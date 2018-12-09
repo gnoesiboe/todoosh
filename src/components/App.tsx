@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import './App.scss';
+import { Container } from 'reactstrap';
+import CalendarOverview from './calendarOverview/CalendarOverview';
 
 class App extends Component {
     public render() {
-        return <div>@todo</div>;
+        return (
+            <Container fluid>
+                <CalendarOverview />
+            </Container>
+        );
     }
 }
 

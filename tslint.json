@@ -9,7 +9,13 @@
         "max-line-length": [true, 120],
         "variable-name": [true, "ban-keywords", "check-format", "allow-pascal-case"],
         "quotemark": [true, "single", "jsx-double"],
-        "ordered-imports": false
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
+        "interface-over-type-literal": false,
+        "member-ordering": false
     },
-    "rulesDirectory": []
+    "rulesDirectory": [],
+    "include": [
+        "./src/**/*"
+    ]
 }
