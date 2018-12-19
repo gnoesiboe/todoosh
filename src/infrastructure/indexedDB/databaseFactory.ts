@@ -1,23 +1,33 @@
 import Dexie from 'dexie';
+import { Todo } from '../../model/todo';
 
-let databaseHandle: Dexie | null = null;
+let databaseHandle: ApplicationDatabase | null = null;
 
 const DATABASE_NAME = 'todoosh';
 
-export function getDatabaseHandle(): Dexie {
+class ApplicationDatabase extends Dexie {
+    // @ts-ignore -> Typescript does not seem to know that this is initialized
+    public todos: Dexie.Table<Todo, number>;
+
+    constructor() {
+        super(DATABASE_NAME);
+
+        this.version(1).stores({
+            todos: '++id, title, isChecked',
+        });
+
+        this.version(2).stores({
+            todos: '++id, title, isChecked, date',
+        });
+    }
+}
+
+export function getDatabaseHandle(): ApplicationDatabase {
     if (databaseHandle) {
         return databaseHandle;
     }
 
-    databaseHandle = new Dexie(DATABASE_NAME);
-
-    databaseHandle.version(1).stores({
-        todos: '++id, title, isChecked',
-    });
-
-    databaseHandle.version(2).stores({
-        todos: '++id, title, isChecked, date',
-    });
+    databaseHandle = new ApplicationDatabase();
 
     // // @ts-ignore
     // databaseHandle.todos.put({

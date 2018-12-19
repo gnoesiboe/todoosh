@@ -1,11 +1,12 @@
 import React from 'react';
 import { Todo, TodoCollection } from './../../model/todo';
-import { fetchAll } from './../../repository/todoRepository';
+import {
+    fetchAll,
+    addListener,
+    removeListener,
+} from './../../infrastructure/repository/todoRepository';
 
-export type TodoSelector = <FP extends object>(
-    props: FP,
-    todo: Todo
-) => boolean;
+export type TodoSelector = (props: {}, todo: Todo) => boolean;
 
 export type AddedProps = {
     todos: TodoCollection;
@@ -25,6 +26,8 @@ const withTodos = (todoSelector: TodoSelector) => <P extends AddedProps>(
     type ForwardedProps = Pick<P, WrappedComponentPropsExceptProvided>;
 
     return class TodosProvider extends React.Component<ForwardedProps, State> {
+        private listenerKey: string | undefined;
+
         constructor(props: P) {
             super(props);
 
@@ -34,10 +37,26 @@ const withTodos = (todoSelector: TodoSelector) => <P extends AddedProps>(
         }
 
         public componentDidMount() {
-            fetchAll().then(todos =>
-                this.setState(currentState => ({ ...currentState, todos }))
-            );
+            this.fetchTodos().then(() => {
+                this.listenerKey = addListener(this.onTodosChanged);
+            });
         }
+
+        public componentWillUnmount() {
+            if (this.listenerKey) {
+                removeListener(this.listenerKey);
+            }
+        }
+
+        private async fetchTodos(): Promise<void> {
+            const todos = await fetchAll();
+
+            this.setState(currentState => ({ ...currentState, todos }));
+        }
+
+        private onTodosChanged = () => {
+            this.fetchTodos();
+        };
 
         public render() {
             const { todos } = this.state;
