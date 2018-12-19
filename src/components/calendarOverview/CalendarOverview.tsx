@@ -1,12 +1,17 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
-import DayOverview from './../dayOverview/DayOverview';
+import DayOverview, {
+    OnTodoChangeCallback,
+} from './../dayOverview/DayOverview';
 import TimeNavigationButton, {
     Direction,
     OnClickCallback,
 } from './components/TimeNavigationButton';
+import { createDateRelativeToToday } from './../../utility/dateTImeHelper';
 
-export default class CalendarOverview extends React.Component {
+type Props = {};
+
+class CalendarOverview extends React.Component<Props> {
     private onBackClick: OnClickCallback = event => {
         event.preventDefault();
 
@@ -19,6 +24,10 @@ export default class CalendarOverview extends React.Component {
         console.log('navigate forward');
     };
 
+    private onTodoChange: OnTodoChangeCallback = (todo, field, newValue) => {
+        console.log('on todo change', todo.id, field, newValue);
+    };
+
     public render() {
         return (
             <Row>
@@ -29,16 +38,28 @@ export default class CalendarOverview extends React.Component {
                     />
                 </Col>
                 <Col md={2}>
-                    <DayOverview />
+                    <DayOverview
+                        onTodoChange={this.onTodoChange}
+                        date={createDateRelativeToToday(-1)}
+                    />
                 </Col>
                 <Col md={4}>
-                    <DayOverview />
+                    <DayOverview
+                        onTodoChange={this.onTodoChange}
+                        date={createDateRelativeToToday(0)}
+                    />
                 </Col>
                 <Col md={2}>
-                    <DayOverview />
+                    <DayOverview
+                        onTodoChange={this.onTodoChange}
+                        date={createDateRelativeToToday(1)}
+                    />
                 </Col>
                 <Col md={2}>
-                    <DayOverview />
+                    <DayOverview
+                        onTodoChange={this.onTodoChange}
+                        date={createDateRelativeToToday(2)}
+                    />
                 </Col>
                 <Col md={1}>
                     <TimeNavigationButton
@@ -50,3 +71,5 @@ export default class CalendarOverview extends React.Component {
         );
     }
 }
+
+export default CalendarOverview;
