@@ -7,7 +7,13 @@ import TimeNavigationButton, {
     Direction,
     OnClickCallback,
 } from './components/TimeNavigationButton';
-import { createDateRelativeToToday } from './../../utility/dateTImeHelper';
+import {
+    createDateRelativeToSupplied,
+    createDateRange,
+    parseDate,
+    checkDateIsToday,
+    formatDate,
+} from './../../utility/dateTImeHelper';
 import { connect } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
 import { TodosReducerState } from '../../storage/reducers/todosReducer';
@@ -21,9 +27,10 @@ type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
 
 type ReduxSuppliedProps = {
     todos: TodosReducerState;
+    visibleDateRange: Date[];
 };
 
-class CalendarOverview extends React.Component<OwnProps> {
+class CalendarOverview extends React.Component<OwnProps & ReduxSuppliedProps> {
     private onBackClick: OnClickCallback = event => {
         event.preventDefault();
 
@@ -41,6 +48,8 @@ class CalendarOverview extends React.Component<OwnProps> {
     };
 
     public render() {
+        const { visibleDateRange } = this.props;
+
         return (
             <Row>
                 <Col md={1}>
@@ -49,30 +58,17 @@ class CalendarOverview extends React.Component<OwnProps> {
                         onClick={this.onBackClick}
                     />
                 </Col>
-                <Col md={2}>
-                    <DayOverview
-                        onTodoChange={this.onTodoChange}
-                        date={createDateRelativeToToday(-1)}
-                    />
-                </Col>
-                <Col md={4}>
-                    <DayOverview
-                        onTodoChange={this.onTodoChange}
-                        date={createDateRelativeToToday(0)}
-                    />
-                </Col>
-                <Col md={2}>
-                    <DayOverview
-                        onTodoChange={this.onTodoChange}
-                        date={createDateRelativeToToday(1)}
-                    />
-                </Col>
-                <Col md={2}>
-                    <DayOverview
-                        onTodoChange={this.onTodoChange}
-                        date={createDateRelativeToToday(2)}
-                    />
-                </Col>
+                {visibleDateRange.map(date => (
+                    <Col
+                        md={checkDateIsToday(date) ? 4 : 2}
+                        key={formatDate(date)}
+                    >
+                        <DayOverview
+                            onTodoChange={this.onTodoChange}
+                            date={date}
+                        />
+                    </Col>
+                ))}
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Forward}
@@ -88,10 +84,15 @@ function mapGlobalStateToProps(
     globalState: GlobalState,
     props: OwnProps
 ): ReduxSuppliedProps {
-    console.log('props: ', props.match.params.startDate);
+    const cursor = parseDate(props.match.params.startDate);
+    const oneDayBefore = createDateRelativeToSupplied(cursor, -1);
+    const lastDay = createDateRelativeToSupplied(cursor, 2);
+
+    const visibleDateRange = createDateRange(oneDayBefore, lastDay);
 
     return {
         todos: globalState.todos || null,
+        visibleDateRange,
     };
 }
 
