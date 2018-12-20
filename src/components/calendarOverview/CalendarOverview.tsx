@@ -8,8 +8,6 @@ import TimeNavigationButton, {
     OnClickCallback,
 } from './components/TimeNavigationButton';
 import { createDateRelativeToToday } from './../../utility/dateTImeHelper';
-import { modifyTodo } from './../../model/modifier/todoModifier';
-import { update as updateExistingTodo } from './../../infrastructure/repository/todoRepository';
 
 type Props = {};
 
@@ -26,10 +24,8 @@ class CalendarOverview extends React.Component<Props> {
         // console.log('navigate forward');
     };
 
-    private onTodoChange: OnTodoChangeCallback = (todo, field, newValue) => {
-        const updatedTodo = modifyTodo(todo, field, newValue);
-
-        updateExistingTodo(updatedTodo);
+    private onTodoChange: OnTodoChangeCallback = () => {
+        // console.log('update todo', arguments);
     };
 
     public render() {
