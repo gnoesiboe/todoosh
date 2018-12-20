@@ -2,8 +2,7 @@ import React from 'react';
 import { Todo, TodoCollection } from './../../model/todo';
 import {
     fetchAll,
-    addListener,
-    removeListener,
+    changeObserver as todoChangeObserver,
 } from './../../infrastructure/repository/todoRepository';
 
 export type TodoSelector = (props: {}, todo: Todo) => boolean;
@@ -38,13 +37,15 @@ const withTodos = (todoSelector: TodoSelector) => <P extends AddedProps>(
 
         public componentDidMount() {
             this.fetchTodos().then(() => {
-                this.listenerKey = addListener(this.onTodosChanged);
+                this.listenerKey = todoChangeObserver.addListener(
+                    this.onTodosChanged
+                );
             });
         }
 
         public componentWillUnmount() {
             if (this.listenerKey) {
-                removeListener(this.listenerKey);
+                todoChangeObserver.removeListener(this.listenerKey);
             }
         }
 

@@ -1,28 +1,8 @@
 import { TodoCollection, Todo } from './../../model/todo';
 import { getDatabaseHandle } from './../indexedDB/databaseFactory';
-import uuid from 'uuid/v4';
+import SimpleChangeObserver from './../../utility/simpleChangeObserver';
 
-export type ListenerCallback = () => void;
-
-const listeners: { [key: string]: ListenerCallback } = {};
-
-export function addListener(callback: ListenerCallback): string {
-    const key = uuid();
-
-    listeners[key] = callback;
-
-    return key;
-}
-
-export function removeListener(key: string): void {
-    if (typeof listeners[key] !== 'undefined') {
-        delete listeners[key];
-    }
-}
-
-function _notifyChange() {
-    Object.keys(listeners).map(key => listeners[key]());
-}
+export const changeObserver = new SimpleChangeObserver();
 
 export function fetchAll(): Promise<TodoCollection> {
     return getDatabaseHandle().todos.toArray();
@@ -31,7 +11,7 @@ export function fetchAll(): Promise<TodoCollection> {
 export async function update(todo: Todo): Promise<number> {
     const key = await getDatabaseHandle().todos.put(todo);
 
-    _notifyChange();
+    changeObserver.notifyChange();
 
     return key;
 }
