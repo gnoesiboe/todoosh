@@ -8,10 +8,16 @@ import TimeNavigationButton, {
     OnClickCallback,
 } from './components/TimeNavigationButton';
 import { createDateRelativeToToday } from './../../utility/dateTImeHelper';
+import { connect } from 'react-redux';
+import { GlobalState } from '../../storage/reducers';
+import { TodosReducerState } from '../../storage/reducers/todosReducer';
 
-type Props = {};
+type OwnProps = {};
+type ReduxSuppliedProps = {
+    todos: TodosReducerState;
+};
 
-class CalendarOverview extends React.Component<Props> {
+class CalendarOverview extends React.Component<OwnProps> {
     private onBackClick: OnClickCallback = event => {
         event.preventDefault();
 
@@ -72,4 +78,12 @@ class CalendarOverview extends React.Component<Props> {
     }
 }
 
-export default CalendarOverview;
+function mapGlobalStateToProps(globalState: GlobalState): ReduxSuppliedProps {
+    return {
+        todos: globalState.todos || null,
+    };
+}
+
+export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(
+    CalendarOverview
+);
