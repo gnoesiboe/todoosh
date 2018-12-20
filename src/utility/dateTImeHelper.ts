@@ -10,13 +10,22 @@ import {
 } from 'date-fns';
 
 const DATE_FORMAT_SHORT = 'MMM, Mo';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function createDate(value: string): Date {
     return parse(value);
 }
 
-export function formatDate(date: Date): string {
+export function formatDateShort(date: Date): string {
     return format(date, DATE_FORMAT_SHORT);
+}
+
+export function formatDate(date: Date): string {
+    return format(date, DATE_FORMAT);
+}
+
+export function fomatDateToday(): string {
+    return formatDate(new Date());
 }
 
 export function checkIsSameDay(first: Date, second: Date): boolean {
@@ -36,7 +45,7 @@ export function formatDistanceFromToday(date: Date): string {
         return 'yesterday';
     }
 
-    return formatDate(date);
+    return formatDateShort(date);
 }
 
 export function createDateRelativeToToday(amount: number): Date {

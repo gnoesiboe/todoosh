@@ -11,8 +11,14 @@ import { createDateRelativeToToday } from './../../utility/dateTImeHelper';
 import { connect } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
 import { TodosReducerState } from '../../storage/reducers/todosReducer';
+import { RouteComponentProps } from 'react-router';
 
-type OwnProps = {};
+type ReactRouterMatchParams = {
+    startDate: string;
+};
+
+type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
+
 type ReduxSuppliedProps = {
     todos: TodosReducerState;
 };
@@ -78,7 +84,12 @@ class CalendarOverview extends React.Component<OwnProps> {
     }
 }
 
-function mapGlobalStateToProps(globalState: GlobalState): ReduxSuppliedProps {
+function mapGlobalStateToProps(
+    globalState: GlobalState,
+    props: OwnProps
+): ReduxSuppliedProps {
+    console.log('props: ', props.match.params.startDate);
+
     return {
         todos: globalState.todos || null,
     };
