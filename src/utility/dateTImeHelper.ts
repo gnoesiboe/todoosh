@@ -10,7 +10,7 @@ import {
     eachDay,
 } from 'date-fns';
 
-const DATE_FORMAT_SHORT = 'MMM, Mo';
+const DATE_FORMAT_SHORT = 'MMM, Do';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export function parseDate(value: string): Date {
