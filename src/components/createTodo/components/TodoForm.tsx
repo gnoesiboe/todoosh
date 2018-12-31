@@ -3,15 +3,22 @@ import { FormikProps } from 'formik';
 import { TodoFormValues } from './TodoFormStateHandler';
 import { Form, Input } from 'reactstrap';
 
-type Props = FormikProps<TodoFormValues>;
+export type OnCancelCallback = () => void;
 
-const TodoForm: React.FunctionComponent<Props> = ({
+type Props = {
+    onCancel: OnCancelCallback;
+};
+
+const TodoForm: React.FunctionComponent<
+    Props & FormikProps<TodoFormValues>
+> = ({
     handleSubmit,
     handleChange,
     handleBlur,
     values,
     touched,
     errors,
+    onCancel,
 }) => {
     return (
         <Form onSubmit={handleSubmit}>
@@ -20,6 +27,11 @@ const TodoForm: React.FunctionComponent<Props> = ({
                 name="title"
                 placeholder="Title"
                 onChange={handleChange}
+                onKeyDown={(event: React.KeyboardEvent) => {
+                    if (event.key === 'Escape') {
+                        onCancel();
+                    }
+                }}
                 onBlur={handleBlur}
                 value={values.title}
                 autoFocus
