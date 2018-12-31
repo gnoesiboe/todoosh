@@ -27,6 +27,7 @@ const TodoForm: React.FunctionComponent<
                 name="title"
                 placeholder="Title"
                 onChange={handleChange}
+                autoComplete="off"
                 onKeyDown={(event: React.KeyboardEvent) => {
                     if (event.key === 'Escape') {
                         onCancel();
