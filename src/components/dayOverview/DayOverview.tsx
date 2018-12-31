@@ -1,6 +1,6 @@
 import React from 'react';
 import Todo from '../todo/Todo';
-import { Todo as TodoModel, TodoCollection } from '../../model/todo';
+import { Todo as TodoModel } from '../../model/todo';
 import TodoOverview from './components/TodoOverview';
 import { formatDistanceFromToday } from '../../utility/dateTImeHelper';
 import createClassName from 'classnames';
@@ -17,7 +17,7 @@ type Props = {
     date: Date;
     isCurrent: boolean;
     children?: JSX.Element;
-    todos: TodoCollection;
+    todos: TodoModel[];
 };
 
 const DayOverview = ({

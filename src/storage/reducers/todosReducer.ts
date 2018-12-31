@@ -8,15 +8,31 @@ export type TodosReducerState = TodoCollection | null;
 
 const defaultState: TodosReducerState = null;
 
+function handleCreateAddTodoAction(
+    currentState: TodosReducerState,
+    action: TodoAction
+): TodosReducerState {
+    const { date, todo } = action.payload;
+
+    if (!currentState) {
+        return {
+            [action.payload.date]: [todo],
+        };
+    }
+
+    return {
+        ...currentState,
+        [date]: [...(currentState[date] || {}), todo],
+    };
+}
+
 export default (
     currentState: TodosReducerState = defaultState,
     action: TodoAction
 ) => {
     switch (action.type) {
         case getType(actionFactories.createAddTodoAction):
-            return Array.isArray(currentState)
-                ? [...currentState, action.payload]
-                : [action.payload];
+            return handleCreateAddTodoAction(currentState, action);
 
         default:
             return currentState;

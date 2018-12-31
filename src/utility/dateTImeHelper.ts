@@ -80,3 +80,15 @@ export function createDateRelativeToToday(amount: number): Date {
 export function createDateRange(start: Date, end: Date): Date[] {
     return eachDay(start, end);
 }
+
+export function checkDateIsInRange(dateRange: Date[], date: Date): boolean {
+    for (let i = 0, l = dateRange.length; i < l; i++) {
+        const cursorDate = dateRange[i];
+
+        if (isSameDay(cursorDate, date)) {
+            return true;
+        }
+    }
+
+    return false;
+}

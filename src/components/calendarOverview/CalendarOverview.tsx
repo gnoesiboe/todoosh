@@ -15,12 +15,13 @@ import {
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
-import { TodosReducerState } from '../../storage/reducers/todosReducer';
 import { RouteComponentProps } from 'react-router';
-import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
 import { createSetCurrentDateAction } from '../../storage/actions/factory/currentDateActionFactories';
 import { RootAction } from './../../storage/actions/rootAction';
 import CreateTodo from './../createTodo/CreateTodo';
+import { TodoCollection } from '../../model/todo';
+import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
+import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -29,7 +30,7 @@ type ReactRouterMatchParams = {
 type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
 
 type ReduxSuppliedProps = {
-    todos: TodosReducerState;
+    todos: TodoCollection;
     visibleDateRange: Date[];
     hasCurrentDate: boolean;
     currentDate: Date;
@@ -63,7 +64,7 @@ class CalendarOverview extends React.Component<
     };
 
     public render() {
-        const { visibleDateRange, currentDate, todos } = this.props;
+        const { currentDate, todos } = this.props;
 
         return (
             <Row>
@@ -73,8 +74,10 @@ class CalendarOverview extends React.Component<
                         onClick={this.onBackClick}
                     />
                 </Col>
-                {visibleDateRange.map(date => {
+                {Object.keys(todos).map(dateAsString => {
+                    const date = parseDate(dateAsString);
                     const isCurrent = checkIsSameDay(date, currentDate);
+                    const todosForDate = todos[dateAsString];
 
                     return (
                         <Col
@@ -85,7 +88,7 @@ class CalendarOverview extends React.Component<
                                 onTodoChange={this.onTodoChange}
                                 date={date}
                                 isCurrent={isCurrent}
-                                todos={todos || []}
+                                todos={todosForDate}
                             >
                                 {isCurrent ? (
                                     <CreateTodo date={this.props.currentDate} />
@@ -111,16 +114,20 @@ function mapGlobalStateToProps(
     globalState: GlobalState,
     props: OwnProps
 ): ReduxSuppliedProps {
+    // @todo do we still need this to be in global state? Or is it enough to have it in url
+    const hasCurrentDateInGlobalState = !!globalState.currentDate;
+
     const currentDate = parseDate(props.match.params.startDate);
     const visibleDateRange = createVisibleDateRangeFromRouterDate(currentDate);
-    const hasCurrentDate = !!globalState.currentDate;
-
-    // @todo insert the todo's grouped by date for easy handling in the component?
+    const todos: TodoCollection = applyOnlyRelevantTodosSelector(
+        globalState.todos || null,
+        visibleDateRange
+    );
 
     return {
-        todos: globalState.todos || null,
+        todos,
         visibleDateRange,
-        hasCurrentDate,
+        hasCurrentDate: hasCurrentDateInGlobalState,
         currentDate,
     };
 }

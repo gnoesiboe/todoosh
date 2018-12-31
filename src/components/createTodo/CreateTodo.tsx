@@ -6,7 +6,6 @@ import TodoFormStateHandler, {
 import mousetrap from 'mousetrap';
 import { RootAction } from '../../storage/actions/rootAction';
 import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
-import { formatDate } from '../../utility/dateTImeHelper';
 
 type Props = {
     date: Date;
@@ -39,7 +38,9 @@ class CreateTodo extends React.Component<CombinedProps, State> {
         mousetrap.bind('a', this.onAddKeyboardShortcutOccurred);
     }
 
-    private onAddKeyboardShortcutOccurred = () => {
+    private onAddKeyboardShortcutOccurred = (event: Event) => {
+        event.preventDefault();
+
         this.setState(currentState => ({
             ...currentState,
             showForm: true,
@@ -51,9 +52,9 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
-        this.props.dispatch(
-            createAddTodoAction(values.title, formatDate(this.props.date))
-        );
+        const action = createAddTodoAction(values.title, this.props.date);
+
+        this.props.dispatch(action);
     };
 
     private renderFormIfRequired() {
