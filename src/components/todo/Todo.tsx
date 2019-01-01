@@ -24,6 +24,7 @@ export default class Todo extends React.Component<Props> {
 
         const className = createClassName('todo', {
             todo__current: isCurrent,
+            todo__completed: todo.isCompleted,
         });
 
         return (
@@ -34,7 +35,10 @@ export default class Todo extends React.Component<Props> {
                         checked={todo.isCompleted}
                         onChange={this.onCompleteChange}
                     />{' '}
-                    <span dangerouslySetInnerHTML={innerHtml} />
+                    <span
+                        className="todo--title"
+                        dangerouslySetInnerHTML={innerHtml}
+                    />
                 </Label>
             </div>
         );

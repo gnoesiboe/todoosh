@@ -5,6 +5,13 @@
         background: #ff9900;
     }
 
+    &.todo__completed {
+        .todo--title {
+            color: #aaa;
+            text-decoration: line-through;
+        }
+    }
+
     .form-check-label {
         margin-left: 5px;
     }
