@@ -67,6 +67,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
         const action = createAddTodoAction(values.title, this.props.date);
 
         this.props.dispatch(action);
+        this.hideForm();
     };
 
     private onCancel: OnCancelCallback = () => {
