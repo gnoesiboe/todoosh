@@ -6,14 +6,14 @@ import { formatDistanceFromToday } from '../../utility/dateTImeHelper';
 import createClassName from 'classnames';
 import './DayOverview.scss';
 
-export type OnTodoChangeCallback = (
+export type OnTodoCompletedChangeCallback = (
     todo: TodoModel,
-    field: string,
-    newValue: any
+    date: Date,
+    completed: boolean
 ) => void;
 
 type Props = {
-    onTodoChange: OnTodoChangeCallback;
+    onTodoCompletedChange: OnTodoCompletedChangeCallback;
     date: Date;
     isCurrent: boolean;
     children?: JSX.Element;
@@ -21,7 +21,7 @@ type Props = {
 };
 
 const DayOverview = ({
-    onTodoChange,
+    onTodoCompletedChange,
     date,
     isCurrent,
     children,
@@ -42,8 +42,8 @@ const DayOverview = ({
                     <Todo
                         key={todo.id}
                         todo={todo}
-                        onChange={(field, newValue) =>
-                            onTodoChange(todo, field, newValue)
+                        onCompletedChange={complete =>
+                            onTodoCompletedChange(todo, date, complete)
                         }
                     />
                 ))}

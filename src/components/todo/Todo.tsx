@@ -2,19 +2,16 @@ import React, { ChangeEvent } from 'react';
 import { Todo as TodoType } from '../../model/todo';
 import { Label, Input } from 'reactstrap';
 
-export type OnChangeCallback = (
-    field: string,
-    newValue: boolean | string
-) => void;
+export type OnCompletedChangeCallback = (completed: boolean) => void;
 
 type Props = {
     todo: TodoType;
-    onChange: OnChangeCallback;
+    onCompletedChange: OnCompletedChangeCallback;
 };
 
 export default class Todo extends React.Component<Props> {
-    private onIsCheckedChange = (event: ChangeEvent<HTMLInputElement>) => {
-        this.props.onChange('isChecked', event.target.checked);
+    private onCompleteChange = (event: ChangeEvent<HTMLInputElement>) => {
+        this.props.onCompletedChange(event.target.checked);
     };
 
     public render() {
@@ -25,8 +22,8 @@ export default class Todo extends React.Component<Props> {
                 <Label check>
                     <Input
                         type="checkbox"
-                        checked={todo.isChecked}
-                        onChange={this.onIsCheckedChange}
+                        checked={todo.isCompleted}
+                        onChange={this.onCompleteChange}
                     />{' '}
                     {todo.title}
                 </Label>

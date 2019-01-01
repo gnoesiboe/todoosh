@@ -5,13 +5,19 @@ import { formatDate } from '../../../utility/dateTImeHelper';
 
 export const createAddTodoAction = createAction(
     '@todos/create',
-    resolve => (title: string, date: Date, isChecked: boolean = false) =>
+    resolve => (title: string, date: Date, isCompleted: boolean = false) =>
         resolve({
             todo: {
                 id: uuid(),
                 title,
-                isChecked,
+                isCompleted,
             } as Todo,
             date: formatDate(date) as string,
         })
+);
+
+export const createToggleTodoCompletedAction = createAction(
+    '@todos/toggle-completed',
+    resolve => (id: string, date: string, completed: boolean) =>
+        resolve({ id, date, completed })
 );

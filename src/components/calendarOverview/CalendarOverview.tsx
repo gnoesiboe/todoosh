@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col } from 'reactstrap';
 import DayOverview, {
-    OnTodoChangeCallback,
+    OnTodoCompletedChangeCallback,
 } from './../dayOverview/DayOverview';
 import TimeNavigationButton, {
     Direction,
@@ -22,6 +22,7 @@ import CreateTodo from './../createTodo/CreateTodo';
 import { TodoCollection } from '../../model/todo';
 import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
 import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector';
+import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -47,20 +48,30 @@ class CalendarOverview extends React.Component<
         }
     }
 
-    private onBackClick: OnClickCallback = event => {
+    private onPageBackClick: OnClickCallback = event => {
         event.preventDefault();
 
         // console.log('navigate back');
     };
 
-    private onForwardClick: OnClickCallback = event => {
+    private onPageForwardClick: OnClickCallback = event => {
         event.preventDefault();
 
         // console.log('navigate forward');
     };
 
-    private onTodoChange: OnTodoChangeCallback = () => {
-        // console.log('update todo', arguments);
+    private onTodoCompletedChange: OnTodoCompletedChangeCallback = (
+        todo,
+        date,
+        completed
+    ) => {
+        const action = createToggleTodoCompletedAction(
+            todo.id,
+            formatDate(date),
+            completed
+        );
+
+        this.props.dispatch(action);
     };
 
     public render() {
@@ -71,7 +82,7 @@ class CalendarOverview extends React.Component<
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Back}
-                        onClick={this.onBackClick}
+                        onClick={this.onPageBackClick}
                     />
                 </Col>
                 {Object.keys(todos).map(dateAsString => {
@@ -85,7 +96,9 @@ class CalendarOverview extends React.Component<
                             key={formatDate(date)}
                         >
                             <DayOverview
-                                onTodoChange={this.onTodoChange}
+                                onTodoCompletedChange={
+                                    this.onTodoCompletedChange
+                                }
                                 date={date}
                                 isCurrent={isCurrent}
                                 todos={todosForDate}
@@ -102,7 +115,7 @@ class CalendarOverview extends React.Component<
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Forward}
-                        onClick={this.onForwardClick}
+                        onClick={this.onPageForwardClick}
                     />
                 </Col>
             </Row>
