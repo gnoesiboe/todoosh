@@ -8,14 +8,14 @@ import TimeNavigationButton, {
     OnClickCallback,
 } from './components/TimeNavigationButton';
 import {
-    checkDateIsToday,
     formatDate,
     parseDate,
+    createDateRelativeToSupplied,
     checkIsSameDay,
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
-import { RouteComponentProps } from 'react-router';
+import { RouteComponentProps, withRouter } from 'react-router';
 import { createSetCurrentDateAction } from '../../storage/actions/factory/currentDateActionFactories';
 import { RootAction } from './../../storage/actions/rootAction';
 import CreateTodo from './../createTodo/CreateTodo';
@@ -23,6 +23,8 @@ import { TodoCollection } from '../../model/todo';
 import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
 import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector';
 import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
+import mousetrap from 'mousetrap';
+import { createTodosPath } from '../../routing/urlGenerator';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -37,28 +39,70 @@ type ReduxSuppliedProps = {
 };
 
 class CalendarOverview extends React.Component<
-    OwnProps & ReduxSuppliedProps & DispatchProp<RootAction>
+    OwnProps &
+        ReduxSuppliedProps &
+        DispatchProp<RootAction> &
+        RouteComponentProps<{}>
 > {
     public componentDidMount() {
-        this.setCurrentDate();
+        this.setCurrentDate(this.props.match.params.startDate);
+        this.bindKeyboardShortcuts();
     }
 
-    private setCurrentDate() {
-        const { dispatch, match } = this.props;
-
-        dispatch(createSetCurrentDateAction(match.params.startDate));
+    public componentWillUnmount() {
+        this.unbindKeyboardShortcuts();
     }
 
-    private onPageBackClick: OnClickCallback = event => {
-        event.preventDefault();
+    private bindKeyboardShortcuts() {
+        mousetrap.bind('right', this.onMoveRightKeyboardShortcutPressed);
+        mousetrap.bind('left', this.onMoveLightKeyboardShortcutPressed);
+    }
 
-        // console.log('navigate back');
+    private onMoveRightKeyboardShortcutPressed = () => {
+        this.navigateToNextDate();
     };
 
-    private onPageForwardClick: OnClickCallback = event => {
+    private navigateToNextDate() {
+        const { currentDate, history } = this.props;
+
+        const nextDate = createDateRelativeToSupplied(currentDate, 1);
+
+        history.push(createTodosPath(formatDate(nextDate)));
+    }
+
+    private onMoveLightKeyboardShortcutPressed = () => {
+        this.navigateToPreviousDate();
+    };
+
+    private navigateToPreviousDate() {
+        const { currentDate, history } = this.props;
+
+        const nextDate = createDateRelativeToSupplied(currentDate, -1);
+
+        history.push(createTodosPath(formatDate(nextDate)));
+    }
+
+    private unbindKeyboardShortcuts() {
+        mousetrap.unbind('right');
+        mousetrap.unbind('left');
+    }
+
+    private setCurrentDate(date: string) {
+        const { dispatch } = this.props;
+
+        dispatch(createSetCurrentDateAction(date));
+    }
+
+    private onBackClick: OnClickCallback = event => {
         event.preventDefault();
 
-        // console.log('navigate forward');
+        this.navigateToPreviousDate();
+    };
+
+    private onForwardClick: OnClickCallback = event => {
+        event.preventDefault();
+
+        this.navigateToNextDate();
     };
 
     private onTodoCompletedChange: OnTodoCompletedChangeCallback = (
@@ -83,7 +127,7 @@ class CalendarOverview extends React.Component<
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Back}
-                        onClick={this.onPageBackClick}
+                        onClick={this.onBackClick}
                     />
                 </Col>
                 {Object.keys(todos).map(dateAsString => {
@@ -92,10 +136,7 @@ class CalendarOverview extends React.Component<
                     const todosForDate = todos[dateAsString];
 
                     return (
-                        <Col
-                            md={checkDateIsToday(date) ? 4 : 2}
-                            key={formatDate(date)}
-                        >
+                        <Col md={isCurrent ? 4 : 2} key={formatDate(date)}>
                             <DayOverview
                                 onTodoCompletedChange={
                                     this.onTodoCompletedChange
@@ -116,7 +157,7 @@ class CalendarOverview extends React.Component<
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Forward}
-                        onClick={this.onPageForwardClick}
+                        onClick={this.onForwardClick}
                     />
                 </Col>
             </Row>
@@ -143,5 +184,7 @@ function mapGlobalStateToProps(
 }
 
 export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(
-    CalendarOverview
+    withRouter<OwnProps & ReduxSuppliedProps & DispatchProp<RootAction>>(
+        CalendarOverview
+    )
 );
