@@ -12,6 +12,7 @@ import {
     parseDate,
     createDateRelativeToSupplied,
     checkIsSameDay,
+    fomatDateToday,
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
@@ -40,6 +41,7 @@ type ReduxSuppliedProps = {
 
 const FORWARDS_SHORCUT = ['right', 'j'];
 const BACKWARDS_SHORTCUT = ['left', 'k'];
+const TODAY_SHORTCUT = 't';
 
 class CalendarOverview extends React.Component<
     OwnProps &
@@ -65,6 +67,7 @@ class CalendarOverview extends React.Component<
             BACKWARDS_SHORTCUT,
             this.onMoveLightKeyboardShortcutPressed
         );
+        mousetrap.bind(TODAY_SHORTCUT, this.onTodayKeyboardShortcutPressed);
     }
 
     private onMoveRightKeyboardShortcutPressed = () => {
@@ -81,6 +84,12 @@ class CalendarOverview extends React.Component<
 
     private onMoveLightKeyboardShortcutPressed = () => {
         this.navigateToPreviousDate();
+    };
+
+    private onTodayKeyboardShortcutPressed = () => {
+        const { history } = this.props;
+
+        history.push(createTodosPath(fomatDateToday()));
     };
 
     private navigateToPreviousDate() {
