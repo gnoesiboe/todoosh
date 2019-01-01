@@ -38,6 +38,9 @@ type ReduxSuppliedProps = {
     currentDate: Date;
 };
 
+const FORWARDS_SHORCUT = ['right', 'j'];
+const BACKWARDS_SHORTCUT = ['left', 'k'];
+
 class CalendarOverview extends React.Component<
     OwnProps &
         ReduxSuppliedProps &
@@ -54,8 +57,14 @@ class CalendarOverview extends React.Component<
     }
 
     private bindKeyboardShortcuts() {
-        mousetrap.bind('right', this.onMoveRightKeyboardShortcutPressed);
-        mousetrap.bind('left', this.onMoveLightKeyboardShortcutPressed);
+        mousetrap.bind(
+            FORWARDS_SHORCUT,
+            this.onMoveRightKeyboardShortcutPressed
+        );
+        mousetrap.bind(
+            BACKWARDS_SHORTCUT,
+            this.onMoveLightKeyboardShortcutPressed
+        );
     }
 
     private onMoveRightKeyboardShortcutPressed = () => {
@@ -83,8 +92,8 @@ class CalendarOverview extends React.Component<
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind('right');
-        mousetrap.unbind('left');
+        mousetrap.unbind(FORWARDS_SHORCUT);
+        mousetrap.unbind(BACKWARDS_SHORTCUT);
     }
 
     private setCurrentDate(date: string) {
