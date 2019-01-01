@@ -1,6 +1,8 @@
 import React, { ChangeEvent } from 'react';
 import { Todo as TodoType } from '../../model/todo';
 import { Label, Input } from 'reactstrap';
+import './Todo.scss';
+import { parseInlineMarkdown } from './../../utility/markdownHelper';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 
@@ -16,16 +18,17 @@ export default class Todo extends React.Component<Props> {
 
     public render() {
         const { todo } = this.props;
+        const innerHtml = { __html: parseInlineMarkdown(todo.title) };
 
         return (
-            <div>
+            <div className="todo">
                 <Label check>
                     <Input
                         type="checkbox"
                         checked={todo.isCompleted}
                         onChange={this.onCompleteChange}
                     />{' '}
-                    {todo.title}
+                    <span dangerouslySetInnerHTML={innerHtml} />
                 </Label>
             </div>
         );
