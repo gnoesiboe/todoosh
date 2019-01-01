@@ -16,6 +16,7 @@ type Props = {
     onTodoCompletedChange: OnTodoCompletedChangeCallback;
     date: Date;
     isCurrent: boolean;
+    currentTodoIndex: number;
     children?: JSX.Element;
     todos: TodoModel[];
 };
@@ -26,6 +27,7 @@ const DayOverview = ({
     isCurrent,
     children,
     todos,
+    currentTodoIndex,
 }: Props) => {
     const className = createClassName('day-overview', {
         'day-overview__current': isCurrent,
@@ -38,10 +40,11 @@ const DayOverview = ({
             </h3>
             {children}
             <TodoOverview>
-                {todos.map(todo => (
+                {todos.map((todo, index) => (
                     <Todo
                         key={todo.id}
                         todo={todo}
+                        isCurrent={isCurrent && index === currentTodoIndex}
                         onCompletedChange={complete =>
                             onTodoCompletedChange(todo, date, complete)
                         }

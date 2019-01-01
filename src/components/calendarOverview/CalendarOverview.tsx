@@ -26,6 +26,11 @@ import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector'
 import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
 import mousetrap from 'mousetrap';
 import { createTodosPath } from '../../routing/urlGenerator';
+import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
+import {
+    determineNextIndex,
+    determinePrevousIndex,
+} from './../../utility/arrayIndexNavigationHelper';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -37,10 +42,13 @@ type ReduxSuppliedProps = {
     todos: TodoCollection;
     visibleDateRange: Date[];
     currentDate: Date;
+    currentTodoIndex: number;
 };
 
-const FORWARDS_SHORCUT = ['right', 'j'];
-const BACKWARDS_SHORTCUT = ['left', 'k'];
+const NEXT_DATE_SHORCUT = ['right', 'n'];
+const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
+const NEXT_TODO_SHORTCUT = ['down', 'j'];
+const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
 const TODAY_SHORTCUT = 't';
 
 class CalendarOverview extends React.Component<
@@ -60,18 +68,44 @@ class CalendarOverview extends React.Component<
 
     private bindKeyboardShortcuts() {
         mousetrap.bind(
-            FORWARDS_SHORCUT,
-            this.onMoveRightKeyboardShortcutPressed
+            NEXT_DATE_SHORCUT,
+            this.onMoveToNextDateKeyboardShortcutPressed
         );
         mousetrap.bind(
-            BACKWARDS_SHORTCUT,
-            this.onMoveLightKeyboardShortcutPressed
+            PREVIOUS_DATE_SHORTCUT,
+            this.onMoveToPreviousDateKeyboardShortcutPressed
         );
         mousetrap.bind(TODAY_SHORTCUT, this.onTodayKeyboardShortcutPressed);
+        mousetrap.bind(
+            NEXT_TODO_SHORTCUT,
+            this.onMoveToNextTodoKeyboardShortcutPressed
+        );
+        mousetrap.bind(
+            PREVIOUS_TODO_SHORTCUT,
+            this.onMoveToPreviousTodoKeyboardShortcutPressed
+        );
     }
 
-    private onMoveRightKeyboardShortcutPressed = () => {
+    private onMoveToNextDateKeyboardShortcutPressed = () => {
         this.navigateToNextDate();
+    };
+
+    private onMoveToPreviousTodoKeyboardShortcutPressed = () => {
+        const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
+
+        const arrayLength = todos[formatDate(currentDate)].length;
+        const nextIndex = determinePrevousIndex(currentTodoIndex, arrayLength);
+
+        dispatch(createSetCurrentTodoIndexAction(nextIndex));
+    };
+
+    private onMoveToNextTodoKeyboardShortcutPressed = () => {
+        const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
+
+        const arrayLength = todos[formatDate(currentDate)].length;
+        const nextIndex = determineNextIndex(currentTodoIndex, arrayLength);
+
+        dispatch(createSetCurrentTodoIndexAction(nextIndex));
     };
 
     private navigateToNextDate() {
@@ -82,7 +116,7 @@ class CalendarOverview extends React.Component<
         history.push(createTodosPath(formatDate(nextDate)));
     }
 
-    private onMoveLightKeyboardShortcutPressed = () => {
+    private onMoveToPreviousDateKeyboardShortcutPressed = () => {
         this.navigateToPreviousDate();
     };
 
@@ -101,8 +135,11 @@ class CalendarOverview extends React.Component<
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind(FORWARDS_SHORCUT);
-        mousetrap.unbind(BACKWARDS_SHORTCUT);
+        mousetrap.unbind(NEXT_DATE_SHORCUT);
+        mousetrap.unbind(PREVIOUS_DATE_SHORTCUT);
+        mousetrap.unbind(TODAY_SHORTCUT);
+        mousetrap.unbind(NEXT_TODO_SHORTCUT);
+        mousetrap.unbind(PREVIOUS_TODO_SHORTCUT);
     }
 
     private setCurrentDate(date: string) {
@@ -138,7 +175,7 @@ class CalendarOverview extends React.Component<
     };
 
     public render() {
-        const { currentDate, todos } = this.props;
+        const { currentDate, todos, currentTodoIndex } = this.props;
 
         return (
             <Row>
@@ -162,6 +199,7 @@ class CalendarOverview extends React.Component<
                                 date={date}
                                 isCurrent={isCurrent}
                                 todos={todosForDate}
+                                currentTodoIndex={currentTodoIndex}
                             >
                                 {isCurrent ? (
                                     <CreateTodo date={this.props.currentDate} />
@@ -193,12 +231,9 @@ function mapGlobalStateToProps(
         globalState.todos || null,
         visibleDateRange
     );
+    const currentTodoIndex = globalState.currentTodoIndex || 0;
 
-    return {
-        todos,
-        visibleDateRange,
-        currentDate,
-    };
+    return { todos, visibleDateRange, currentDate, currentTodoIndex };
 }
 
 export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(
