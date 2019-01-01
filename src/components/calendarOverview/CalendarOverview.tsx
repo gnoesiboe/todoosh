@@ -33,7 +33,6 @@ type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
 type ReduxSuppliedProps = {
     todos: TodoCollection;
     visibleDateRange: Date[];
-    hasCurrentDate: boolean;
     currentDate: Date;
 };
 
@@ -41,11 +40,13 @@ class CalendarOverview extends React.Component<
     OwnProps & ReduxSuppliedProps & DispatchProp<RootAction>
 > {
     public componentDidMount() {
-        const { hasCurrentDate: hasCurrent, dispatch, match } = this.props;
+        this.setCurrentDate();
+    }
 
-        if (!hasCurrent) {
-            dispatch(createSetCurrentDateAction(match.params.startDate));
-        }
+    private setCurrentDate() {
+        const { dispatch, match } = this.props;
+
+        dispatch(createSetCurrentDateAction(match.params.startDate));
     }
 
     private onPageBackClick: OnClickCallback = event => {
@@ -127,9 +128,6 @@ function mapGlobalStateToProps(
     globalState: GlobalState,
     props: OwnProps
 ): ReduxSuppliedProps {
-    // @todo do we still need this to be in global state? Or is it enough to have it in url
-    const hasCurrentDateInGlobalState = !!globalState.currentDate;
-
     const currentDate = parseDate(props.match.params.startDate);
     const visibleDateRange = createVisibleDateRangeFromRouterDate(currentDate);
     const todos: TodoCollection = applyOnlyRelevantTodosSelector(
@@ -140,7 +138,6 @@ function mapGlobalStateToProps(
     return {
         todos,
         visibleDateRange,
-        hasCurrentDate: hasCurrentDateInGlobalState,
         currentDate,
     };
 }
