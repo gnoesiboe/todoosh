@@ -50,6 +50,7 @@ const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
 const NEXT_TODO_SHORTCUT = ['down', 'j'];
 const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
 const TODAY_SHORTCUT = 't';
+const TOGGLE_COMPLETED_SHORTCUT = 'space';
 
 class CalendarOverview extends React.Component<
     OwnProps &
@@ -84,7 +85,28 @@ class CalendarOverview extends React.Component<
             PREVIOUS_TODO_SHORTCUT,
             this.onMoveToPreviousTodoKeyboardShortcutPressed
         );
+        mousetrap.bind(
+            TOGGLE_COMPLETED_SHORTCUT,
+            this.onToggleCompletedKeyboardShortcutPressed
+        );
     }
+
+    private onToggleCompletedKeyboardShortcutPressed = () => {
+        const { todos, currentDate, currentTodoIndex } = this.props;
+
+        const currentDayTodos = todos[formatDate(currentDate)];
+        const currentTodo = currentDayTodos[currentTodoIndex];
+
+        if (!currentTodo) {
+            throw new Error('Could not resolve current todo');
+        }
+
+        this.setTodoCompletedStatus(
+            currentTodo.id,
+            currentDate,
+            !currentTodo.isCompleted
+        );
+    };
 
     private onMoveToNextDateKeyboardShortcutPressed = () => {
         this.navigateToNextDate();
@@ -140,6 +162,7 @@ class CalendarOverview extends React.Component<
         mousetrap.unbind(TODAY_SHORTCUT);
         mousetrap.unbind(NEXT_TODO_SHORTCUT);
         mousetrap.unbind(PREVIOUS_TODO_SHORTCUT);
+        mousetrap.unbind(TOGGLE_COMPLETED_SHORTCUT);
     }
 
     private setCurrentDate(date: string) {
@@ -165,14 +188,22 @@ class CalendarOverview extends React.Component<
         date,
         completed
     ) => {
+        this.setTodoCompletedStatus(todo.id, date, completed);
+    };
+
+    private setTodoCompletedStatus(
+        todoId: string,
+        date: Date,
+        completed: boolean
+    ) {
         const action = createToggleTodoCompletedAction(
-            todo.id,
+            todoId,
             formatDate(date),
             completed
         );
 
         this.props.dispatch(action);
-    };
+    }
 
     public render() {
         const { currentDate, todos, currentTodoIndex } = this.props;

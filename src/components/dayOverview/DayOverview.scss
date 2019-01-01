@@ -1,10 +1,10 @@
 .day-overview {
     background: #eee;
     padding: 10px;
-    border: 2px solid #ddd;
+    border: 2px solid #eee;
 
     &.day-overview__current {
-        border-color: #ccc;
+        border-color: #ff9900;
     }
 
     .day-overview--title {
