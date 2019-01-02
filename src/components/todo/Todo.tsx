@@ -4,13 +4,18 @@ import { Label, Input } from 'reactstrap';
 import './Todo.scss';
 import { parseInlineMarkdown } from './../../utility/markdownHelper';
 import createClassName from 'classnames';
+import EditTodo from './../editTodo/EditTodo';
+import { OnCancelCallback } from '../createTodo/components/TodoForm';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 
 type Props = {
     todo: TodoType;
+    date: Date;
     onCompletedChange: OnCompletedChangeCallback;
     isCurrent: boolean;
+    isEditMode: boolean;
+    onEditCancel: OnCancelCallback;
 };
 
 export default class Todo extends React.Component<Props> {
@@ -18,8 +23,9 @@ export default class Todo extends React.Component<Props> {
         this.props.onCompletedChange(event.target.checked);
     };
 
-    public render() {
+    private renderDisplayMode() {
         const { todo, isCurrent } = this.props;
+
         const innerHtml = { __html: parseInlineMarkdown(todo.title) };
 
         const className = createClassName('todo', {
@@ -42,5 +48,17 @@ export default class Todo extends React.Component<Props> {
                 </Label>
             </div>
         );
+    }
+
+    private renderEditMode() {
+        const { todo, date, onEditCancel } = this.props;
+
+        return <EditTodo todo={todo} date={date} onCancel={onEditCancel} />;
+    }
+
+    public render() {
+        const { isEditMode } = this.props;
+
+        return isEditMode ? this.renderEditMode() : this.renderDisplayMode();
     }
 }

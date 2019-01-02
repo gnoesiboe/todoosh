@@ -14,7 +14,8 @@ export default (
     action: TodoAction
 ) => {
     switch (action.type) {
-        case getType(actionFactories.createAddTodoAction):
+        case getType(actionFactories.createAddTodoAction): {
+            // tslint:disable-next-line:no-shadowed-variable
             const { date, todo } = action.payload;
 
             if (!currentState) {
@@ -28,14 +29,16 @@ export default (
 
                 draft[date].push(todo);
             });
+        }
 
-        case getType(actionFactories.createToggleTodoCompletedAction):
+        case getType(actionFactories.createToggleTodoCompletedAction): {
             if (!currentState) {
                 throw new Error(
                     'No change should be possible when there is no initial state!'
                 );
             }
 
+            // tslint:disable-next-line:no-shadowed-variable
             const { date: todoDate, completed, id } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
@@ -56,6 +59,33 @@ export default (
 
                 completedTodo.isCompleted = completed;
             });
+        }
+
+        case getType(actionFactories.createUpdateTodoAction): {
+            if (!currentState) {
+                throw new Error(
+                    'No change should be possible when there is no initial state!'
+                );
+            }
+
+            const { date, title, id } = action.payload;
+
+            return produce<TodoCollection>(currentState, draft => {
+                if (typeof draft[date] === 'undefined') {
+                    throw new Error('Expecting the date to be available');
+                }
+
+                const todo = draft[date].find(
+                    cursorTodo => cursorTodo.id === id
+                );
+
+                if (!todo) {
+                    throw new Error('Cannot find todo to edit');
+                }
+
+                todo.title = title;
+            });
+        }
 
         default:
             return currentState;

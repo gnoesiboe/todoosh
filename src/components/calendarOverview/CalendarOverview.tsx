@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col } from 'reactstrap';
 import DayOverview, {
     OnTodoCompletedChangeCallback,
-} from './../dayOverview/DayOverview';
+} from './components/DayOverview';
 import TimeNavigationButton, {
     Direction,
     OnClickCallback,
@@ -31,6 +31,11 @@ import {
     determineNextIndex,
     determinePrevousIndex,
 } from './../../utility/arrayIndexNavigationHelper';
+import DayOverviewTitle from './components/DayOverviewTitle';
+import TodoOverview from './components/TodoOverview';
+import Todo from '../todo/Todo';
+import { OnCancelCallback } from '../createTodo/components/TodoForm';
+import { Todo as TodoModel } from './../../model/todo';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -50,14 +55,26 @@ type CombinedProps = OwnProps &
     DispatchProp<RootAction> &
     RouteComponentProps<{}>;
 
+type State = {
+    isEditingTodo: boolean;
+};
+
 const NEXT_DATE_SHORCUT = ['right', 'n'];
 const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
 const NEXT_TODO_SHORTCUT = ['down', 'j'];
 const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
 const TODAY_SHORTCUT = 't';
 const TOGGLE_COMPLETED_SHORTCUT = 'space';
+const TODO_EDIT_SHORTCUT = ['e', 'enter'];
 
-class CalendarOverview extends React.Component<CombinedProps> {
+class CalendarOverview extends React.Component<CombinedProps, State> {
+    constructor(props: CombinedProps) {
+        super(props);
+
+        this.state = {
+            isEditingTodo: false,
+        };
+    }
     public componentDidMount() {
         this.setCurrentDate(this.props.match.params.startDate);
         this.bindKeyboardShortcuts();
@@ -89,7 +106,30 @@ class CalendarOverview extends React.Component<CombinedProps> {
             TOGGLE_COMPLETED_SHORTCUT,
             this.onToggleCompletedKeyboardShortcutPressed
         );
+        mousetrap.bind(TODO_EDIT_SHORTCUT, this.onEditKeyboardShortcutPressed);
     }
+
+    private onEditKeyboardShortcutPressed = () => {
+        this.startEditingTodo();
+    };
+
+    private startEditingTodo() {
+        this.setState(currentState => ({
+            ...currentState,
+            isEditingTodo: true,
+        }));
+    }
+
+    private stopEditingTodo() {
+        this.setState(currentState => ({
+            ...currentState,
+            isEditingTodo: false,
+        }));
+    }
+
+    private onEditTodoCancel: OnCancelCallback = () => {
+        this.stopEditingTodo();
+    };
 
     private onToggleCompletedKeyboardShortcutPressed = () => {
         const { todos, currentDate, currentTodoIndex } = this.props;
@@ -205,8 +245,48 @@ class CalendarOverview extends React.Component<CombinedProps> {
         this.props.dispatch(action);
     }
 
+    private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
+        const isEditMode = isCurrent && this.state.isEditingTodo;
+
+        return (
+            <Todo
+                key={todo.id}
+                isEditMode={isEditMode}
+                onEditCancel={this.onEditTodoCancel}
+                todo={todo}
+                date={date}
+                isCurrent={isCurrent}
+                onCompletedChange={complete =>
+                    this.onTodoCompletedChange(todo, date, complete)
+                }
+            />
+        );
+    }
+
+    private renderDayOverview(date: Date, isCurrentDate: boolean) {
+        const { todos, currentDate, currentTodoIndex } = this.props;
+
+        const dateAsString = formatDate(date);
+        const todosForDate = todos[dateAsString];
+
+        return (
+            <DayOverview isCurrent={isCurrentDate}>
+                <DayOverviewTitle date={currentDate} />
+                {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
+                <TodoOverview>
+                    {todosForDate.map((todo, index) => {
+                        const isCurrent =
+                            isCurrentDate && index === currentTodoIndex;
+
+                        return this.renderTodo(todo, isCurrent, date);
+                    })}
+                </TodoOverview>
+            </DayOverview>
+        );
+    }
+
     public render() {
-        const { currentDate, todos, currentTodoIndex } = this.props;
+        const { currentDate, todos } = this.props;
 
         return (
             <Row>
@@ -218,26 +298,11 @@ class CalendarOverview extends React.Component<CombinedProps> {
                 </Col>
                 {Object.keys(todos).map(dateAsString => {
                     const date = parseDate(dateAsString);
-                    const isCurrent = checkIsSameDay(date, currentDate);
-                    const todosForDate = todos[dateAsString];
+                    const isCurrentDate = checkIsSameDay(date, currentDate);
 
                     return (
-                        <Col md={isCurrent ? 4 : 2} key={formatDate(date)}>
-                            <DayOverview
-                                onTodoCompletedChange={
-                                    this.onTodoCompletedChange
-                                }
-                                date={date}
-                                isCurrent={isCurrent}
-                                todos={todosForDate}
-                                currentTodoIndex={currentTodoIndex}
-                            >
-                                {isCurrent ? (
-                                    <CreateTodo date={this.props.currentDate} />
-                                ) : (
-                                    undefined
-                                )}
-                            </DayOverview>
+                        <Col md={isCurrentDate ? 4 : 2} key={dateAsString}>
+                            {this.renderDayOverview(date, isCurrentDate)}
                         </Col>
                     );
                 })}

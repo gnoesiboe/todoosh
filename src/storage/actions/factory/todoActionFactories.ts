@@ -21,3 +21,9 @@ export const createToggleTodoCompletedAction = createAction(
     resolve => (id: string, date: string, completed: boolean) =>
         resolve({ id, date, completed })
 );
+
+export const createUpdateTodoAction = createAction(
+    '@todos/update',
+    resolve => (id: string, date: string, title: string) =>
+        resolve({ id, title, date })
+);
