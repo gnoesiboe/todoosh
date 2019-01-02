@@ -45,6 +45,11 @@ type ReduxSuppliedProps = {
     currentTodoIndex: number;
 };
 
+type CombinedProps = OwnProps &
+    ReduxSuppliedProps &
+    DispatchProp<RootAction> &
+    RouteComponentProps<{}>;
+
 const NEXT_DATE_SHORCUT = ['right', 'n'];
 const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
 const NEXT_TODO_SHORTCUT = ['down', 'j'];
@@ -52,12 +57,7 @@ const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
 const TODAY_SHORTCUT = 't';
 const TOGGLE_COMPLETED_SHORTCUT = 'space';
 
-class CalendarOverview extends React.Component<
-    OwnProps &
-        ReduxSuppliedProps &
-        DispatchProp<RootAction> &
-        RouteComponentProps<{}>
-> {
+class CalendarOverview extends React.Component<CombinedProps> {
     public componentDidMount() {
         this.setCurrentDate(this.props.match.params.startDate);
         this.bindKeyboardShortcuts();
