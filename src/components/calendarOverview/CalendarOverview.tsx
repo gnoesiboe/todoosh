@@ -271,7 +271,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <DayOverview isCurrent={isCurrentDate}>
-                <DayOverviewTitle date={currentDate} />
+                <DayOverviewTitle date={date} />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
                 <TodoOverview>
                     {todosForDate.map((todo, index) => {
