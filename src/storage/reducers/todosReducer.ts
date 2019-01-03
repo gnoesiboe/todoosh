@@ -87,6 +87,32 @@ export default (
             });
         }
 
+        case getType(actionFactories.createDeleteTodoAction): {
+            if (!currentState) {
+                throw new Error(
+                    'Delete should not be possible when there is no initial state!'
+                );
+            }
+
+            const { date, id } = action.payload;
+
+            return produce<TodoCollection>(currentState, draft => {
+                if (typeof draft[date] === 'undefined') {
+                    throw new Error('Expecting the date to be available');
+                }
+
+                const todoIndex = draft[date].findIndex(
+                    cursorTodo => cursorTodo.id === id
+                );
+
+                if (todoIndex === -1) {
+                    throw new Error('Cannot find todo to delete');
+                }
+
+                draft[date].splice(todoIndex, 1);
+            });
+        }
+
         default:
             return currentState;
     }

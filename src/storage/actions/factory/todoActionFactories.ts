@@ -27,3 +27,8 @@ export const createUpdateTodoAction = createAction(
     resolve => (id: string, date: string, title: string) =>
         resolve({ id, title, date })
 );
+
+export const createDeleteTodoAction = createAction(
+    '@todos/delete',
+    resolve => (id: string, date: string) => resolve({ id, date })
+);

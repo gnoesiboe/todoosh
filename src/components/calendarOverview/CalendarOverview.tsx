@@ -23,7 +23,10 @@ import CreateTodo from './../createTodo/CreateTodo';
 import { TodoCollection } from '../../model/todo';
 import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
 import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector';
-import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
+import {
+    createToggleTodoCompletedAction,
+    createDeleteTodoAction,
+} from '../../storage/actions/factory/todoActionFactories';
 import mousetrap from 'mousetrap';
 import { createTodosPath } from '../../routing/urlGenerator';
 import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
@@ -66,6 +69,7 @@ const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
 const TODAY_SHORTCUT = 't';
 const TOGGLE_COMPLETED_SHORTCUT = 'space';
 const TODO_EDIT_SHORTCUT = ['e', 'enter'];
+const TODO_DELETE_SHORTCUT = ['d', 'del', 'backspace'];
 
 class CalendarOverview extends React.Component<CombinedProps, State> {
     constructor(props: CombinedProps) {
@@ -107,7 +111,39 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             this.onToggleCompletedKeyboardShortcutPressed
         );
         mousetrap.bind(TODO_EDIT_SHORTCUT, this.onEditKeyboardShortcutPressed);
+        mousetrap.bind(
+            TODO_DELETE_SHORTCUT,
+            this.onTodoDeleteKeyboardShortcutPressed
+        );
     }
+
+    private unbindKeyboardShortcuts() {
+        mousetrap.unbind(NEXT_DATE_SHORCUT);
+        mousetrap.unbind(PREVIOUS_DATE_SHORTCUT);
+        mousetrap.unbind(TODAY_SHORTCUT);
+        mousetrap.unbind(NEXT_TODO_SHORTCUT);
+        mousetrap.unbind(PREVIOUS_TODO_SHORTCUT);
+        mousetrap.unbind(TOGGLE_COMPLETED_SHORTCUT);
+        mousetrap.unbind(TODO_EDIT_SHORTCUT);
+        mousetrap.unbind(TODO_DELETE_SHORTCUT);
+    }
+
+    private onTodoDeleteKeyboardShortcutPressed = () => {
+        const { todos, currentDate, currentTodoIndex, dispatch } = this.props;
+
+        const currentDayTodos = todos[formatDate(currentDate)];
+        const currentTodo = currentDayTodos[currentTodoIndex];
+
+        if (!currentTodo) {
+            throw new Error('Could not resolve current todo');
+        }
+
+        if (confirm('Are you sure?')) {
+            dispatch(
+                createDeleteTodoAction(currentTodo.id, formatDate(currentDate))
+            );
+        }
+    };
 
     private onEditKeyboardShortcutPressed = () => {
         this.startEditingTodo();
@@ -194,15 +230,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
 
         history.push(createTodosPath(formatDate(nextDate)));
-    }
-
-    private unbindKeyboardShortcuts() {
-        mousetrap.unbind(NEXT_DATE_SHORCUT);
-        mousetrap.unbind(PREVIOUS_DATE_SHORTCUT);
-        mousetrap.unbind(TODAY_SHORTCUT);
-        mousetrap.unbind(NEXT_TODO_SHORTCUT);
-        mousetrap.unbind(PREVIOUS_TODO_SHORTCUT);
-        mousetrap.unbind(TOGGLE_COMPLETED_SHORTCUT);
     }
 
     private setCurrentDate(date: string) {
