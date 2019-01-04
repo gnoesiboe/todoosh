@@ -133,7 +133,7 @@ export default (
 
                 // move todo to new location
                 if (typeof draft[to.date] === 'undefined') {
-                    throw new Error('Expecting the date to be available');
+                    draft[to.date] = [];
                 }
 
                 draft[to.date].splice(to.index, 0, todo);
