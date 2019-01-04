@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Row, Col } from 'reactstrap';
 import DayOverview, {
     OnTodoCompletedChangeCallback,
@@ -337,32 +337,42 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const { currentDate, todos } = this.props;
 
         return (
-            <Row>
-                <Col md={1}>
-                    <TimeNavigationButton
-                        direction={Direction.Back}
-                        onClick={this.onBackClick}
-                    />
-                </Col>
-                <DragDropContext onDragEnd={this.onTodoDragEnd}>
-                    {Object.keys(todos).map(dateAsString => {
-                        const date = parseDate(dateAsString);
-                        const isCurrentDate = checkIsSameDay(date, currentDate);
+            <Fragment>
+                <Row>
+                    <Col md={{ size: 1, offset: 5 }} className="text-right">
+                        <TimeNavigationButton
+                            direction={Direction.Back}
+                            onClick={this.onBackClick}
+                        />
+                    </Col>
+                    <Col md={1} className="text-left">
+                        <TimeNavigationButton
+                            direction={Direction.Forward}
+                            onClick={this.onForwardClick}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <DragDropContext onDragEnd={this.onTodoDragEnd}>
+                        {Object.keys(todos).map(dateAsString => {
+                            const date = parseDate(dateAsString);
+                            const isCurrentDate = checkIsSameDay(
+                                date,
+                                currentDate
+                            );
 
-                        return (
-                            <Col md={isCurrentDate ? 4 : 2} key={dateAsString}>
-                                {this.renderDayOverview(date, isCurrentDate)}
-                            </Col>
-                        );
-                    })}
-                </DragDropContext>
-                <Col md={1}>
-                    <TimeNavigationButton
-                        direction={Direction.Forward}
-                        onClick={this.onForwardClick}
-                    />
-                </Col>
-            </Row>
+                            return (
+                                <Col md={3} key={dateAsString}>
+                                    {this.renderDayOverview(
+                                        date,
+                                        isCurrentDate
+                                    )}
+                                </Col>
+                            );
+                        })}
+                    </DragDropContext>
+                </Row>
+            </Fragment>
         );
     }
 }
