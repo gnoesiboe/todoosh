@@ -1,16 +1,43 @@
 import React from 'react';
 import uuid from 'uuid/v4';
+import {
+    Droppable,
+    Draggable,
+    DraggableProvided,
+    DroppableProvided,
+} from 'react-beautiful-dnd';
+import { formatDate } from '../../../utility/dateTImeHelper';
 
 type Props = {
     children: JSX.Element[];
+    date: Date;
 };
 
-const TodoOverview = ({ children }: Props) => (
-    <ul className="list-unstyled">
-        {React.Children.map(children, child => (
-            <li key={child.key || uuid()}>{child}</li>
-        ))}
-    </ul>
+const TodoOverview = ({ children, date }: Props) => (
+    <Droppable droppableId={formatDate(date)}>
+        {(droppableProvided: DroppableProvided) => (
+            <ul className="list-unstyled" ref={droppableProvided.innerRef}>
+                {React.Children.map(children, (child, index) => {
+                    const key = child.key ? child.key.toString() : uuid();
+
+                    return (
+                        <Draggable key={key} draggableId={key} index={index}>
+                            {(draggableProvided: DraggableProvided) => (
+                                <li
+                                    ref={draggableProvided.innerRef}
+                                    {...draggableProvided.draggableProps}
+                                    {...draggableProvided.dragHandleProps}
+                                >
+                                    {child}
+                                </li>
+                            )}
+                        </Draggable>
+                    );
+                })}
+                {droppableProvided.placeholder}
+            </ul>
+        )}
+    </Droppable>
 );
 
 export default TodoOverview;

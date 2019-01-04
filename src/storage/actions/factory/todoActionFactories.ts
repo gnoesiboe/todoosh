@@ -32,3 +32,17 @@ export const createDeleteTodoAction = createAction(
     '@todos/delete',
     resolve => (id: string, date: string) => resolve({ id, date })
 );
+
+export const createMoveTodoAction = createAction(
+    '@todoes/move',
+    resolve => (
+        fromDate: string,
+        toDate: string,
+        fromIndex: number,
+        toIndex: number
+    ) =>
+        resolve({
+            from: { date: fromDate, index: fromIndex },
+            to: { date: toDate, index: toIndex },
+        })
+);

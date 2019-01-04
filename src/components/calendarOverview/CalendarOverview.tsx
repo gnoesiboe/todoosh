@@ -26,6 +26,7 @@ import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector'
 import {
     createToggleTodoCompletedAction,
     createDeleteTodoAction,
+    createMoveTodoAction,
 } from '../../storage/actions/factory/todoActionFactories';
 import mousetrap from 'mousetrap';
 import { createTodosPath } from '../../routing/urlGenerator';
@@ -39,6 +40,7 @@ import TodoOverview from './components/TodoOverview';
 import Todo from '../todo/Todo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { Todo as TodoModel } from './../../model/todo';
+import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -272,6 +274,25 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.props.dispatch(action);
     }
 
+    private onTodoDragEnd = (result: DropResult) => {
+        const { dispatch } = this.props;
+
+        const destination = result.destination;
+
+        if (!destination) {
+            return;
+        }
+
+        const action = createMoveTodoAction(
+            result.source.droppableId,
+            destination.droppableId,
+            result.source.index,
+            destination.index
+        );
+
+        dispatch(action);
+    };
+
     private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
 
@@ -300,7 +321,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             <DayOverview isCurrent={isCurrentDate}>
                 <DayOverviewTitle date={date} />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
-                <TodoOverview>
+                <TodoOverview date={date}>
                     {todosForDate.map((todo, index) => {
                         const isCurrent =
                             isCurrentDate && index === currentTodoIndex;
@@ -323,16 +344,18 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         onClick={this.onBackClick}
                     />
                 </Col>
-                {Object.keys(todos).map(dateAsString => {
-                    const date = parseDate(dateAsString);
-                    const isCurrentDate = checkIsSameDay(date, currentDate);
+                <DragDropContext onDragEnd={this.onTodoDragEnd}>
+                    {Object.keys(todos).map(dateAsString => {
+                        const date = parseDate(dateAsString);
+                        const isCurrentDate = checkIsSameDay(date, currentDate);
 
-                    return (
-                        <Col md={isCurrentDate ? 4 : 2} key={dateAsString}>
-                            {this.renderDayOverview(date, isCurrentDate)}
-                        </Col>
-                    );
-                })}
+                        return (
+                            <Col md={isCurrentDate ? 4 : 2} key={dateAsString}>
+                                {this.renderDayOverview(date, isCurrentDate)}
+                            </Col>
+                        );
+                    })}
+                </DragDropContext>
                 <Col md={1}>
                     <TimeNavigationButton
                         direction={Direction.Forward}

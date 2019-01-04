@@ -113,6 +113,35 @@ export default (
             });
         }
 
+        case getType(actionFactories.createMoveTodoAction): {
+            if (!currentState) {
+                throw new Error(
+                    // tslint:disable-next-line:quotemark
+                    "Moving todo's should not be possible when there is no initial state!"
+                );
+            }
+
+            const { from, to } = action.payload;
+
+            return produce<TodoCollection>(currentState, draft => {
+                // extract todo from old location
+                if (typeof draft[from.date] === 'undefined') {
+                    throw new Error('Expecting the date to be available');
+                }
+
+                const [todo] = draft[from.date].splice(from.index, 1);
+
+                // move todo to new location
+                if (typeof draft[to.date] === 'undefined') {
+                    throw new Error('Expecting the date to be available');
+                }
+
+                draft[to.date].splice(to.index, 0, todo);
+            });
+
+            return currentState;
+        }
+
         default:
             return currentState;
     }
