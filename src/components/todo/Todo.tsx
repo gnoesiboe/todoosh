@@ -6,6 +6,7 @@ import { parseInlineMarkdown } from './../../utility/markdownHelper';
 import createClassName from 'classnames';
 import EditTodo from './../editTodo/EditTodo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
+import TodoDeadline from './components/TodoDeadline';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 
@@ -41,6 +42,9 @@ export default class Todo extends React.Component<Props> {
                         checked={todo.isCompleted}
                         onChange={this.onCompleteChange}
                     />{' '}
+                    {todo.deadline && !todo.isCompleted && (
+                        <TodoDeadline deadline={todo.deadline} />
+                    )}
                     <span
                         className="todo--title"
                         dangerouslySetInnerHTML={innerHtml}

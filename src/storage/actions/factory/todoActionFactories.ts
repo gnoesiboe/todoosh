@@ -5,12 +5,18 @@ import { formatDate } from '../../../utility/dateTImeHelper';
 
 export const createAddTodoAction = createAction(
     '@todos/create',
-    resolve => (title: string, date: Date, isCompleted: boolean = false) =>
+    resolve => (
+        title: string,
+        date: Date,
+        deadline: string | null = null,
+        isCompleted: boolean = false
+    ) =>
         resolve({
             todo: {
                 id: uuid(),
                 title,
                 isCompleted,
+                deadline,
             } as Todo,
             date: formatDate(date) as string,
         })

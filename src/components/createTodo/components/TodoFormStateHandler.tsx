@@ -1,10 +1,15 @@
 import React from 'react';
 import { Formik, FormikProps, FormikActions } from 'formik';
-import TodoForm, { OnCancelCallback } from './TodoForm';
+import TodoForm, {
+    OnCancelCallback,
+    DeadlineSelectOptionType,
+} from './TodoForm';
 import { Todo } from '../../../model/todo';
+import { parseDate } from '../../../utility/dateTImeHelper';
 
 export type TodoFormValues = {
     title: string;
+    deadline: DeadlineSelectOptionType | undefined;
 };
 
 export type OnSubmitCallback = (values: TodoFormValues) => void;
@@ -32,6 +37,13 @@ const TodoFormStateHandler: React.FunctionComponent<Props> = ({
 }: Props) => {
     const initialValues: TodoFormValues = {
         title: todo ? todo.title : '',
+        deadline:
+            todo && todo.deadline
+                ? {
+                      label: 'Current',
+                      value: parseDate(todo.deadline),
+                  }
+                : undefined,
     };
 
     return (

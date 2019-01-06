@@ -7,6 +7,7 @@ import mousetrap from 'mousetrap';
 import { RootAction } from '../../storage/actions/rootAction';
 import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { OnCancelCallback } from './components/TodoForm';
+import { formatDate } from '../../utility/dateTImeHelper';
 
 type Props = {
     date: Date;
@@ -64,7 +65,13 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
-        const action = createAddTodoAction(values.title, this.props.date);
+        const deadline = values.deadline ? values.deadline.value : null;
+
+        const action = createAddTodoAction(
+            values.title,
+            this.props.date,
+            deadline ? formatDate(deadline) : null
+        );
 
         this.props.dispatch(action);
         this.hideForm();

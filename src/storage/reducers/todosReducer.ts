@@ -19,7 +19,7 @@ export default (
             const { date, todo } = action.payload;
 
             if (!currentState) {
-                return { [action.payload.date]: [todo] };
+                return { [date]: [todo] };
             }
 
             return produce<TodoCollection>(currentState, draft => {

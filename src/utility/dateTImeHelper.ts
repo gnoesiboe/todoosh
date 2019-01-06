@@ -12,6 +12,7 @@ import {
 
 const DATE_FORMAT_SHORT = 'MMM, Do';
 const DATE_FORMAT = 'YYYY-MM-DD';
+const DAY_FORMAT = 'dddd';
 
 export function parseDate(value: string): Date {
     return parse(value);
@@ -23,6 +24,10 @@ export function formatDateShort(date: Date): string {
 
 export function formatDate(date: Date): string {
     return format(date, DATE_FORMAT);
+}
+
+export function formatDay(date: Date): string {
+    return format(date, DAY_FORMAT);
 }
 
 export function fomatDateToday(): string {
@@ -37,6 +42,10 @@ export function checkDateIsToday(date: Date): boolean {
     const today = new Date();
 
     return isSameDay(date, today);
+}
+
+export function checkDateIsTomorrow(date: Date): boolean {
+    return isTomorrow(date);
 }
 
 export function formatDistanceFromToday(date: Date): string {

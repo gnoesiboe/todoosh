@@ -137,7 +137,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const currentTodo = currentDayTodos[currentTodoIndex];
 
         if (!currentTodo) {
-            throw new Error('Could not resolve current todo');
+            return;
         }
 
         if (confirm('Are you sure?')) {
@@ -176,7 +176,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const currentTodo = currentDayTodos[currentTodoIndex];
 
         if (!currentTodo) {
-            throw new Error('Could not resolve current todo');
+            return;
         }
 
         this.setTodoCompletedStatus(

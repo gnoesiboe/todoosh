@@ -1,8 +1,10 @@
 .todo {
-    padding-left: 20px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: 2px dotted transparent;
 
     &.todo__current {
-        background: #ff9900;
+        border-color: #ff9900;
     }
 
     &.todo__completed {
@@ -14,5 +16,23 @@
 
     .form-check-label {
         margin-left: 5px;
+        width: 100%;
+    }
+
+    .todo--deadline {
+        float: right;
+        border-radius: 3px;
+        padding: 2px 7px;
+        margin-left: 10px;
+
+        &.todo--deadline__danger {
+            background: #ff0000;
+            color: white;
+        }
+
+        &.todo--deadline__warning {
+            background: #ff9900;
+            color: white;
+        }
     }
 }
