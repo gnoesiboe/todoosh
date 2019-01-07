@@ -30,8 +30,12 @@ export const createToggleTodoCompletedAction = createAction(
 
 export const createUpdateTodoAction = createAction(
     '@todos/update',
-    resolve => (id: string, date: string, title: string) =>
-        resolve({ id, title, date })
+    resolve => (
+        id: string,
+        date: string,
+        title: string,
+        deadline: string | null = null
+    ) => resolve({ id, title, date, deadline })
 );
 
 export const createDeleteTodoAction = createAction(

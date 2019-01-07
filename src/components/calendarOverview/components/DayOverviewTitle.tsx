@@ -4,11 +4,14 @@ import './DayOverviewTitle.scss';
 
 type Props = {
     date: Date;
+    onClick: () => void;
 };
 
-const DayOverviewTitle = ({ date }: Props) => {
+const DayOverviewTitle = ({ date, onClick }: Props) => {
     return (
-        <h3 className="day-overview-title">{formatDistanceFromToday(date)}</h3>
+        <h3 className="day-overview-title" onClick={onClick}>
+            {formatDistanceFromToday(date)}
+        </h3>
     );
 };
 

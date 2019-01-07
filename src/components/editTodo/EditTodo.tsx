@@ -21,10 +21,13 @@ class EditTodo extends React.Component<CombinedProps> {
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
         const { todo, dispatch, date, onCancel } = this.props;
 
+        const deadline = values.deadline ? values.deadline.value : null;
+
         const action = createUpdateTodoAction(
             todo.id,
             formatDate(date),
-            values.title
+            values.title,
+            deadline ? formatDate(deadline) : null
         );
 
         dispatch(action);

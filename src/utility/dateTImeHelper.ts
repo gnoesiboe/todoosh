@@ -8,6 +8,7 @@ import {
     parse,
     isSameDay,
     eachDay,
+    isPast,
 } from 'date-fns';
 
 const DATE_FORMAT_SHORT = 'MMM, Do';
@@ -42,6 +43,10 @@ export function checkDateIsToday(date: Date): boolean {
     const today = new Date();
 
     return isSameDay(date, today);
+}
+
+export function checkDateIsInThePast(date: Date): boolean {
+    return isPast(date);
 }
 
 export function checkDateIsTomorrow(date: Date): boolean {

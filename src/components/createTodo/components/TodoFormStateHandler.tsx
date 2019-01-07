@@ -5,7 +5,10 @@ import TodoForm, {
     DeadlineSelectOptionType,
 } from './TodoForm';
 import { Todo } from '../../../model/todo';
-import { parseDate } from '../../../utility/dateTImeHelper';
+import {
+    parseDate,
+    formatDistanceFromToday,
+} from '../../../utility/dateTImeHelper';
 
 export type TodoFormValues = {
     title: string;
@@ -30,6 +33,15 @@ function validateValues(values: TodoFormValues) {
     return errors;
 }
 
+function resolveCurrentOption(deadline: string): DeadlineSelectOptionType {
+    const deadlineAsDate = parseDate(deadline);
+
+    return {
+        label: formatDistanceFromToday(deadlineAsDate),
+        value: deadlineAsDate,
+    };
+}
+
 const TodoFormStateHandler: React.FunctionComponent<Props> = ({
     todo,
     onFormSubmittedAndValid,
@@ -39,10 +51,7 @@ const TodoFormStateHandler: React.FunctionComponent<Props> = ({
         title: todo ? todo.title : '',
         deadline:
             todo && todo.deadline
-                ? {
-                      label: 'Current',
-                      value: parseDate(todo.deadline),
-                  }
+                ? resolveCurrentOption(todo.deadline)
                 : undefined,
     };
 

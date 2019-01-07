@@ -283,15 +283,24 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             return;
         }
 
-        const action = createMoveTodoAction(
-            result.source.droppableId,
-            destination.droppableId,
-            result.source.index,
-            destination.index
+        dispatch(
+            createMoveTodoAction(
+                result.source.droppableId,
+                destination.droppableId,
+                result.source.index,
+                destination.index
+            )
         );
 
-        dispatch(action);
+        dispatch(createSetCurrentDateAction(destination.droppableId));
+        dispatch(createSetCurrentTodoIndexAction(destination.index));
     };
+
+    private onDayOverviewTitleClick(date: string) {
+        const { history } = this.props;
+
+        history.push(createTodosPath(date));
+    }
 
     private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
@@ -319,7 +328,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <DayOverview isCurrent={isCurrentDate}>
-                <DayOverviewTitle date={date} />
+                <DayOverviewTitle
+                    date={date}
+                    onClick={() => this.onDayOverviewTitleClick(dateAsString)}
+                />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
                 <TodoOverview date={date}>
                     {todosForDate.map((todo, index) => {

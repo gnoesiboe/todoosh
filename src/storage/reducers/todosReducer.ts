@@ -68,7 +68,7 @@ export default (
                 );
             }
 
-            const { date, title, id } = action.payload;
+            const { date, title, id, deadline } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
                 if (typeof draft[date] === 'undefined') {
@@ -84,6 +84,7 @@ export default (
                 }
 
                 todo.title = title;
+                todo.deadline = deadline;
             });
         }
 

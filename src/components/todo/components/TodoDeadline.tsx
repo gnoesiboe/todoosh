@@ -4,6 +4,7 @@ import {
     parseDate,
     checkDateIsToday,
     checkDateIsTomorrow,
+    checkDateIsInThePast,
 } from './../../../utility/dateTImeHelper';
 import createClassName from 'classnames';
 
@@ -15,7 +16,9 @@ const TodoDeadline = ({ deadline }: Props) => {
     const deadlineAsDate = parseDate(deadline);
 
     const className = createClassName('todo--deadline', {
-        'todo--deadline__danger': checkDateIsToday(deadlineAsDate),
+        'todo--deadline__danger':
+            checkDateIsToday(deadlineAsDate) ||
+            checkDateIsInThePast(deadlineAsDate),
         'todo--deadline__warning': checkDateIsTomorrow(deadlineAsDate),
     });
 
