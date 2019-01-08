@@ -2,6 +2,11 @@ import { ActionType, getType } from 'typesafe-actions';
 import * as actionFactories from './../actions/factory/todoActionFactories';
 import { TodoCollection } from '../../model/todo';
 import produce from 'immer';
+import {
+    parseDate,
+    checkDateIsInThePast,
+    formatTodayAsDate,
+} from '../../utility/dateTImeHelper';
 
 export type TodoAction = ActionType<typeof actionFactories>;
 
@@ -139,8 +144,45 @@ export default (
 
                 draft[to.date].splice(to.index, 0, todo);
             });
+        }
 
-            return currentState;
+        case getType(
+            actionFactories.createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction
+        ): {
+            if (!currentState) {
+                return currentState;
+            }
+
+            return produce<TodoCollection>(currentState, draft => {
+                const dateTodayAsString = formatTodayAsDate();
+
+                if (!draft[dateTodayAsString]) {
+                    draft[dateTodayAsString] = [];
+                }
+
+                Object.keys(draft).forEach(dateAsString => {
+                    const date = parseDate(dateAsString);
+
+                    if (!checkDateIsInThePast(date)) {
+                        // don't move the todos in the present
+
+                        return;
+                    }
+
+                    // first remove todos that are completed
+                    draft[dateAsString] = draft[dateAsString].filter(
+                        todo => !todo.isCompleted
+                    );
+
+                    // move not completed todos to today (prepend)
+                    draft[dateAsString].forEach(todo => {
+                        draft[dateTodayAsString].push(todo);
+                    });
+
+                    // make sure nothing remains
+                    delete draft[dateAsString];
+                });
+            });
         }
 
         default:

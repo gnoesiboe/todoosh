@@ -44,7 +44,7 @@ export const createDeleteTodoAction = createAction(
 );
 
 export const createMoveTodoAction = createAction(
-    '@todoes/move',
+    '@todos/move',
     resolve => (
         fromDate: string,
         toDate: string,
@@ -55,4 +55,9 @@ export const createMoveTodoAction = createAction(
             from: { date: fromDate, index: fromIndex },
             to: { date: toDate, index: toIndex },
         })
+);
+
+export const createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction = createAction(
+    '@todos/move-unfinished-in-the-past-to-today-and-remove-completed',
+    resolve => () => resolve()
 );

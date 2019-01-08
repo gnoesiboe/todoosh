@@ -8,7 +8,8 @@ import {
     parse,
     isSameDay,
     eachDay,
-    isPast,
+    startOfDay,
+    isBefore,
 } from 'date-fns';
 
 const DATE_FORMAT_SHORT = 'MMM, Do';
@@ -21,6 +22,12 @@ export function parseDate(value: string): Date {
 
 export function formatDateShort(date: Date): string {
     return format(date, DATE_FORMAT_SHORT);
+}
+
+export function formatTodayAsDate(): string {
+    const today = new Date();
+
+    return formatDate(today);
 }
 
 export function formatDate(date: Date): string {
@@ -46,7 +53,9 @@ export function checkDateIsToday(date: Date): boolean {
 }
 
 export function checkDateIsInThePast(date: Date): boolean {
-    return isPast(date);
+    const theStartOfToday = startOfDay(new Date());
+
+    return isBefore(date, theStartOfToday);
 }
 
 export function checkDateIsTomorrow(date: Date): boolean {

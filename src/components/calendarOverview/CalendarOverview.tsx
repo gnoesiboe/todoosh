@@ -27,6 +27,7 @@ import {
     createToggleTodoCompletedAction,
     createDeleteTodoAction,
     createMoveTodoAction,
+    createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction,
 } from '../../storage/actions/factory/todoActionFactories';
 import mousetrap from 'mousetrap';
 import { createTodosPath } from '../../routing/urlGenerator';
@@ -83,12 +84,19 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         };
     }
     public componentDidMount() {
+        this.ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved();
         this.setCurrentDate(this.props.match.params.startDate);
         this.bindKeyboardShortcuts();
     }
 
     public componentWillUnmount() {
         this.unbindKeyboardShortcuts();
+    }
+
+    private ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved() {
+        this.props.dispatch(
+            createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction()
+        );
     }
 
     private bindKeyboardShortcuts() {
