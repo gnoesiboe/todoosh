@@ -59,34 +59,29 @@ const KeyboardShortcutOverview = () => {
     return (
         <Row>
             <Col md={{ size: 6, offset: 3 }}>
-                <Table>
-                    <thead>
-                        <tr>
-                            <th style={{ width: '200px' }}>
-                                Key (combination)
-                            </th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
+                <h3>Keyboard shortcuts</h3>
+                <Table bordered>
                     <tbody>
-                        {shortcutsAndDescriptionMapping.map(pair => {
+                        {shortcutsAndDescriptionMapping.map((pair, index) => {
                             const shortcuts = Array.isArray(pair.shortcut)
                                 ? pair.shortcut
                                 : [pair.shortcut];
                             const description = pair.description;
 
                             return (
-                                <tr>
+                                <tr key={index}>
                                     <td>
-                                        {shortcuts.map((shortcut, index) => (
-                                            <Fragment>
-                                                <code>{shortcut}</code>
-                                                {checkDashShouldBeDisplayed(
-                                                    shortcuts,
-                                                    index
-                                                ) && ' / '}
-                                            </Fragment>
-                                        ))}
+                                        {shortcuts.map(
+                                            (shortcut, shortcutIndex) => (
+                                                <Fragment key={shortcutIndex}>
+                                                    <code>{shortcut}</code>
+                                                    {checkDashShouldBeDisplayed(
+                                                        shortcuts,
+                                                        shortcutIndex
+                                                    ) && ' / '}
+                                                </Fragment>
+                                            )
+                                        )}
                                     </td>
                                     <td>{description}</td>
                                 </tr>
