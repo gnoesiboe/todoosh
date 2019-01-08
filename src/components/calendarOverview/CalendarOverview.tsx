@@ -225,9 +225,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToToday();
     };
 
-    private onTodayClick = (event: React.MouseEvent) => {
-        event.preventDefault();
-
+    private onTodayClick = () => {
         this.navigateToToday();
     };
 
@@ -370,9 +368,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                             />
                         </Col>
                         <Col md={2} className="text-center">
-                            <a href="" onClick={this.onTodayClick}>
+                            <button
+                                className="btn btn-link"
+                                onClick={this.onTodayClick}
+                            >
                                 today
-                            </a>
+                            </button>
                         </Col>
                         <Col md={1} className="text-left">
                             <TimeNavigationButton
