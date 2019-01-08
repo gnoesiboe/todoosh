@@ -222,10 +222,20 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private onTodayKeyboardShortcutPressed = () => {
+        this.navigateToToday();
+    };
+
+    private onTodayClick = (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        this.navigateToToday();
+    };
+
+    private navigateToToday() {
         const { history } = this.props;
 
         history.push(createTodosPath(fomatDateToday()));
-    };
+    }
 
     private navigateToPreviousDate() {
         const { currentDate, history } = this.props;
@@ -351,20 +361,27 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <div className="calendar-overview">
-                <Row>
-                    <Col md={{ size: 1, offset: 5 }} className="text-right">
-                        <TimeNavigationButton
-                            direction={Direction.Back}
-                            onClick={this.onBackClick}
-                        />
-                    </Col>
-                    <Col md={1} className="text-left">
-                        <TimeNavigationButton
-                            direction={Direction.Forward}
-                            onClick={this.onForwardClick}
-                        />
-                    </Col>
-                </Row>
+                <div className="calendar-overview--navigation">
+                    <Row>
+                        <Col md={{ size: 1, offset: 4 }} className="text-right">
+                            <TimeNavigationButton
+                                direction={Direction.Back}
+                                onClick={this.onBackClick}
+                            />
+                        </Col>
+                        <Col md={2} className="text-center">
+                            <a href="" onClick={this.onTodayClick}>
+                                today
+                            </a>
+                        </Col>
+                        <Col md={1} className="text-left">
+                            <TimeNavigationButton
+                                direction={Direction.Forward}
+                                onClick={this.onForwardClick}
+                            />
+                        </Col>
+                    </Row>
+                </div>
                 <Row>
                     <DragDropContext onDragEnd={this.onTodoDragEnd}>
                         {Object.keys(todos).map(dateAsString => {
