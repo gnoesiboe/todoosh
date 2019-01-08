@@ -1,5 +1,5 @@
 .todo {
-    padding: 5px 10px 5px 20px;
+    padding: 5px 15px 5px 8px;
     border-radius: 6px;
     border: 1px solid transparent;
     margin-bottom: 10px;
@@ -27,6 +27,7 @@
         font-size: 13px;
         padding: 2px 7px;
         margin-left: 10px;
+        margin-top: 5px;
 
         &.todo--deadline__danger {
             background: #ff0000;

@@ -1,4 +1,8 @@
 .calendar-overview {
     border-bottom: 1px dashed #ddd;
     margin-bottom: 50px;
+
+    .calendar-overview--navigation {
+        margin: 10px 0 20px;
+    }
 }
