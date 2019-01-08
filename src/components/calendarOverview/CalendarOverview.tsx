@@ -174,6 +174,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // prevent scrolling down the page
         event.preventDefault();
 
+        if (this.state.isEditingTodo) {
+            // when editing and using space to submit form, we don't want to complete the todo
+
+            return;
+        }
+
         const { todos, currentDate, currentTodoIndex } = this.props;
 
         const currentDayTodos = todos[formatDate(currentDate)];
