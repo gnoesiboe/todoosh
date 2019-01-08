@@ -170,7 +170,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.stopEditingTodo();
     };
 
-    private onToggleCompletedKeyboardShortcutPressed = () => {
+    private onToggleCompletedKeyboardShortcutPressed = (event: Event) => {
+        // prevent scrolling down the page
+        event.preventDefault();
+
         const { todos, currentDate, currentTodoIndex } = this.props;
 
         const currentDayTodos = todos[formatDate(currentDate)];
