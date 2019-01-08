@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Row, Col } from 'reactstrap';
 import DayOverview, {
     OnTodoCompletedChangeCallback,
@@ -41,6 +41,7 @@ import Todo from '../todo/Todo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { Todo as TodoModel } from './../../model/todo';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
+import './CalendarOverview.scss';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -64,14 +65,14 @@ type State = {
     isEditingTodo: boolean;
 };
 
-const NEXT_DATE_SHORCUT = ['right', 'n'];
-const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
-const NEXT_TODO_SHORTCUT = ['down', 'j'];
-const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
-const TODAY_SHORTCUT = 't';
-const TOGGLE_COMPLETED_SHORTCUT = 'space';
-const TODO_EDIT_SHORTCUT = ['e', 'enter'];
-const TODO_DELETE_SHORTCUT = ['d', 'del', 'backspace'];
+export const NEXT_DATE_SHORCUT = ['right', 'n'];
+export const PREVIOUS_DATE_SHORTCUT = ['left', 'p'];
+export const NEXT_TODO_SHORTCUT = ['down', 'j'];
+export const PREVIOUS_TODO_SHORTCUT = ['up', 'k'];
+export const TODAY_SHORTCUT = 't';
+export const TOGGLE_COMPLETED_SHORTCUT = 'space';
+export const TODO_EDIT_SHORTCUT = ['e', 'enter'];
+export const TODO_DELETE_SHORTCUT = ['d', 'del', 'backspace'];
 
 class CalendarOverview extends React.Component<CombinedProps, State> {
     constructor(props: CombinedProps) {
@@ -349,7 +350,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const { currentDate, todos } = this.props;
 
         return (
-            <Fragment>
+            <div className="calendar-overview">
                 <Row>
                     <Col md={{ size: 1, offset: 5 }} className="text-right">
                         <TimeNavigationButton
@@ -384,7 +385,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         })}
                     </DragDropContext>
                 </Row>
-            </Fragment>
+            </div>
         );
     }
 }
