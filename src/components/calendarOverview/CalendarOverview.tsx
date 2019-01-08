@@ -191,7 +191,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToNextDate();
     };
 
-    private onMoveToPreviousTodoKeyboardShortcutPressed = () => {
+    private onMoveToPreviousTodoKeyboardShortcutPressed = (event: Event) => {
+        // prevent page scrolling up
+        event.preventDefault();
+
         const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
 
         const arrayLength = todos[formatDate(currentDate)].length;
@@ -200,7 +203,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         dispatch(createSetCurrentTodoIndexAction(nextIndex));
     };
 
-    private onMoveToNextTodoKeyboardShortcutPressed = () => {
+    private onMoveToNextTodoKeyboardShortcutPressed = (event: Event) => {
+        // prevent page scrolling down
+        event.preventDefault();
+
         const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
 
         const arrayLength = todos[formatDate(currentDate)].length;
