@@ -10,6 +10,7 @@ import {
     TODO_EDIT_SHORTCUT,
     TODO_DELETE_SHORTCUT,
 } from '../calendarOverview/CalendarOverview';
+import { ADD_TODO_SHORTCUT } from '../createTodo/CreateTodo';
 
 function checkDashShouldBeDisplayed(shortcuts: string[], currentIndex: number) {
     return currentIndex < shortcuts.length - 1;
@@ -44,6 +45,10 @@ const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
     {
         shortcut: TOGGLE_COMPLETED_SHORTCUT,
         description: 'Toggle completed status of currently selected todo.',
+    },
+    {
+        shortcut: ADD_TODO_SHORTCUT,
+        description: 'Add a todo for the currently seleted date',
     },
     {
         shortcut: TODO_EDIT_SHORTCUT,

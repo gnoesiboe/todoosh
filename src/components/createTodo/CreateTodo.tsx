@@ -19,6 +19,8 @@ type State = {
 
 type CombinedProps = Props & DispatchProp<RootAction>;
 
+export const ADD_TODO_SHORTCUT = 'a';
+
 class CreateTodo extends React.Component<CombinedProps, State> {
     constructor(props: CombinedProps) {
         super(props);
@@ -37,7 +39,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private bindKeyboardShortcuts() {
-        mousetrap.bind('a', this.onAddKeyboardShortcutOccurred);
+        mousetrap.bind(ADD_TODO_SHORTCUT, this.onAddKeyboardShortcutOccurred);
     }
 
     private onAddKeyboardShortcutOccurred = (event: Event) => {
@@ -61,7 +63,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind('a');
+        mousetrap.unbind(ADD_TODO_SHORTCUT);
     }
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
