@@ -19,7 +19,6 @@ import {
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
 import { RouteComponentProps, withRouter } from 'react-router';
-import { createSetCurrentDateAction } from '../../storage/actions/factory/currentDateActionFactories';
 import { RootAction } from './../../storage/actions/rootAction';
 import CreateTodo from './../createTodo/CreateTodo';
 import { TodoCollection } from '../../model/todo';
@@ -88,7 +87,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     public componentDidMount() {
         this.redirectToTodayIfCurrentDateIsInThePast();
         this.ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved();
-        this.setCurrentDate(this.props.match.params.startDate);
         this.bindKeyboardShortcuts();
     }
 
@@ -283,12 +281,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         history.push(createTodosPath(formatDate(nextDate)));
     }
 
-    private setCurrentDate(date: string) {
-        const { dispatch } = this.props;
-
-        dispatch(createSetCurrentDateAction(date));
-    }
-
     private onBackClick: OnClickCallback = event => {
         event.preventDefault();
 
@@ -341,8 +333,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             )
         );
 
-        dispatch(createSetCurrentDateAction(destination.droppableId));
-        dispatch(createSetCurrentTodoIndexAction(destination.index));
+        dispatch(createSetCurrentTodoIndexAction(0));
     };
 
     private onDayOverviewTitleClick(date: string) {
