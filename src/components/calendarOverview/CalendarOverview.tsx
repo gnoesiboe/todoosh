@@ -416,7 +416,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                             );
 
                             return (
-                                <Col md={3} key={dateAsString}>
+                                <Col md={4} key={dateAsString}>
                                     {this.renderDayOverview(
                                         date,
                                         isCurrentDate

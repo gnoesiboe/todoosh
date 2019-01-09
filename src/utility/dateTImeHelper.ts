@@ -52,7 +52,7 @@ export function checkDateIsToday(date: Date): boolean {
     return isSameDay(date, today);
 }
 
-export function checkDateIsInThePastDate(date: Date): boolean {
+export function checkDateIsInThePast(date: Date): boolean {
     const theStartOfToday = startOfDay(new Date());
 
     return isBefore(date, theStartOfToday);
