@@ -13,6 +13,8 @@ import {
     createDateRelativeToSupplied,
     checkIsSameDay,
     fomatDateToday,
+    checkDateIsInThePast,
+    formatTodayAsDate,
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
@@ -84,6 +86,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         };
     }
     public componentDidMount() {
+        this.redirectToTodayIfCurrentDateIsInThePast();
         this.ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved();
         this.setCurrentDate(this.props.match.params.startDate);
         this.bindKeyboardShortcuts();
@@ -91,6 +94,16 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     public componentWillUnmount() {
         this.unbindKeyboardShortcuts();
+    }
+
+    private redirectToTodayIfCurrentDateIsInThePast() {
+        const { match, history } = this.props;
+
+        const currentDate = parseDate(match.params.startDate);
+
+        if (checkDateIsInThePast(currentDate)) {
+            history.push(createTodosPath(formatTodayAsDate()));
+        }
     }
 
     private ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved() {
@@ -241,6 +254,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private onMoveToPreviousDateKeyboardShortcutPressed = () => {
+        if (!this.checkPreviousDateIsAccessible()) {
+            return;
+        }
+
         this.navigateToPreviousDate();
     };
 
@@ -377,6 +394,14 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         );
     }
 
+    private checkPreviousDateIsAccessible(): boolean {
+        const startDate = parseDate(this.props.match.params.startDate);
+
+        const nextDate = createDateRelativeToSupplied(startDate, -1);
+
+        return !checkDateIsInThePast(nextDate);
+    }
+
     public render() {
         const { currentDate, todos } = this.props;
 
@@ -385,10 +410,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 <div className="calendar-overview--navigation">
                     <Row>
                         <Col md={{ size: 1, offset: 4 }} className="text-right">
-                            <TimeNavigationButton
-                                direction={Direction.Back}
-                                onClick={this.onBackClick}
-                            />
+                            {this.checkPreviousDateIsAccessible() && (
+                                <TimeNavigationButton
+                                    direction={Direction.Back}
+                                    onClick={this.onBackClick}
+                                />
+                            )}
                         </Col>
                         <Col md={2} className="text-center">
                             <button
