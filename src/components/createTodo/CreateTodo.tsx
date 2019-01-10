@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect, DispatchProp } from 'react-redux';
 import TodoFormStateHandler, {
     OnSubmitCallback,
@@ -88,7 +88,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
         this.hideForm();
     };
 
-    private renderFormIfRequired() {
+    public render() {
         if (!this.state.showForm) {
             return null;
         }
@@ -99,10 +99,6 @@ class CreateTodo extends React.Component<CombinedProps, State> {
                 onCancel={this.onCancel}
             />
         );
-    }
-
-    public render() {
-        return <Fragment>{this.renderFormIfRequired()}</Fragment>;
     }
 }
 
