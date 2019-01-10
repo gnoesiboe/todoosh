@@ -11,6 +11,7 @@ export const clientSidePersistingMiddleware: Middleware = ({ getState }) => (
     const newState: GlobalState = getState();
 
     store.set('todos', newState.todos || {});
+    store.set('projects', newState.projects || {});
 
     return result;
 };
