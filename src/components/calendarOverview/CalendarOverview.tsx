@@ -140,6 +140,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             KeyboardShortcuts.MOVE_TODO_DOWN,
             this.onMoveTodoDownKeyboardShortcutPressed
         );
+        bindKeyboardShortcut(
+            KeyboardShortcuts.MOVE_TODO_UP,
+            this.onMoveTodoUpKeyboardShortcutPressed
+        );
     }
 
     private unbindKeyboardShortcuts() {
@@ -152,6 +156,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         unbindKeyboardShortcut(KeyboardShortcuts.TODO_EDIT_SHORTCUT);
         unbindKeyboardShortcut(KeyboardShortcuts.TODO_DELETE_SHORTCUT);
         unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_DOWN);
+        unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_UP);
     }
 
     private onTodoDeleteKeyboardShortcutPressed = () => {
@@ -350,6 +355,31 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 ? todos[currentDate].length
                 : 0;
         const nextTodoIndex = determineNextIndex(
+            currentTodoIndex,
+            noOfTodosForCurrentDate
+        );
+
+        dispatch(
+            createMoveTodoAction(
+                currentDate,
+                currentDate,
+                currentTodoIndex,
+                nextTodoIndex
+            )
+        );
+
+        dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
+    };
+
+    private onMoveTodoUpKeyboardShortcutPressed = () => {
+        const { match, currentTodoIndex, todos, dispatch } = this.props;
+        const currentDate = match.params.startDate;
+
+        const noOfTodosForCurrentDate =
+            typeof todos[currentDate] !== 'undefined'
+                ? todos[currentDate].length
+                : 0;
+        const nextTodoIndex = determinePrevousIndex(
             currentTodoIndex,
             noOfTodosForCurrentDate
         );

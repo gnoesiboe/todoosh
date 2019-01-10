@@ -52,6 +52,10 @@ const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
         shortcut: KeyboardShortcuts.MOVE_TODO_DOWN,
         description: 'Move the currently selected todo down',
     },
+    {
+        shortcut: KeyboardShortcuts.MOVE_TODO_UP,
+        description: 'Move the currently selected todo up',
+    },
 ];
 
 const KeyboardShortcutOverview = () => {

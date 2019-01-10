@@ -17,6 +17,7 @@ export const KeyboardShortcuts: KeyboardShortcutsType = {
     TODO_EDIT_SHORTCUT: ['e', 'enter'],
     TODO_DELETE_SHORTCUT: ['d', 'del', 'backspace'],
     MOVE_TODO_DOWN: ['meta+down'],
+    MOVE_TODO_UP: ['meta+up'],
 };
 
 export function bindKeyboardShortcut(
