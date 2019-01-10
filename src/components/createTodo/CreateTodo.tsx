@@ -3,12 +3,15 @@ import { connect, DispatchProp } from 'react-redux';
 import TodoFormStateHandler, {
     OnSubmitCallback,
 } from './components/TodoFormStateHandler';
-import mousetrap from 'mousetrap';
 import { RootAction } from '../../storage/actions/rootAction';
 import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { OnCancelCallback } from './components/TodoForm';
 import { formatDate } from '../../utility/dateTImeHelper';
-import { KeyboardShortcuts } from '../../navigation/KeyboardShortcuts';
+import {
+    KeyboardShortcuts,
+    bindKeyboardShortcut,
+    unbindKeyboardShortcut,
+} from '../../navigation/KeyboardShortcuts';
 
 type Props = {
     date: Date;
@@ -38,7 +41,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private bindKeyboardShortcuts() {
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.ADD_TODO_SHORTCUT,
             this.onAddKeyboardShortcutOccurred
         );
@@ -65,7 +68,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind(KeyboardShortcuts.ADD_TODO_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.ADD_TODO_SHORTCUT);
     }
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {

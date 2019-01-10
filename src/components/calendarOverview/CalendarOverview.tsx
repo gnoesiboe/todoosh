@@ -27,7 +27,6 @@ import {
     createMoveTodoAction,
     createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction,
 } from '../../storage/actions/factory/todoActionFactories';
-import mousetrap from 'mousetrap';
 import { createTodosPath } from '../../routing/urlGenerator';
 import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
 import {
@@ -42,7 +41,11 @@ import { Todo as TodoModel } from './../../model/todo';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import './CalendarOverview.scss';
 import DateNavigator from './components/DateNavigator';
-import { KeyboardShortcuts } from './../../navigation/KeyboardShortcuts';
+import {
+    KeyboardShortcuts,
+    bindKeyboardShortcut,
+    unbindKeyboardShortcut,
+} from './../../navigation/KeyboardShortcuts';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -101,49 +104,49 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private bindKeyboardShortcuts() {
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.NEXT_DATE_SHORCUT,
             this.onMoveToNextDateKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.PREVIOUS_DATE_SHORTCUT,
             this.onMoveToPreviousDateKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.TODAY_SHORTCUT,
             this.onTodayKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.NEXT_TODO_SHORTCUT,
             this.onMoveToNextTodoKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.PREVIOUS_TODO_SHORTCUT,
             this.onMoveToPreviousTodoKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.TOGGLE_COMPLETED_SHORTCUT,
             this.onToggleCompletedKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.TODO_EDIT_SHORTCUT,
             this.onEditKeyboardShortcutPressed
         );
-        mousetrap.bind(
+        bindKeyboardShortcut(
             KeyboardShortcuts.TODO_DELETE_SHORTCUT,
             this.onTodoDeleteKeyboardShortcutPressed
         );
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind(KeyboardShortcuts.NEXT_DATE_SHORCUT);
-        mousetrap.unbind(KeyboardShortcuts.PREVIOUS_DATE_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.TODAY_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.NEXT_TODO_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.PREVIOUS_TODO_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.TOGGLE_COMPLETED_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.TODO_EDIT_SHORTCUT);
-        mousetrap.unbind(KeyboardShortcuts.TODO_DELETE_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.NEXT_DATE_SHORCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.PREVIOUS_DATE_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.TODAY_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.NEXT_TODO_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.PREVIOUS_TODO_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.TOGGLE_COMPLETED_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.TODO_EDIT_SHORTCUT);
+        unbindKeyboardShortcut(KeyboardShortcuts.TODO_DELETE_SHORTCUT);
     }
 
     private onTodoDeleteKeyboardShortcutPressed = () => {

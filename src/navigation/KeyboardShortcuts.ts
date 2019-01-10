@@ -1,5 +1,9 @@
+import mousetrap from 'mousetrap';
+
+type KeyboardShortcut = string[] | string;
+
 type KeyboardShortcutsType = {
-    readonly [key: string]: string[] | string;
+    readonly [key: string]: KeyboardShortcut;
 };
 
 export const KeyboardShortcuts: KeyboardShortcutsType = {
@@ -13,3 +17,14 @@ export const KeyboardShortcuts: KeyboardShortcutsType = {
     TODO_EDIT_SHORTCUT: ['e', 'enter'],
     TODO_DELETE_SHORTCUT: ['d', 'del', 'backspace'],
 };
+
+export function bindKeyboardShortcut(
+    shortcut: KeyboardShortcut,
+    callback: (e: ExtendedKeyboardEvent) => void
+): void {
+    mousetrap.bind(shortcut, callback);
+}
+
+export function unbindKeyboardShortcut(shortcut: KeyboardShortcut): void {
+    mousetrap.unbind(shortcut);
+}
