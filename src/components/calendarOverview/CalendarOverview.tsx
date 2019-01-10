@@ -366,7 +366,11 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         dispatch(createSetCurrentTodoIndexAction(newCurrentTodoIndex));
     };
 
-    private onMoveTodoDownKeyboardShortcutPressed = () => {
+    private onMoveTodoDownKeyboardShortcutPressed = (
+        event: ExtendedKeyboardEvent
+    ) => {
+        // as cmd + down is also used for moving down the page in Google Chrome, prevent default behaviour
+        event.preventDefault();
         const { currentTodoIndex, todos, dispatch, currentDate } = this.props;
         const currentDateAsString = formatDate(currentDate);
 
@@ -391,7 +395,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
     };
 
-    private onMoveTodoUpKeyboardShortcutPressed = () => {
+    private onMoveTodoUpKeyboardShortcutPressed = (
+        event: ExtendedKeyboardEvent
+    ) => {
+        // as cmd + up is also used for moving up the page in Google Chrome, prevent default behaviour
+        event.preventDefault();
+
         const { currentDate, currentTodoIndex, todos, dispatch } = this.props;
         const currentDateAsString = formatDate(currentDate);
 
@@ -416,7 +425,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
     };
 
-    private onMoveTodoToNextDateKeyboardShortcutPressed = () => {
+    private onMoveTodoToNextDateKeyboardShortcutPressed = (
+        event: ExtendedKeyboardEvent
+    ) => {
+        // as cmd + right is also used for navigation in history, in Google Chrome, prevent default behaviour
+        event.preventDefault();
+
         const { dispatch, currentDate, currentTodoIndex } = this.props;
 
         const nextDate = createDateRelativeToSupplied(currentDate, 1);
