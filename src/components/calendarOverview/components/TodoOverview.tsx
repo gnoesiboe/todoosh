@@ -6,15 +6,14 @@ import {
     DraggableProvided,
     DroppableProvided,
 } from 'react-beautiful-dnd';
-import { formatDate } from '../../../utility/dateTimeHelper';
 
 type Props = {
     children: JSX.Element[];
-    date: Date;
+    droppableId: string;
 };
 
-const TodoOverview = ({ children, date }: Props) => (
-    <Droppable droppableId={formatDate(date)}>
+const TodoOverview = ({ children, droppableId }: Props) => (
+    <Droppable droppableId={droppableId}>
         {(droppableProvided: DroppableProvided) => (
             <ul className="list-unstyled" ref={droppableProvided.innerRef}>
                 {React.Children.map(children, (child, index) => {

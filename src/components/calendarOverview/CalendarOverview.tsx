@@ -530,7 +530,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                     onClick={() => this.onDayOverviewTitleClick(dateAsString)}
                 />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
-                <TodoOverview date={date}>
+                <TodoOverview droppableId={formatDate(date)}>
                     {todosForDate.map((todo, index) => {
                         const isCurrent =
                             isCurrentDate && index === currentTodoIndex;
