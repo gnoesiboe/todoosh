@@ -3,10 +3,7 @@ import { Row, Col } from 'reactstrap';
 import DayOverview, {
     OnTodoCompletedChangeCallback,
 } from './components/DayOverview';
-import TimeNavigationButton, {
-    Direction,
-    OnClickCallback,
-} from './components/TimeNavigationButton';
+import { OnClickCallback } from './components/TimeNavigationButton';
 import {
     formatDate,
     parseDate,
@@ -44,6 +41,7 @@ import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { Todo as TodoModel } from './../../model/todo';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import './CalendarOverview.scss';
+import DateNavigator from './components/DateNavigator';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -400,28 +398,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             <div className="calendar-overview">
                 <div className="calendar-overview--navigation">
                     <Row>
-                        <Col md={{ size: 1, offset: 4 }} className="text-right">
-                            {this.checkPreviousDateIsAccessible() && (
-                                <TimeNavigationButton
-                                    direction={Direction.Back}
-                                    onClick={this.onBackClick}
-                                />
-                            )}
-                        </Col>
-                        <Col md={2} className="text-center">
-                            <button
-                                className="btn btn-link"
-                                onClick={this.onTodayClick}
-                            >
-                                today
-                            </button>
-                        </Col>
-                        <Col md={1} className="text-left">
-                            <TimeNavigationButton
-                                direction={Direction.Forward}
-                                onClick={this.onForwardClick}
-                            />
-                        </Col>
+                        <DateNavigator
+                            currentDate={currentDate}
+                            onBackClick={this.onBackClick}
+                            onForwardClick={this.onForwardClick}
+                            onTodayClick={this.onTodayClick}
+                        />
                     </Row>
                 </div>
                 <Row>
