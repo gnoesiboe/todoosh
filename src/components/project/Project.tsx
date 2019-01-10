@@ -1,6 +1,7 @@
 import React from 'react';
 import { Project as ProjectModel } from './../../model/project';
 import { Card, CardTitle, CardBody } from 'reactstrap';
+import './Project.scss';
 
 type Props = {
     project: ProjectModel;

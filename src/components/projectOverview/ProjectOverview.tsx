@@ -5,6 +5,7 @@ import { GlobalState } from '../../storage/reducers';
 import CreateProject from './../createProject/CreateProject';
 import Project from './../project/Project';
 import { Row, Col } from 'reactstrap';
+import './ProjectOverview.scss';
 
 type OwnProps = {};
 
