@@ -20,8 +20,20 @@ type Props = {
 };
 
 export default class Todo extends React.Component<Props> {
+    private checkboxRef: React.RefObject<any>;
+
+    constructor(props: Props) {
+        super(props);
+
+        this.checkboxRef = React.createRef();
+    }
+
     private onCompleteChange = (event: ChangeEvent<HTMLInputElement>) => {
         this.props.onCompletedChange(event.target.checked);
+
+        // blur input to be able to still use keyboards shortcuts for navingation between todo's and not
+        // be bound to checbox
+        this.checkboxRef.current.blur();
     };
 
     private renderDisplayMode() {
@@ -41,6 +53,7 @@ export default class Todo extends React.Component<Props> {
                         type="checkbox"
                         checked={todo.isCompleted}
                         onChange={this.onCompleteChange}
+                        innerRef={this.checkboxRef}
                     />{' '}
                     {todo.deadline && !todo.isCompleted && (
                         <TodoDeadline deadline={todo.deadline} />

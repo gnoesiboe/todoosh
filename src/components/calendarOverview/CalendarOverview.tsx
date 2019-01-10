@@ -97,9 +97,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const { history } = this.props;
         const dateAsString = formatDate(nextDate);
 
-        console.log('navigate to date', dateAsString);
-        console.trace();
-
         history.push(createTodosPath(dateAsString));
     }
 
@@ -510,8 +507,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     public render() {
         const { currentDate, todos } = this.props;
-
-        console.log('current date: ', formatDate(currentDate));
 
         return (
             <div className="calendar-overview">
