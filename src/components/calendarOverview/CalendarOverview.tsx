@@ -596,7 +596,7 @@ function mapGlobalStateToProps(
     const currentDate = parseDate(props.match.params.startDate);
     const visibleDateRange = createVisibleDateRangeFromRouterDate(currentDate);
     const todos: TodoCollection = applyOnlyRelevantTodosSelector(
-        globalState.todos || null,
+        globalState.todos || {},
         visibleDateRange
     );
     const currentTodoIndex = globalState.currentTodoIndex || 0;

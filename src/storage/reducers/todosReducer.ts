@@ -10,9 +10,9 @@ import {
 
 export type TodoAction = ActionType<typeof actionFactories>;
 
-export type TodosReducerState = TodoCollection | null;
+export type TodosReducerState = TodoCollection;
 
-const DEFAULT_STATE: TodosReducerState = null;
+const DEFAULT_STATE: TodosReducerState = {};
 
 export default (
     currentState: TodosReducerState = DEFAULT_STATE,
@@ -22,10 +22,6 @@ export default (
         case getType(actionFactories.createAddTodoAction): {
             // tslint:disable-next-line:no-shadowed-variable
             const { date, todo } = action.payload;
-
-            if (!currentState) {
-                return { [date]: [todo] };
-            }
 
             return produce<TodoCollection>(currentState, draft => {
                 if (typeof draft[date] === 'undefined') {
@@ -37,13 +33,6 @@ export default (
         }
 
         case getType(actionFactories.createToggleTodoCompletedAction): {
-            if (!currentState) {
-                throw new Error(
-                    'No change should be possible when there is no initial state!'
-                );
-            }
-
-            // tslint:disable-next-line:no-shadowed-variable
             const { date: todoDate, completed, id } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
@@ -67,12 +56,6 @@ export default (
         }
 
         case getType(actionFactories.createUpdateTodoAction): {
-            if (!currentState) {
-                throw new Error(
-                    'No change should be possible when there is no initial state!'
-                );
-            }
-
             const { date, title, id, deadline } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
@@ -94,12 +77,6 @@ export default (
         }
 
         case getType(actionFactories.createDeleteTodoAction): {
-            if (!currentState) {
-                throw new Error(
-                    'Delete should not be possible when there is no initial state!'
-                );
-            }
-
             const { date, id } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
@@ -120,13 +97,6 @@ export default (
         }
 
         case getType(actionFactories.createMoveTodoAction): {
-            if (!currentState) {
-                throw new Error(
-                    // tslint:disable-next-line:quotemark
-                    "Moving todo's should not be possible when there is no initial state!"
-                );
-            }
-
             const { from, to } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
@@ -149,10 +119,6 @@ export default (
         case getType(
             actionFactories.createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction
         ): {
-            if (!currentState) {
-                return currentState;
-            }
-
             return produce<TodoCollection>(currentState, draft => {
                 const dateTodayAsString = formatTodayAsDate();
 
