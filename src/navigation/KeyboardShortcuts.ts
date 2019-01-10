@@ -18,6 +18,7 @@ export const KeyboardShortcuts: KeyboardShortcutsType = {
     TODO_DELETE_SHORTCUT: ['d', 'del', 'backspace'],
     MOVE_TODO_DOWN: ['meta+down'],
     MOVE_TODO_UP: ['meta+up'],
+    MOVE_TODO_TO_NEXT_DATE: ['meta+right'],
 };
 
 export function bindKeyboardShortcut(
