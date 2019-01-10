@@ -48,6 +48,10 @@ const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
         shortcut: KeyboardShortcuts.TODO_DELETE_SHORTCUT,
         description: 'Delete the currently selected todo',
     },
+    {
+        shortcut: KeyboardShortcuts.MOVE_TODO_DOWN,
+        description: 'Move the currently selected todo down',
+    },
 ];
 
 const KeyboardShortcutOverview = () => {
