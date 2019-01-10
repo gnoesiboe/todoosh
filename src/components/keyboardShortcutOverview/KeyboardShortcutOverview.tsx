@@ -1,16 +1,6 @@
 import React, { Fragment } from 'react';
 import { Table, Row, Col } from 'reactstrap';
-import {
-    TODAY_SHORTCUT,
-    PREVIOUS_DATE_SHORTCUT,
-    NEXT_DATE_SHORCUT,
-    PREVIOUS_TODO_SHORTCUT,
-    NEXT_TODO_SHORTCUT,
-    TOGGLE_COMPLETED_SHORTCUT,
-    TODO_EDIT_SHORTCUT,
-    TODO_DELETE_SHORTCUT,
-} from '../calendarOverview/CalendarOverview';
-import { ADD_TODO_SHORTCUT } from '../createTodo/CreateTodo';
+import { KeyboardShortcuts } from '../../navigation/KeyboardShortcuts';
 
 function checkDashShouldBeDisplayed(shortcuts: string[], currentIndex: number) {
     return currentIndex < shortcuts.length - 1;
@@ -23,39 +13,39 @@ type ShortcutsAndDescriptionMappingType = Array<{
 
 const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
     {
-        shortcut: TODAY_SHORTCUT,
+        shortcut: KeyboardShortcuts.TODAY_SHORTCUT,
         description: 'Navigate to today.',
     },
     {
-        shortcut: PREVIOUS_DATE_SHORTCUT,
+        shortcut: KeyboardShortcuts.PREVIOUS_DATE_SHORTCUT,
         description: 'Move focus to the previous date.',
     },
     {
-        shortcut: NEXT_DATE_SHORCUT,
+        shortcut: KeyboardShortcuts.NEXT_DATE_SHORCUT,
         description: 'Move focus to the next date.',
     },
     {
-        shortcut: PREVIOUS_TODO_SHORTCUT,
+        shortcut: KeyboardShortcuts.PREVIOUS_TODO_SHORTCUT,
         description: 'Move focus to the previous todo.',
     },
     {
-        shortcut: NEXT_TODO_SHORTCUT,
+        shortcut: KeyboardShortcuts.NEXT_TODO_SHORTCUT,
         description: 'Move focus to the next todo.',
     },
     {
-        shortcut: TOGGLE_COMPLETED_SHORTCUT,
+        shortcut: KeyboardShortcuts.TOGGLE_COMPLETED_SHORTCUT,
         description: 'Toggle completed status of currently selected todo.',
     },
     {
-        shortcut: ADD_TODO_SHORTCUT,
+        shortcut: KeyboardShortcuts.ADD_TODO_SHORTCUT,
         description: 'Add a todo for the currently seleted date',
     },
     {
-        shortcut: TODO_EDIT_SHORTCUT,
+        shortcut: KeyboardShortcuts.TODO_EDIT_SHORTCUT,
         description: 'Start editing the currently selected todo.',
     },
     {
-        shortcut: TODO_DELETE_SHORTCUT,
+        shortcut: KeyboardShortcuts.TODO_DELETE_SHORTCUT,
         description: 'Delete the currently selected todo',
     },
 ];

@@ -8,6 +8,7 @@ import { RootAction } from '../../storage/actions/rootAction';
 import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { OnCancelCallback } from './components/TodoForm';
 import { formatDate } from '../../utility/dateTImeHelper';
+import { KeyboardShortcuts } from '../../navigation/KeyboardShortcuts';
 
 type Props = {
     date: Date;
@@ -18,8 +19,6 @@ type State = {
 };
 
 type CombinedProps = Props & DispatchProp<RootAction>;
-
-export const ADD_TODO_SHORTCUT = 'a';
 
 class CreateTodo extends React.Component<CombinedProps, State> {
     constructor(props: CombinedProps) {
@@ -39,7 +38,10 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private bindKeyboardShortcuts() {
-        mousetrap.bind(ADD_TODO_SHORTCUT, this.onAddKeyboardShortcutOccurred);
+        mousetrap.bind(
+            KeyboardShortcuts.ADD_TODO_SHORTCUT,
+            this.onAddKeyboardShortcutOccurred
+        );
     }
 
     private onAddKeyboardShortcutOccurred = (event: Event) => {
@@ -63,7 +65,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 
     private unbindKeyboardShortcuts() {
-        mousetrap.unbind(ADD_TODO_SHORTCUT);
+        mousetrap.unbind(KeyboardShortcuts.ADD_TODO_SHORTCUT);
     }
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
