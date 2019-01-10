@@ -196,7 +196,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         }
     };
 
-    private onEditKeyboardShortcutPressed = () => {
+    private onEditKeyboardShortcutPressed = (event: ExtendedKeyboardEvent) => {
+        // prevent typing the letter 'e' in input
+        event.preventDefault();
+
         this.startEditingTodo();
     };
 
