@@ -13,7 +13,7 @@ import {
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
-import { RouteComponentProps, withRouter } from 'react-router';
+import { RouteComponentProps, withRouter, Redirect } from 'react-router';
 import { RootAction } from './../../storage/actions/rootAction';
 import CreateTodo from './../createTodo/CreateTodo';
 import { TodoCollection } from '../../model/todo';
@@ -25,7 +25,7 @@ import {
     createMoveTodoAction,
     createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction,
 } from '../../storage/actions/factory/todoActionFactories';
-import { createTodosPath } from '../../routing/urlGenerator';
+import { createTodosPath, createHomePath } from '../../routing/urlGenerator';
 import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
 import {
     determineNextIndex,
@@ -550,6 +550,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     public render() {
         const { currentDate, todos } = this.props;
+
+        if (!(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+            return <Redirect to={createHomePath()} />;
+        }
 
         return (
             <div className="calendar-overview">

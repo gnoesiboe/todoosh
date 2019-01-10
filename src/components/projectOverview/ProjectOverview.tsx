@@ -20,8 +20,8 @@ class ProjectOverview extends React.Component<OwnProps & ReduxSuppliedProps> {
             <div className="project-overview">
                 <Row>
                     {projects.map(project => (
-                        <Col md={3}>
-                            <Project key={project.id} project={project} />
+                        <Col md={3} key={project.id}>
+                            <Project project={project} />
                         </Col>
                     ))}
                     <Col md={3}>
