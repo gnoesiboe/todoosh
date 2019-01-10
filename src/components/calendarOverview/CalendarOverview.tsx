@@ -433,6 +433,9 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + left is also used for navigation in history, in Google Chrome, prevent default behaviour
         event.preventDefault();
 
+        const { dispatch, currentDate, currentTodoIndex, todos } = this.props;
+
+        const currentDateAsString = formatDate(currentDate);
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
 
         if (checkDateIsInThePast(nextDate)) {
@@ -441,6 +444,15 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         const nextDateAsString = formatDate(nextDate);
         const nextIndex = 0;
+
+        if (
+            typeof todos[currentDateAsString] === 'undefined' ||
+            typeof todos[currentDateAsString][currentTodoIndex] === 'undefined'
+        ) {
+            toast.error('No todo was selected to move to the previous date');
+
+            return;
+        }
 
         dispatch(
             createMoveTodoAction(
