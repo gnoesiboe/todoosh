@@ -9,9 +9,7 @@ import {
     parseDate,
     createDateRelativeToSupplied,
     checkIsSameDay,
-    fomatDateToday,
     checkDateIsInThePast,
-    formatTodayAsDate,
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
@@ -88,13 +86,27 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private redirectToTodayIfCurrentDateIsInThePast() {
-        const { match, history } = this.props;
-
-        const currentDate = parseDate(match.params.startDate);
+        const currentDate = this.props.currentDate;
 
         if (checkDateIsInThePast(currentDate)) {
-            history.push(createTodosPath(formatTodayAsDate()));
+            this.navigateToToday();
         }
+    }
+
+    private navigateToDate(nextDate: Date) {
+        const { history } = this.props;
+        const dateAsString = formatDate(nextDate);
+
+        console.log('navigate to date', dateAsString);
+        console.trace();
+
+        history.push(createTodosPath(dateAsString));
+    }
+
+    private navigateToToday() {
+        const today = new Date();
+
+        this.navigateToDate(today);
     }
 
     private ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved() {
@@ -147,6 +159,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         bindKeyboardShortcut(
             KeyboardShortcuts.MOVE_TODO_TO_NEXT_DATE,
             this.onMoveTodoToNextDateKeyboardShortcutPressed
+        );
+        bindKeyboardShortcut(
+            KeyboardShortcuts.MOVE_TODO_TO_PREVIOUS_DATE,
+            this.onMoveTodoToPreviousDateKeyboardShortcutPressed
         );
     }
 
@@ -258,11 +274,11 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private navigateToNextDate() {
-        const { currentDate, history } = this.props;
+        const { currentDate } = this.props;
 
         const nextDate = createDateRelativeToSupplied(currentDate, 1);
 
-        history.push(createTodosPath(formatDate(nextDate)));
+        this.navigateToDate(nextDate);
     }
 
     private onMoveToPreviousDateKeyboardShortcutPressed = () => {
@@ -281,18 +297,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToToday();
     };
 
-    private navigateToToday() {
-        const { history } = this.props;
-
-        history.push(createTodosPath(fomatDateToday()));
-    }
-
     private navigateToPreviousDate() {
-        const { currentDate, history } = this.props;
+        const { currentDate } = this.props;
 
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
 
-        history.push(createTodosPath(formatDate(nextDate)));
+        this.navigateToDate(nextDate);
     }
 
     private onBackClick: OnClickCallback = event => {
@@ -352,12 +362,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private onMoveTodoDownKeyboardShortcutPressed = () => {
-        const { match, currentTodoIndex, todos, dispatch } = this.props;
-        const currentDate = match.params.startDate;
+        const { currentTodoIndex, todos, dispatch, currentDate } = this.props;
+        const currentDateAsString = formatDate(currentDate);
 
         const noOfTodosForCurrentDate =
-            typeof todos[currentDate] !== 'undefined'
-                ? todos[currentDate].length
+            typeof todos[currentDateAsString] !== 'undefined'
+                ? todos[currentDateAsString].length
                 : 0;
         const nextTodoIndex = determineNextIndex(
             currentTodoIndex,
@@ -366,8 +376,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         dispatch(
             createMoveTodoAction(
-                currentDate,
-                currentDate,
+                currentDateAsString,
+                currentDateAsString,
                 currentTodoIndex,
                 nextTodoIndex
             )
@@ -377,12 +387,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private onMoveTodoUpKeyboardShortcutPressed = () => {
-        const { match, currentTodoIndex, todos, dispatch } = this.props;
-        const currentDate = match.params.startDate;
+        const { currentDate, currentTodoIndex, todos, dispatch } = this.props;
+        const currentDateAsString = formatDate(currentDate);
 
         const noOfTodosForCurrentDate =
-            typeof todos[currentDate] !== 'undefined'
-                ? todos[currentDate].length
+            typeof todos[currentDateAsString] !== 'undefined'
+                ? todos[currentDateAsString].length
                 : 0;
         const nextTodoIndex = determinePrevousIndex(
             currentTodoIndex,
@@ -391,8 +401,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         dispatch(
             createMoveTodoAction(
-                currentDate,
-                currentDate,
+                currentDateAsString,
+                currentDateAsString,
                 currentTodoIndex,
                 nextTodoIndex
             )
@@ -402,9 +412,33 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private onMoveTodoToNextDateKeyboardShortcutPressed = () => {
-        const { dispatch, currentDate, currentTodoIndex, history } = this.props;
+        const { dispatch, currentDate, currentTodoIndex } = this.props;
 
         const nextDate = createDateRelativeToSupplied(currentDate, 1);
+        const nextIndex = 0;
+
+        dispatch(
+            createMoveTodoAction(
+                formatDate(currentDate),
+                formatDate(nextDate),
+                currentTodoIndex,
+                nextIndex
+            )
+        );
+
+        dispatch(createSetCurrentTodoIndexAction(nextIndex));
+        this.navigateToDate(nextDate);
+    };
+
+    private onMoveTodoToPreviousDateKeyboardShortcutPressed = () => {
+        const { dispatch, currentDate, currentTodoIndex } = this.props;
+
+        const nextDate = createDateRelativeToSupplied(currentDate, -1);
+
+        if (checkDateIsInThePast(nextDate)) {
+            return;
+        }
+
         const nextDateAsString = formatDate(nextDate);
         const nextIndex = 0;
 
@@ -418,13 +452,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         );
 
         dispatch(createSetCurrentTodoIndexAction(nextIndex));
-        history.push(createTodosPath(nextDateAsString));
     };
 
     private onDayOverviewTitleClick(date: string) {
-        const { history } = this.props;
-
-        history.push(createTodosPath(date));
+        this.navigateToDate(parseDate(date));
     }
 
     private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
@@ -471,8 +502,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private checkPreviousDateIsAccessible(): boolean {
-        const startDate = parseDate(this.props.match.params.startDate);
-
+        const startDate = this.props.currentDate;
         const nextDate = createDateRelativeToSupplied(startDate, -1);
 
         return !checkDateIsInThePast(nextDate);
@@ -480,6 +510,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     public render() {
         const { currentDate, todos } = this.props;
+
+        console.log('current date: ', formatDate(currentDate));
 
         return (
             <div className="calendar-overview">

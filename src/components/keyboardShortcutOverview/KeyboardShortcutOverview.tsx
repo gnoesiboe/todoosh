@@ -60,6 +60,10 @@ const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
         shortcut: KeyboardShortcuts.MOVE_TODO_TO_NEXT_DATE,
         description: 'Move the currently selected todo to the next date.',
     },
+    {
+        shortcut: KeyboardShortcuts.MOVE_TODO_TO_PREVIOUS_DATE,
+        description: 'Move the currently selected todo to the previous date.',
+    },
 ];
 
 const KeyboardShortcutOverview = () => {
