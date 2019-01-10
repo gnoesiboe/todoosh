@@ -427,8 +427,11 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToDate(nextDate);
     };
 
-    private onMoveTodoToPreviousDateKeyboardShortcutPressed = () => {
-        const { dispatch, currentDate, currentTodoIndex } = this.props;
+    private onMoveTodoToPreviousDateKeyboardShortcutPressed = (
+        event: ExtendedKeyboardEvent
+    ) => {
+        // as cmd + left is also used for navigation in history, in Google Chrome, prevent default behaviour
+        event.preventDefault();
 
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
 
