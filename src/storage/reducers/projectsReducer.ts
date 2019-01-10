@@ -14,7 +14,7 @@ export default (
     action: ProjectAction
 ) => {
     switch (action.type) {
-        case getType(actionFactories.createProjectAction): {
+        case getType(actionFactories.createAddProjectAction): {
             const newProject = action.payload.project;
 
             return produce<ProjectCollection>(currentState, draft => {

@@ -8,6 +8,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { createHomePath, createTodosPath } from './../routing/urlGenerator';
 import Home from './home/Home';
 import KeyboardShortcutOverview from './keyboardShortcutOverview/KeyboardShortcutOverview';
+import ProjectOverview from './projectOverview/ProjectOverview';
 
 class App extends Component {
     public render() {
@@ -28,6 +29,7 @@ class App extends Component {
                             />
                         </Switch>
                     </BrowserRouter>
+                    <ProjectOverview />
                     <KeyboardShortcutOverview />
                 </Container>
             </Provider>
