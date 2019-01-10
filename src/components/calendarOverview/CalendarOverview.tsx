@@ -10,6 +10,7 @@ import {
     createDateRelativeToSupplied,
     checkIsSameDay,
     checkDateIsInThePast,
+    checkIsValidDate,
 } from './../../utility/dateTImeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
@@ -551,7 +552,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     public render() {
         const { currentDate, todos } = this.props;
 
-        if (!(currentDate instanceof Date) || isNaN(currentDate.getTime())) {
+        if (!(currentDate instanceof Date) || !checkIsValidDate(currentDate)) {
             return <Redirect to={createHomePath()} />;
         }
 

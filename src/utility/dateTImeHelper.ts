@@ -115,3 +115,7 @@ export function checkDateIsInRange(dateRange: Date[], date: Date): boolean {
 
     return false;
 }
+
+export function checkIsValidDate(date: Date): boolean {
+    return !isNaN(date.getTime());
+}
