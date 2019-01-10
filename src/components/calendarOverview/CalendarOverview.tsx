@@ -323,16 +323,17 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             return;
         }
 
-        dispatch(
-            createMoveTodoAction(
-                result.source.droppableId,
-                destination.droppableId,
-                result.source.index,
-                destination.index
-            )
-        );
+        const oldDate = result.source.droppableId;
+        const newDate = destination.droppableId;
 
-        dispatch(createSetCurrentTodoIndexAction(0));
+        const oldIndex = result.source.index;
+        const newIndex = destination.index;
+
+        dispatch(createMoveTodoAction(oldDate, newDate, oldIndex, newIndex));
+
+        const newCurrentTodoIndex = oldDate === newDate ? newIndex : 0;
+
+        dispatch(createSetCurrentTodoIndexAction(newCurrentTodoIndex));
     };
 
     private onDayOverviewTitleClick(date: string) {
