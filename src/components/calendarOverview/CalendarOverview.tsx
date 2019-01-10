@@ -444,15 +444,15 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const { dispatch, currentDate, currentTodoIndex, todos } = this.props;
 
         const currentDateAsString = formatDate(currentDate);
-        const nextDate = createDateRelativeToSupplied(currentDate, -1);
+        const previousDate = createDateRelativeToSupplied(currentDate, -1);
 
-        if (checkDateIsInThePast(nextDate)) {
+        if (checkDateIsInThePast(previousDate)) {
             toast.error('Cannot move a todo to the past');
 
             return;
         }
 
-        const nextDateAsString = formatDate(nextDate);
+        const previousDateAsString = formatDate(previousDate);
         const nextIndex = 0;
 
         if (
@@ -467,13 +467,14 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         dispatch(
             createMoveTodoAction(
                 formatDate(currentDate),
-                nextDateAsString,
+                previousDateAsString,
                 currentTodoIndex,
                 nextIndex
             )
         );
 
         dispatch(createSetCurrentTodoIndexAction(nextIndex));
+        this.navigateToDate(previousDate);
     };
 
     private onDayOverviewTitleClick(date: string) {
