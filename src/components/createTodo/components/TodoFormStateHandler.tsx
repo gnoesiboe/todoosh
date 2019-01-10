@@ -8,7 +8,7 @@ import { Todo } from '../../../model/todo';
 import {
     parseDate,
     formatDistanceFromToday,
-} from '../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 
 export type TodoFormValues = {
     title: string;

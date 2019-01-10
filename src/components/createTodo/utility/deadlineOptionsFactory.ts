@@ -3,7 +3,7 @@ import { DeadlineSelectOptionType } from '../components/TodoForm';
 import {
     createDateRelativeToSupplied,
     formatDay,
-} from '../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 
 export function createDeadlineOptions(): OptionsType<DeadlineSelectOptionType> {
     const today = new Date();

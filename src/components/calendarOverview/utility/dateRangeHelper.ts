@@ -1,7 +1,7 @@
 import {
     createDateRelativeToSupplied,
     createDateRange,
-} from '../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 
 export function createVisibleDateRangeFromRouterDate(
     currentDate: Date

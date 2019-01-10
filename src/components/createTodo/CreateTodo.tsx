@@ -6,7 +6,7 @@ import TodoFormStateHandler, {
 import { RootAction } from '../../storage/actions/rootAction';
 import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { OnCancelCallback } from './components/TodoForm';
-import { formatDate } from '../../utility/dateTImeHelper';
+import { formatDate } from '../../utility/dateTimeHelper';
 import {
     KeyboardShortcuts,
     bindKeyboardShortcut,

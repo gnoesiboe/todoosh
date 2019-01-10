@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatDistanceFromToday } from './../../../utility/dateTImeHelper';
+import { formatDistanceFromToday } from '../../../utility/dateTimeHelper';
 import './DayOverviewTitle.scss';
 
 type Props = {

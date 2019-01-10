@@ -6,7 +6,7 @@ import {
     DraggableProvided,
     DroppableProvided,
 } from 'react-beautiful-dnd';
-import { formatDate } from '../../../utility/dateTImeHelper';
+import { formatDate } from '../../../utility/dateTimeHelper';
 
 type Props = {
     children: JSX.Element[];

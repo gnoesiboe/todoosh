@@ -4,7 +4,7 @@ import {
     formatDate,
     parseDate,
     checkDateIsInRange,
-} from '../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 
 export function applyOnlyRelevantTodosSelector(
     todosReducerState: TodosReducerState,

@@ -5,7 +5,7 @@ import {
     checkDateIsToday,
     checkDateIsTomorrow,
     checkDateIsInThePast,
-} from './../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 import createClassName from 'classnames';
 
 type Props = {

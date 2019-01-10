@@ -6,7 +6,7 @@ import {
     parseDate,
     checkDateIsInThePast,
     formatTodayAsDate,
-} from '../../utility/dateTImeHelper';
+} from '../../utility/dateTimeHelper';
 
 export type TodoAction = ActionType<typeof actionFactories>;
 

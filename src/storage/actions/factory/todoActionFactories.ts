@@ -1,7 +1,7 @@
 import { createAction } from 'typesafe-actions';
 import { Todo } from '../../../model/todo';
 import uuid from 'uuid/v4';
-import { formatDate } from '../../../utility/dateTImeHelper';
+import { formatDate } from '../../../utility/dateTimeHelper';
 
 export const createAddTodoAction = createAction(
     '@todos/create',

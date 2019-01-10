@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Redirect } from 'react-router';
-import { fomatDateToday } from '../../utility/dateTImeHelper';
+import { fomatDateToday } from '../../utility/dateTimeHelper';
 import { createTodosPath } from '../../routing/urlGenerator';
 
 export default () => {

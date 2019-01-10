@@ -11,7 +11,7 @@ import {
     checkIsSameDay,
     checkDateIsInThePast,
     checkIsValidDate,
-} from './../../utility/dateTImeHelper';
+} from '../../utility/dateTimeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
 import { RouteComponentProps, withRouter, Redirect } from 'react-router';

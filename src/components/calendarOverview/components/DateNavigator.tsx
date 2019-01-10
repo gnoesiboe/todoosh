@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import {
     createDateRelativeToSupplied,
     checkDateIsInThePast,
-} from './../../../utility/dateTImeHelper';
+} from '../../../utility/dateTimeHelper';
 import TimeNavigationButton, {
     Direction,
     OnClickCallback,

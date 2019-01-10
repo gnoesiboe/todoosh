@@ -6,7 +6,7 @@ import { Todo } from '../../model/todo';
 import { connect, DispatchProp } from 'react-redux';
 import { RootAction } from '../../storage/actions/rootAction';
 import { createUpdateTodoAction } from '../../storage/actions/factory/todoActionFactories';
-import { formatDate } from '../../utility/dateTImeHelper';
+import { formatDate } from '../../utility/dateTimeHelper';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 
 type Props = {
