@@ -44,6 +44,8 @@ import {
     bindKeyboardShortcut,
     unbindKeyboardShortcut,
 } from './../../navigation/KeyboardShortcuts';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -184,7 +186,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const currentTodo = currentDayTodos[currentTodoIndex];
 
         if (!currentTodo) {
-            return;
+            toast.error('There is no current todo to delete');
         }
 
         if (confirm('Are you sure?')) {
@@ -232,6 +234,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const currentTodo = currentDayTodos[currentTodoIndex];
 
         if (!currentTodo) {
+            toast.error(
+                'There is no current todo to toggle the completed status of'
+            );
+
             return;
         }
 
@@ -280,6 +286,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     private onMoveToPreviousDateKeyboardShortcutPressed = () => {
         if (!this.checkPreviousDateIsAccessible()) {
+            toast.error('Cannot move before today');
+
             return;
         }
 
@@ -439,6 +447,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
 
         if (checkDateIsInThePast(nextDate)) {
+            toast.error('Cannot move a todo to the past');
+
             return;
         }
 
@@ -555,6 +565,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         })}
                     </DragDropContext>
                 </Row>
+                <ToastContainer />
             </div>
         );
     }
