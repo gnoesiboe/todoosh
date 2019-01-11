@@ -9,7 +9,7 @@ type Props = {};
 const ProjectForm: React.FunctionComponent<
     Props & FormikProps<ProjectFormValues>
 > = ({ handleSubmit, handleChange, handleBlur, values, touched, errors }) => (
-    <Form onSubmit={handleSubmit} className="todo-form">
+    <Form onSubmit={handleSubmit}>
         <FormGroup>
             <Label for="title">Title</Label>
             <Input
@@ -21,7 +21,6 @@ const ProjectForm: React.FunctionComponent<
                 autoComplete="off"
                 onBlur={handleBlur}
                 value={values.title}
-                autoFocus
                 invalid={!!errors.title && touched.title}
                 valid={!errors.title && touched.title}
             />
