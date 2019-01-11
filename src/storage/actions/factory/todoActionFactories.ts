@@ -8,7 +8,7 @@ export const createAddTodoAction = createAction(
     resolve => (
         title: string,
         projectId: string,
-        date: Date | null,
+        date: Date | null = null,
         deadline: string | null = null,
         isCompleted: boolean = false
     ) =>
@@ -26,8 +26,12 @@ export const createAddTodoAction = createAction(
 
 export const createToggleTodoCompletedAction = createAction(
     '@todos/toggle-completed',
-    resolve => (id: string, date: string | null, completed: boolean) =>
-        resolve({ id, date, completed })
+    resolve => (
+        id: string,
+        date: string | null,
+        completed: boolean,
+        projectId: string
+    ) => resolve({ id, date, completed, projectId })
 );
 
 export const createUpdateTodoAction = createAction(
@@ -43,7 +47,8 @@ export const createUpdateTodoAction = createAction(
 
 export const createDeleteTodoAction = createAction(
     '@todos/delete',
-    resolve => (id: string, date: string | null = null) => resolve({ id, date })
+    resolve => (id: string, projectId: string, date: string | null = null) =>
+        resolve({ id, date, projectId })
 );
 
 export const createMoveTodoAction = createAction(

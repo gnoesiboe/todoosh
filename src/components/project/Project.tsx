@@ -5,15 +5,23 @@ import './Project.scss';
 import TodoOverview from '../calendarOverview/components/TodoOverview';
 import { Todo as TodoModel } from '../../model/todo';
 import Todo from '../todo/Todo';
+import QuickCreateTodo from './../quickCreateTodo/QuickCreateTodo';
+import { connect } from 'react-redux';
+import { GlobalState } from '../../storage/reducers';
 
 type Props = {
     project: ProjectModel;
 };
 
-export default class Project extends React.Component<Props> {
+type ReduxSuppliedProps = {
+    todos: TodoModel[];
+};
+
+type CombinedProps = Props & ReduxSuppliedProps;
+
+class Project extends React.Component<CombinedProps> {
     public render() {
-        const { project } = this.props;
-        const todos: TodoModel[] = [];
+        const { project, todos } = this.props;
 
         return (
             <div className="project">
@@ -22,6 +30,7 @@ export default class Project extends React.Component<Props> {
                         <CardTitle>
                             {project.title} ({project.abbrevation})
                         </CardTitle>
+                        <QuickCreateTodo project={project} />
                         <TodoOverview droppableId={project.id}>
                             {todos.map(todo => (
                                 <Todo
@@ -48,3 +57,19 @@ export default class Project extends React.Component<Props> {
         );
     }
 }
+
+function mapGlobalStateToProps(
+    globalState: GlobalState,
+    props: Props
+): ReduxSuppliedProps {
+    const { project } = props;
+
+    const allTodos = globalState.todos || {};
+    const projectTodos = allTodos[project.id] || [];
+
+    return { todos: projectTodos };
+}
+
+export default connect<ReduxSuppliedProps, {}, Props>(mapGlobalStateToProps)(
+    Project
+);

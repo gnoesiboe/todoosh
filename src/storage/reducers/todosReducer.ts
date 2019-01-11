@@ -12,11 +12,7 @@ export type TodoAction = ActionType<typeof actionFactories>;
 
 export type TodosReducerState = TodoCollection;
 
-export const UNCATEGORIZED_INDEX = '__uncategorized';
-
-export const DEFAULT_STATE: TodosReducerState = {
-    [UNCATEGORIZED_INDEX]: [],
-};
+export const DEFAULT_STATE: TodosReducerState = {};
 
 export default (
     currentState: TodosReducerState = DEFAULT_STATE,
@@ -28,7 +24,13 @@ export default (
             const { date, todo } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                const group = date || UNCATEGORIZED_INDEX;
+                const group = date || todo.projectId;
+
+                if (!group) {
+                    throw new Error(
+                        'Expected group to be available at this point'
+                    );
+                }
 
                 if (typeof draft[group] === 'undefined') {
                     draft[group] = [];
@@ -39,10 +41,16 @@ export default (
         }
 
         case getType(actionFactories.createToggleTodoCompletedAction): {
-            const { date, completed, id } = action.payload;
+            const { date, completed, id, projectId } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                const group = date || UNCATEGORIZED_INDEX;
+                const group = date || projectId;
+
+                if (!group) {
+                    throw new Error(
+                        'Expected group to be available at this point'
+                    );
+                }
 
                 if (typeof draft[group] === 'undefined') {
                     throw new Error(
@@ -69,7 +77,13 @@ export default (
             const { date, title, id, deadline, projectId } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                const group = date || UNCATEGORIZED_INDEX;
+                const group = date || projectId;
+
+                if (!group) {
+                    throw new Error(
+                        'Expected group to be available at this point'
+                    );
+                }
 
                 if (typeof draft[group] === 'undefined') {
                     throw new Error(
@@ -92,10 +106,16 @@ export default (
         }
 
         case getType(actionFactories.createDeleteTodoAction): {
-            const { date, id } = action.payload;
+            const { date, id, projectId } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                const group = date || UNCATEGORIZED_INDEX;
+                const group = date || projectId;
+
+                if (!group) {
+                    throw new Error(
+                        'Expected group to be available at this point'
+                    );
+                }
 
                 if (typeof draft[group] === 'undefined') {
                     throw new Error(

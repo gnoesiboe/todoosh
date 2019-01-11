@@ -7,6 +7,5 @@ export type Todo = {
 };
 
 export type TodoCollection = Readonly<{
-    __uncategorized: Todo[];
-    [date: string]: Todo[];
+    [dateOrProjectId: string]: Todo[];
 }>;

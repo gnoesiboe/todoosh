@@ -250,6 +250,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         this.setTodoCompletedStatus(
             currentTodo.id,
+            currentTodo.projectId,
             currentDate,
             !currentTodo.isCompleted
         );
@@ -334,18 +335,20 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         date,
         completed
     ) => {
-        this.setTodoCompletedStatus(todo.id, date, completed);
+        this.setTodoCompletedStatus(todo.id, todo.projectId, date, completed);
     };
 
     private setTodoCompletedStatus(
         todoId: string,
+        projectId: string,
         date: Date,
         completed: boolean
     ) {
         const action = createToggleTodoCompletedAction(
             todoId,
             formatDate(date),
-            completed
+            completed,
+            projectId
         );
 
         this.props.dispatch(action);
