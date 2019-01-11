@@ -1,17 +1,20 @@
 import React from 'react';
-import { Formik, FormikProps, FormikActions } from 'formik';
+import { Formik, FormikProps, FormikActions, FormikErrors } from 'formik';
 import TodoForm, {
     OnCancelCallback,
     DeadlineSelectOptionType,
+    ProjectSelectOptionType,
 } from './TodoForm';
 import { Todo } from '../../../model/todo';
 import {
     parseDate,
     formatDistanceFromToday,
 } from '../../../utility/dateTimeHelper';
+import { ProjectCollection } from '../../../model/project';
 
 export type TodoFormValues = {
     title: string;
+    projectId: ProjectSelectOptionType | undefined;
     deadline: DeadlineSelectOptionType | undefined;
 };
 
@@ -19,57 +22,98 @@ export type OnSubmitCallback = (values: TodoFormValues) => void;
 
 type Props = {
     todo?: Todo;
+    projects: ProjectCollection;
     onFormSubmittedAndValid: OnSubmitCallback;
     onCancel: OnCancelCallback;
 };
 
-function validateValues(values: TodoFormValues) {
-    const errors: { [key: string]: string } = {};
+export default class TodoFormStateHandler extends React.Component<Props> {
+    private static validateValues(
+        values: TodoFormValues
+    ): FormikErrors<TodoFormValues> {
+        const errors: { [key: string]: string } = {};
 
-    if (!values.title) {
-        errors.title = 'Required';
+        if (!values.title) {
+            errors.title = 'Required';
+        }
+
+        if (!values.projectId) {
+            errors.title = 'Required';
+        }
+
+        return errors;
     }
 
-    return errors;
+    private resolveCurrentProjectOption(
+        projectId: string
+    ): ProjectSelectOptionType | undefined {
+        const selectedProject = this.props.projects.find(
+            project => project.id === projectId
+        );
+
+        if (!selectedProject) {
+            return undefined;
+        }
+
+        return {
+            label: selectedProject.title,
+            value: projectId,
+        };
+    }
+
+    private resolveCurrentDeadlineOption(
+        deadline: string
+    ): DeadlineSelectOptionType {
+        const deadlineAsDate = parseDate(deadline);
+
+        return {
+            label: formatDistanceFromToday(deadlineAsDate),
+            value: deadlineAsDate,
+        };
+    }
+
+    private determineInitialValues(todo?: Todo): TodoFormValues {
+        return {
+            title: todo ? todo.title : '',
+            projectId:
+                todo && todo.projectId
+                    ? this.resolveCurrentProjectOption(todo.projectId)
+                    : undefined,
+            deadline:
+                todo && todo.deadline
+                    ? this.resolveCurrentDeadlineOption(todo.deadline)
+                    : undefined,
+        };
+    }
+
+    public render() {
+        const {
+            todo,
+            onFormSubmittedAndValid,
+            onCancel,
+            projects,
+        } = this.props;
+
+        const initialValues = this.determineInitialValues(todo);
+
+        return (
+            <Formik
+                initialValues={initialValues}
+                validate={TodoFormStateHandler.validateValues}
+                onSubmit={(values, actions: FormikActions<TodoFormValues>) => {
+                    actions.resetForm();
+
+                    onFormSubmittedAndValid(values);
+                }}
+            >
+                {(childProps: FormikProps<TodoFormValues>) => (
+                    <TodoForm
+                        {...childProps}
+                        projects={projects}
+                        onCancel={onCancel}
+                    />
+                )}
+            </Formik>
+        );
+    }
 }
-
-function resolveCurrentOption(deadline: string): DeadlineSelectOptionType {
-    const deadlineAsDate = parseDate(deadline);
-
-    return {
-        label: formatDistanceFromToday(deadlineAsDate),
-        value: deadlineAsDate,
-    };
-}
-
-const TodoFormStateHandler: React.FunctionComponent<Props> = ({
-    todo,
-    onFormSubmittedAndValid,
-    onCancel,
-}: Props) => {
-    const initialValues: TodoFormValues = {
-        title: todo ? todo.title : '',
-        deadline:
-            todo && todo.deadline
-                ? resolveCurrentOption(todo.deadline)
-                : undefined,
-    };
-
-    return (
-        <Formik
-            initialValues={initialValues}
-            validate={validateValues}
-            onSubmit={(values, actions: FormikActions<TodoFormValues>) => {
-                actions.resetForm();
-
-                onFormSubmittedAndValid(values);
-            }}
-        >
-            {(childProps: FormikProps<TodoFormValues>) => (
-                <TodoForm {...childProps} onCancel={onCancel} />
-            )}
-        </Formik>
-    );
-};
-
-export default TodoFormStateHandler;

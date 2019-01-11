@@ -47,6 +47,8 @@ import {
 } from './../../navigation/KeyboardShortcuts';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { DEFAULT_STATE as DEFAULT_TODO_REDUCER_STATE } from '../../storage/reducers/todosReducer';
+import { ProjectCollection } from '../../model/project';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -59,6 +61,7 @@ type ReduxSuppliedProps = {
     visibleDateRange: Date[];
     currentDate: Date;
     currentTodoIndex: number;
+    projects: ProjectCollection;
 };
 
 type CombinedProps = OwnProps &
@@ -501,6 +504,13 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
     private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
+        const project = this.props.projects.find(
+            cursorProject => cursorProject.id === todo.projectId
+        );
+
+        if (!project) {
+            throw new Error('Expecting project to be available at this point');
+        }
 
         return (
             <Todo
@@ -508,6 +518,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 isEditMode={isEditMode}
                 onEditCancel={this.onEditTodoCancel}
                 todo={todo}
+                project={project}
                 date={date}
                 isCurrent={isCurrent}
                 onCompletedChange={complete =>
@@ -601,12 +612,13 @@ function mapGlobalStateToProps(
     const currentDate = parseDate(props.match.params.startDate);
     const visibleDateRange = createVisibleDateRangeFromRouterDate(currentDate);
     const todos: TodoCollection = applyOnlyRelevantTodosSelector(
-        globalState.todos || {},
+        globalState.todos || DEFAULT_TODO_REDUCER_STATE,
         visibleDateRange
     );
     const currentTodoIndex = globalState.currentTodoIndex || 0;
+    const projects = globalState.projects || [];
 
-    return { todos, visibleDateRange, currentDate, currentTodoIndex };
+    return { todos, visibleDateRange, currentDate, currentTodoIndex, projects };
 }
 
 export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(

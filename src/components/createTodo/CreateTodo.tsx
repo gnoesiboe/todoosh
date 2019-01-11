@@ -12,6 +12,8 @@ import {
     bindKeyboardShortcut,
     unbindKeyboardShortcut,
 } from '../../navigation/KeyboardShortcuts';
+import { GlobalState } from '../../storage/reducers';
+import { ProjectCollection } from '../../model/project';
 
 type Props = {
     date: Date;
@@ -21,7 +23,11 @@ type State = {
     showForm: boolean;
 };
 
-type CombinedProps = Props & DispatchProp<RootAction>;
+type ReduxSuppliedProps = {
+    projects: ProjectCollection;
+};
+
+type CombinedProps = Props & DispatchProp<RootAction> & ReduxSuppliedProps;
 
 class CreateTodo extends React.Component<CombinedProps, State> {
     constructor(props: CombinedProps) {
@@ -73,9 +79,17 @@ class CreateTodo extends React.Component<CombinedProps, State> {
 
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
         const deadline = values.deadline ? values.deadline.value : null;
+        const projectId = values.projectId ? values.projectId.value : null;
+
+        if (!projectId) {
+            throw new Error(
+                'Expecting projectId to be available at this point'
+            );
+        }
 
         const action = createAddTodoAction(
             values.title,
+            projectId,
             this.props.date,
             deadline ? formatDate(deadline) : null
         );
@@ -95,6 +109,7 @@ class CreateTodo extends React.Component<CombinedProps, State> {
 
         return (
             <TodoFormStateHandler
+                projects={this.props.projects}
                 onFormSubmittedAndValid={this.onFormSubmittedAndValid}
                 onCancel={this.onCancel}
             />
@@ -102,4 +117,10 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     }
 }
 
-export default connect()(CreateTodo);
+function mapGlobalStateToProps(globalState: GlobalState): ReduxSuppliedProps {
+    return {
+        projects: globalState.projects || [],
+    };
+}
+
+export default connect(mapGlobalStateToProps)(CreateTodo);

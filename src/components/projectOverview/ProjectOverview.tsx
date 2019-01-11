@@ -6,6 +6,7 @@ import CreateProject from './../createProject/CreateProject';
 import Project from './../project/Project';
 import { Row, Col } from 'reactstrap';
 import './ProjectOverview.scss';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 type OwnProps = {};
 
@@ -19,11 +20,15 @@ class ProjectOverview extends React.Component<OwnProps & ReduxSuppliedProps> {
         return (
             <div className="project-overview">
                 <Row>
-                    {projects.map(project => (
-                        <Col md={3} key={project.id}>
-                            <Project project={project} />
-                        </Col>
-                    ))}
+                    <DragDropContext
+                        onDragEnd={() => console.log('on drag end')}
+                    >
+                        {projects.map(project => (
+                            <Col md={3} key={project.id}>
+                                <Project project={project} />
+                            </Col>
+                        ))}
+                    </DragDropContext>
                     <Col md={3}>
                         <CreateProject />
                     </Col>

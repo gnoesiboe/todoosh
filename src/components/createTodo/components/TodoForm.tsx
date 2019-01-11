@@ -5,17 +5,24 @@ import { Form, Input, FormGroup, FormFeedback, Label } from 'reactstrap';
 import Select from 'react-select';
 import { createDeadlineOptions } from './../utility/deadlineOptionsFactory';
 import './TodoForm.scss';
+import { ProjectCollection } from '../../../model/project';
 
 export type OnCancelCallback = () => void;
 
 type Props = {
     onCancel: OnCancelCallback;
+    projects: ProjectCollection;
 };
 
 export type DeadlineSelectOptionType = {
     label: string;
     value: Date;
 } | null;
+
+export type ProjectSelectOptionType = {
+    label: string;
+    value: string;
+};
 
 const deadlineOptions = createDeadlineOptions();
 
@@ -30,6 +37,7 @@ const TodoForm: React.FunctionComponent<
     errors,
     onCancel,
     setFieldValue,
+    projects,
 }) => {
     return (
         <Form onSubmit={handleSubmit} className="todo-form">
@@ -57,6 +65,27 @@ const TodoForm: React.FunctionComponent<
                 />
                 {errors.title && touched.title && (
                     <FormFeedback tooltip>{errors.title}</FormFeedback>
+                )}
+            </FormGroup>
+            <FormGroup>
+                <Label for="projectId">Project</Label>
+                <Select<ProjectSelectOptionType>
+                    options={projects.map(project => ({
+                        label: project.title,
+                        value: project.id,
+                    }))}
+                    value={values.projectId}
+                    onChange={newValue => {
+                        setFieldValue('projectId', newValue);
+                        handleChange('projectId');
+                    }}
+                    inputId="projectId"
+                    onBlur={handleBlur}
+                    placeholder="Project"
+                    name="project"
+                />
+                {errors.projectId && touched.projectId && (
+                    <FormFeedback tooltip>{errors.projectId}</FormFeedback>
                 )}
             </FormGroup>
             <FormGroup>

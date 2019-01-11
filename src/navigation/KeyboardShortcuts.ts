@@ -14,7 +14,7 @@ export const KeyboardShortcuts: KeyboardShortcutsType = {
     TODAY_SHORTCUT: 't',
     TOGGLE_COMPLETED_SHORTCUT: 'space',
     ADD_TODO_SHORTCUT: 'a',
-    TODO_EDIT_SHORTCUT: ['e', 'enter'],
+    TODO_EDIT_SHORTCUT: ['e'],
     TODO_DELETE_SHORTCUT: ['d', 'del', 'backspace'],
     MOVE_TODO_DOWN: ['meta+down'],
     MOVE_TODO_UP: ['meta+up'],

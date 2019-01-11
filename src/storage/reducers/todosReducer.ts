@@ -12,7 +12,11 @@ export type TodoAction = ActionType<typeof actionFactories>;
 
 export type TodosReducerState = TodoCollection;
 
-const DEFAULT_STATE: TodosReducerState = {};
+export const UNCATEGORIZED_INDEX = '__uncategorized';
+
+export const DEFAULT_STATE: TodosReducerState = {
+    [UNCATEGORIZED_INDEX]: [],
+};
 
 export default (
     currentState: TodosReducerState = DEFAULT_STATE,
@@ -24,23 +28,29 @@ export default (
             const { date, todo } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                if (typeof draft[date] === 'undefined') {
-                    draft[date] = [];
+                const group = date || UNCATEGORIZED_INDEX;
+
+                if (typeof draft[group] === 'undefined') {
+                    draft[group] = [];
                 }
 
-                draft[date].push(todo);
+                draft[group].push(todo);
             });
         }
 
         case getType(actionFactories.createToggleTodoCompletedAction): {
-            const { date: todoDate, completed, id } = action.payload;
+            const { date, completed, id } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                if (typeof draft[todoDate] === 'undefined') {
-                    throw new Error('Expecting the date to be available');
+                const group = date || UNCATEGORIZED_INDEX;
+
+                if (typeof draft[group] === 'undefined') {
+                    throw new Error(
+                        `Expecting the index '${group}' to be available`
+                    );
                 }
 
-                const completedTodo = draft[todoDate].find(
+                const completedTodo = draft[group].find(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -56,14 +66,18 @@ export default (
         }
 
         case getType(actionFactories.createUpdateTodoAction): {
-            const { date, title, id, deadline } = action.payload;
+            const { date, title, id, deadline, projectId } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                if (typeof draft[date] === 'undefined') {
-                    throw new Error('Expecting the date to be available');
+                const group = date || UNCATEGORIZED_INDEX;
+
+                if (typeof draft[group] === 'undefined') {
+                    throw new Error(
+                        `Expecting the index '${group}' to be available`
+                    );
                 }
 
-                const todo = draft[date].find(
+                const todo = draft[group].find(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -73,6 +87,7 @@ export default (
 
                 todo.title = title;
                 todo.deadline = deadline;
+                todo.projectId = projectId;
             });
         }
 
@@ -80,11 +95,15 @@ export default (
             const { date, id } = action.payload;
 
             return produce<TodoCollection>(currentState, draft => {
-                if (typeof draft[date] === 'undefined') {
-                    throw new Error('Expecting the date to be available');
+                const group = date || UNCATEGORIZED_INDEX;
+
+                if (typeof draft[group] === 'undefined') {
+                    throw new Error(
+                        `Expecting the index '${group}' to be available`
+                    );
                 }
 
-                const todoIndex = draft[date].findIndex(
+                const todoIndex = draft[group].findIndex(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -92,7 +111,7 @@ export default (
                     throw new Error('Cannot find todo to delete');
                 }
 
-                draft[date].splice(todoIndex, 1);
+                draft[group].splice(todoIndex, 1);
             });
         }
 

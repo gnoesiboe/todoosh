@@ -7,12 +7,14 @@ import createClassName from 'classnames';
 import EditTodo from './../editTodo/EditTodo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import TodoDeadline from './components/TodoDeadline';
+import { Project } from '../../model/project';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 
 type Props = {
     todo: TodoType;
-    date: Date;
+    project: Project;
+    date?: Date;
     onCompletedChange: OnCompletedChangeCallback;
     isCurrent: boolean;
     isEditMode: boolean;
@@ -37,7 +39,7 @@ export default class Todo extends React.Component<Props> {
     };
 
     private renderDisplayMode() {
-        const { todo, isCurrent } = this.props;
+        const { todo, isCurrent, project } = this.props;
 
         const innerHtml = { __html: parseInlineMarkdown(todo.title) };
 
@@ -58,6 +60,7 @@ export default class Todo extends React.Component<Props> {
                     {todo.deadline && !todo.isCompleted && (
                         <TodoDeadline deadline={todo.deadline} />
                     )}
+                    <strong>{project.abbrevation}</strong> ||{' '}
                     <span
                         className="todo--title"
                         dangerouslySetInnerHTML={innerHtml}
