@@ -10,6 +10,7 @@ import TodoDeadline from './components/TodoDeadline';
 import { Project } from '../../model/project';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
+export type OnEditClickCallback = (todo: TodoType) => void;
 
 type Props = {
     todo: TodoType;
@@ -20,6 +21,7 @@ type Props = {
     isEditMode: boolean;
     onEditCancel: OnCancelCallback;
     showProject: boolean;
+    onEditClick: OnEditClickCallback;
 };
 
 export default class Todo extends React.Component<Props> {
@@ -37,6 +39,12 @@ export default class Todo extends React.Component<Props> {
         // blur input to be able to still use keyboards shortcuts for navingation between todo's and not
         // be bound to checbox
         this.checkboxRef.current.blur();
+    };
+
+    private onEditClick = (event: React.MouseEvent<HTMLElement>) => {
+        event.preventDefault();
+
+        this.props.onEditClick(this.props.todo);
     };
 
     private renderDisplayMode() {
@@ -71,6 +79,17 @@ export default class Todo extends React.Component<Props> {
                         dangerouslySetInnerHTML={innerHtml}
                     />
                 </Label>
+                {!todo.isCompleted && (
+                    <div className="todo--actions">
+                        <ul className="list-inline">
+                            <li>
+                                <a href="#" onClick={this.onEditClick}>
+                                    edit
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                )}
             </div>
         );
     }

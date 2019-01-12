@@ -37,6 +37,9 @@ class Project extends React.Component<CombinedProps> {
                 <TodoOverview droppableId={project.id}>
                     {todos.map(todo => (
                         <Todo
+                            onEditClick={() =>
+                                console.log('@todo on todo click')
+                            }
                             showProject={false}
                             project={project}
                             key={todo.id}

@@ -3,6 +3,7 @@
     border-radius: 6px;
     border: 1px solid transparent;
     margin-bottom: 10px;
+    position: relative;
 
     &.todo__current {
         background-color: #fff;
@@ -37,6 +38,25 @@
         &.todo--deadline__warning {
             background: #ff9900;
             color: white;
+        }
+    }
+
+    .todo--actions {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 5px 20px;
+        border-radius: 5px;
+    }
+
+    &:hover {
+        .todo--deadline {
+            visibility: hidden;
+        }
+
+        .todo--actions {
+            display: block;
         }
     }
 }
