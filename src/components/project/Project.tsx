@@ -1,6 +1,5 @@
 import React from 'react';
 import { Project as ProjectModel } from './../../model/project';
-import { Card, CardTitle, CardBody } from 'reactstrap';
 import './Project.scss';
 import TodoOverview from '../calendarOverview/components/TodoOverview';
 import { Todo as TodoModel } from '../../model/todo';
@@ -31,35 +30,28 @@ class Project extends React.Component<CombinedProps> {
 
         return (
             <div className={className}>
-                <Card>
-                    <CardBody>
-                        <CardTitle>
-                            {project.title} ({project.abbrevation})
-                        </CardTitle>
-                        <QuickCreateTodo project={project} />
-                        <TodoOverview droppableId={project.id}>
-                            {todos.map(todo => (
-                                <Todo
-                                    showProject={false}
-                                    project={project}
-                                    key={todo.id}
-                                    isEditMode={false}
-                                    onEditCancel={() => {
-                                        console.log('on edit cancel');
-                                    }}
-                                    todo={todo}
-                                    isCurrent={false}
-                                    onCompletedChange={complete => {
-                                        console.log(
-                                            'on complete change',
-                                            complete
-                                        );
-                                    }}
-                                />
-                            ))}
-                        </TodoOverview>
-                    </CardBody>
-                </Card>
+                <h3 className="project--title">
+                    {project.abbrevation} | {project.title}
+                </h3>
+                <QuickCreateTodo project={project} />
+                <TodoOverview droppableId={project.id}>
+                    {todos.map(todo => (
+                        <Todo
+                            showProject={false}
+                            project={project}
+                            key={todo.id}
+                            isEditMode={false}
+                            onEditCancel={() => {
+                                console.log('on edit cancel');
+                            }}
+                            todo={todo}
+                            isCurrent={false}
+                            onCompletedChange={complete => {
+                                console.log('on complete change', complete);
+                            }}
+                        />
+                    ))}
+                </TodoOverview>
             </div>
         );
     }
