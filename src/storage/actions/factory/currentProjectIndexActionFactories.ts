@@ -1,6 +1,6 @@
 import { createAction } from 'typesafe-actions';
 
-export const createSetCurrentTodoIndexAction = createAction(
-    '@current-todo-index/set',
+export const createSetCurrentProjectIndexAction = createAction(
+    '@current-project-index/set',
     resolve => (index: number) => resolve({ index })
 );
