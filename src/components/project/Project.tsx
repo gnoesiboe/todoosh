@@ -8,9 +8,11 @@ import Todo from '../todo/Todo';
 import QuickCreateTodo from './../quickCreateTodo/QuickCreateTodo';
 import { connect } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
+import createClassName from 'classnames';
 
 type Props = {
     project: ProjectModel;
+    isCurrent: boolean;
 };
 
 type ReduxSuppliedProps = {
@@ -21,10 +23,14 @@ type CombinedProps = Props & ReduxSuppliedProps;
 
 class Project extends React.Component<CombinedProps> {
     public render() {
-        const { project, todos } = this.props;
+        const { project, todos, isCurrent } = this.props;
+
+        const className = createClassName('project', {
+            project__current: isCurrent,
+        });
 
         return (
-            <div className="project">
+            <div className={className}>
                 <Card>
                     <CardBody>
                         <CardTitle>

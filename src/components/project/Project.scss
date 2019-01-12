@@ -1,3 +1,7 @@
 .project {
     margin: 0 0 30px;
+
+    &.project__current {
+        border: 1px solid #999;
+    }
 }
