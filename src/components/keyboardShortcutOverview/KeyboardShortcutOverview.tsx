@@ -64,6 +64,14 @@ const shortcutsAndDescriptionMapping: ShortcutsAndDescriptionMappingType = [
         shortcut: KeyboardShortcuts.MOVE_TODO_TO_PREVIOUS_DATE,
         description: 'Move the currently selected todo to the previous date.',
     },
+    {
+        shortcut: KeyboardShortcuts.NEXT_PROJECT,
+        description: 'Select the next project.',
+    },
+    {
+        shortcut: KeyboardShortcuts.PREVIOUS_PROJECT,
+        description: 'Select the previous project.',
+    },
 ];
 
 const KeyboardShortcutOverview = () => {

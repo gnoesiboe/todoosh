@@ -13,7 +13,10 @@ import {
     unbindKeyboardShortcut,
 } from '../../navigation/KeyboardShortcuts';
 import { createSetCurrentProjectIndexAction } from '../../storage/actions/factory/currentProjectIndexActionFactories';
-import { determineNextIndex } from '../../utility/arrayIndexNavigationHelper';
+import {
+    determineNextIndex,
+    determinePrevousIndex,
+} from '../../utility/arrayIndexNavigationHelper';
 import { RootAction } from '../../storage/actions/rootAction';
 
 type OwnProps = {};
@@ -39,6 +42,10 @@ class ProjectOverview extends React.Component<CombinedProps> {
             KeyboardShortcuts.NEXT_PROJECT,
             this.onNextProjectKeyboardShortcutPressed
         );
+        bindKeyboardShortcut(
+            KeyboardShortcuts.PREVIOUS_PROJECT,
+            this.onPreviousProjectKeyboardShortcutPressed
+        );
     }
 
     private onNextProjectKeyboardShortcutPressed = () => {
@@ -56,8 +63,24 @@ class ProjectOverview extends React.Component<CombinedProps> {
         dispatch(createSetCurrentProjectIndexAction(newProjectIndex));
     };
 
+    private onPreviousProjectKeyboardShortcutPressed = () => {
+        const { currentProjectIndex, dispatch, projects } = this.props;
+
+        if (projects.length === 0) {
+            return;
+        }
+
+        const newProjectIndex =
+            currentProjectIndex === null
+                ? projects.length - 1
+                : determinePrevousIndex(currentProjectIndex, projects.length);
+
+        dispatch(createSetCurrentProjectIndexAction(newProjectIndex));
+    };
+
     private unbindKeyboardShortcuts() {
         unbindKeyboardShortcut(KeyboardShortcuts.NEXT_PROJECT);
+        unbindKeyboardShortcut(KeyboardShortcuts.PREVIOUS_PROJECT);
     }
 
     public render() {

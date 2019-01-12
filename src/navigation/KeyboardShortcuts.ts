@@ -20,7 +20,8 @@ export const KeyboardShortcuts: KeyboardShortcutsType = {
     MOVE_TODO_UP: ['meta+up'],
     MOVE_TODO_TO_NEXT_DATE: ['meta+right'],
     MOVE_TODO_TO_PREVIOUS_DATE: ['meta+left'],
-    NEXT_PROJECT: ['shift+right'],
+    NEXT_PROJECT: 'shift+right',
+    PREVIOUS_PROJECT: 'shift+left',
 };
 
 export function bindKeyboardShortcut(
