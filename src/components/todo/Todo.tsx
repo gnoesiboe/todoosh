@@ -19,6 +19,7 @@ type Props = {
     isCurrent: boolean;
     isEditMode: boolean;
     onEditCancel: OnCancelCallback;
+    showProject: boolean;
 };
 
 export default class Todo extends React.Component<Props> {
@@ -39,7 +40,7 @@ export default class Todo extends React.Component<Props> {
     };
 
     private renderDisplayMode() {
-        const { todo, isCurrent, project } = this.props;
+        const { todo, isCurrent, project, showProject } = this.props;
 
         const innerHtml = { __html: parseInlineMarkdown(todo.title) };
 
@@ -60,7 +61,11 @@ export default class Todo extends React.Component<Props> {
                     {todo.deadline && !todo.isCompleted && (
                         <TodoDeadline deadline={todo.deadline} />
                     )}
-                    <strong>{project.abbrevation}</strong> ||{' '}
+                    {showProject && (
+                        <span>
+                            <strong>{project.abbrevation}</strong> |&nbsp;
+                        </span>
+                    )}
                     <span
                         className="todo--title"
                         dangerouslySetInnerHTML={innerHtml}

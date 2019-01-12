@@ -517,6 +517,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <Todo
+                showProject={true}
                 key={todo.id}
                 isEditMode={isEditMode}
                 onEditCancel={this.onEditTodoCancel}

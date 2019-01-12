@@ -34,6 +34,7 @@ class Project extends React.Component<CombinedProps> {
                         <TodoOverview droppableId={project.id}>
                             {todos.map(todo => (
                                 <Todo
+                                    showProject={false}
                                     project={project}
                                     key={todo.id}
                                     isEditMode={false}
