@@ -95,6 +95,7 @@ class ProjectOverview extends React.Component<CombinedProps> {
                         {projects.map((project, index) => (
                             <Col md={3} key={project.id}>
                                 <Project
+                                    index={index}
                                     project={project}
                                     isCurrent={index === currentProjectIndex}
                                 />

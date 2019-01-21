@@ -10,7 +10,7 @@ import TodoDeadline from './components/TodoDeadline';
 import { Project } from '../../model/project';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
-export type OnEditClickCallback = (todo: TodoType) => void;
+export type OnEditClickCallback = () => void;
 
 type Props = {
     todo: TodoType;
@@ -44,7 +44,7 @@ export default class Todo extends React.Component<Props> {
     private onEditClick = (event: React.MouseEvent<HTMLElement>) => {
         event.preventDefault();
 
-        this.props.onEditClick(this.props.todo);
+        this.props.onEditClick();
     };
 
     private renderDisplayMode() {

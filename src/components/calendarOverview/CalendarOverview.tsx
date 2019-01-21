@@ -505,7 +505,20 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToDate(parseDate(date));
     }
 
-    private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
+    private onEditTodoClick = (nextTodoIndex: number) => {
+        const { dispatch } = this.props;
+
+        dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
+
+        this.startEditingTodo();
+    };
+
+    private renderTodo(
+        todo: TodoModel,
+        isCurrent: boolean,
+        date: Date,
+        index: number
+    ) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
         const project = this.props.projects.find(
             cursorProject => cursorProject.id === todo.projectId
@@ -517,7 +530,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <Todo
-                onEditClick={() => console.log('@todo on todo click')}
+                onEditClick={() => this.onEditTodoClick(index)}
                 showProject={true}
                 key={todo.id}
                 isEditMode={isEditMode}
@@ -551,7 +564,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         const isCurrent =
                             isCurrentDate && index === currentTodoIndex;
 
-                        return this.renderTodo(todo, isCurrent, date);
+                        return this.renderTodo(todo, isCurrent, date, index);
                     })}
                 </TodoOverview>
             </DayOverview>
