@@ -7,7 +7,7 @@ export type ProjectAction = ActionType<typeof actionFactories>;
 
 export type ProjectsReducerState = ProjectCollection;
 
-const DEFAULT_STATE: ProjectsReducerState = [];
+export const DEFAULT_STATE: ProjectsReducerState = [];
 
 export default (
     currentState: ProjectsReducerState = DEFAULT_STATE,

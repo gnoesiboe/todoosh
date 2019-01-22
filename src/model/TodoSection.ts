@@ -1,4 +1,4 @@
 export enum TodoSection {
-    date,
-    project,
+    date = 'date',
+    project = 'project',
 }

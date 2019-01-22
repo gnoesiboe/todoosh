@@ -5,23 +5,27 @@ import {
     parseDate,
     checkDateIsInRange,
 } from '../../../utility/dateTimeHelper';
+import { TodoSection } from '../../../model/TodoSection';
 
 export function applyOnlyRelevantTodosSelector(
     todosReducerState: TodosReducerState,
     visibleDateRange: Date[]
 ): TodoCollection {
-    const allTodos = todosReducerState || {};
+    const allDateTodos = todosReducerState
+        ? todosReducerState[TodoSection.date]
+        : {};
+
     const todosForComponent: { [date: string]: Todo[] } = {};
 
     visibleDateRange.forEach(date => {
         todosForComponent[formatDate(date)] = [];
     });
 
-    Object.keys(allTodos).forEach(key => {
+    Object.keys(allDateTodos).forEach(key => {
         const cursorDate = parseDate(key);
 
         if (checkDateIsInRange(visibleDateRange, cursorDate)) {
-            todosForComponent[key] = allTodos[key];
+            todosForComponent[key] = allDateTodos[key];
         }
     });
 

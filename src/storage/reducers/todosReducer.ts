@@ -7,12 +7,19 @@ import {
     checkDateIsInThePast,
     formatTodayAsDate,
 } from '../../utility/dateTimeHelper';
+import { TodoSection } from '../../model/TodoSection';
 
 export type TodoAction = ActionType<typeof actionFactories>;
 
-export type TodosReducerState = TodoCollection;
+export type TodosReducerState = {
+    [TodoSection.date]: TodoCollection;
+    [TodoSection.project]: TodoCollection;
+};
 
-export const DEFAULT_STATE: TodosReducerState = {};
+export const DEFAULT_STATE: TodosReducerState = {
+    [TodoSection.date]: {},
+    [TodoSection.project]: {},
+};
 
 export default (
     currentState: TodosReducerState = DEFAULT_STATE,
@@ -23,8 +30,10 @@ export default (
             // tslint:disable-next-line:no-shadowed-variable
             const { date, todo } = action.payload;
 
-            return produce<TodoCollection>(currentState, draft => {
-                const group = date || todo.projectId;
+            return produce<TodosReducerState>(currentState, draft => {
+                const section = date ? TodoSection.date : TodoSection.project;
+                const group =
+                    section === TodoSection.date ? date : todo.projectId;
 
                 if (!group) {
                     throw new Error(
@@ -32,19 +41,20 @@ export default (
                     );
                 }
 
-                if (typeof draft[group] === 'undefined') {
-                    draft[group] = [];
+                if (typeof draft[section][group] === 'undefined') {
+                    draft[section][group] = [];
                 }
 
-                draft[group].push(todo);
+                draft[section][group].push(todo);
             });
         }
 
         case getType(actionFactories.createToggleTodoCompletedAction): {
             const { date, completed, id, projectId } = action.payload;
 
-            return produce<TodoCollection>(currentState, draft => {
-                const group = date || projectId;
+            return produce<TodosReducerState>(currentState, draft => {
+                const section = date ? TodoSection.date : TodoSection.project;
+                const group = section === TodoSection.date ? date : projectId;
 
                 if (!group) {
                     throw new Error(
@@ -52,13 +62,13 @@ export default (
                     );
                 }
 
-                if (typeof draft[group] === 'undefined') {
+                if (typeof draft[section][group] === 'undefined') {
                     throw new Error(
                         `Expecting the index '${group}' to be available`
                     );
                 }
 
-                const completedTodo = draft[group].find(
+                const completedTodo = draft[section][group].find(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -76,8 +86,9 @@ export default (
         case getType(actionFactories.createUpdateTodoAction): {
             const { date, title, id, deadline, projectId } = action.payload;
 
-            return produce<TodoCollection>(currentState, draft => {
-                const group = date || projectId;
+            return produce<TodosReducerState>(currentState, draft => {
+                const section = date ? TodoSection.date : TodoSection.project;
+                const group = section === TodoSection.date ? date : projectId;
 
                 if (!group) {
                     throw new Error(
@@ -85,13 +96,13 @@ export default (
                     );
                 }
 
-                if (typeof draft[group] === 'undefined') {
+                if (typeof draft[section][group] === 'undefined') {
                     throw new Error(
                         `Expecting the index '${group}' to be available`
                     );
                 }
 
-                const todo = draft[group].find(
+                const todo = draft[section][group].find(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -108,8 +119,9 @@ export default (
         case getType(actionFactories.createDeleteTodoAction): {
             const { date, id, projectId } = action.payload;
 
-            return produce<TodoCollection>(currentState, draft => {
-                const group = date || projectId;
+            return produce<TodosReducerState>(currentState, draft => {
+                const section = date ? TodoSection.date : TodoSection.project;
+                const group = section === TodoSection.date ? date : projectId;
 
                 if (!group) {
                     throw new Error(
@@ -117,13 +129,13 @@ export default (
                     );
                 }
 
-                if (typeof draft[group] === 'undefined') {
+                if (typeof draft[section][group] === 'undefined') {
                     throw new Error(
                         `Expecting the index '${group}' to be available`
                     );
                 }
 
-                const todoIndex = draft[group].findIndex(
+                const todoIndex = draft[section][group].findIndex(
                     cursorTodo => cursorTodo.id === id
                 );
 
@@ -131,41 +143,44 @@ export default (
                     throw new Error('Cannot find todo to delete');
                 }
 
-                draft[group].splice(todoIndex, 1);
+                draft[section][group].splice(todoIndex, 1);
             });
         }
 
         case getType(actionFactories.createMoveTodoAction): {
             const { from, to } = action.payload;
 
-            return produce<TodoCollection>(currentState, draft => {
+            return produce<TodosReducerState>(currentState, draft => {
                 // extract todo from old location
-                if (typeof draft[from.date] === 'undefined') {
+                if (typeof draft[TodoSection.date][from.date] === 'undefined') {
                     throw new Error('Expecting the date to be available');
                 }
 
-                const [todo] = draft[from.date].splice(from.index, 1);
+                const [todo] = draft[TodoSection.date][from.date].splice(
+                    from.index,
+                    1
+                );
 
                 // move todo to new location
-                if (typeof draft[to.date] === 'undefined') {
-                    draft[to.date] = [];
+                if (typeof draft[TodoSection.date][to.date] === 'undefined') {
+                    draft[TodoSection.date][to.date] = [];
                 }
 
-                draft[to.date].splice(to.index, 0, todo);
+                draft[TodoSection.date][to.date].splice(to.index, 0, todo);
             });
         }
 
         case getType(
             actionFactories.createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction
         ): {
-            return produce<TodoCollection>(currentState, draft => {
+            return produce<TodosReducerState>(currentState, draft => {
                 const dateTodayAsString = formatTodayAsDate();
 
-                if (!draft[dateTodayAsString]) {
-                    draft[dateTodayAsString] = [];
+                if (!draft[TodoSection.date][dateTodayAsString]) {
+                    draft[TodoSection.date][dateTodayAsString] = [];
                 }
 
-                Object.keys(draft).forEach(dateAsString => {
+                Object.keys(draft[TodoSection.date]).forEach(dateAsString => {
                     const date = parseDate(dateAsString);
 
                     if (!checkDateIsInThePast(date)) {
@@ -175,17 +190,17 @@ export default (
                     }
 
                     // first remove todos that are completed
-                    draft[dateAsString] = draft[dateAsString].filter(
-                        todo => !todo.isCompleted
-                    );
+                    draft[TodoSection.date][dateAsString] = draft[
+                        TodoSection.date
+                    ][dateAsString].filter(todo => !todo.isCompleted);
 
                     // move not completed todos to today (prepend)
-                    draft[dateAsString].forEach(todo => {
-                        draft[dateTodayAsString].push(todo);
+                    draft[TodoSection.date][dateAsString].forEach(todo => {
+                        draft[TodoSection.date][dateTodayAsString].push(todo);
                     });
 
                     // make sure nothing remains
-                    delete draft[dateAsString];
+                    delete draft[TodoSection.date][dateAsString];
                 });
             });
         }

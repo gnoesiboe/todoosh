@@ -12,6 +12,7 @@ import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/c
 import { RootAction } from '../../storage/actions/rootAction';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { createSetCurrentProjectIndexAction } from '../../storage/actions/factory/currentProjectIndexActionFactories';
+import { TodoSection } from '../../model/TodoSection';
 
 type Props = {
     project: ProjectModel;
@@ -119,7 +120,9 @@ function mapGlobalStateToProps(
 ): ReduxSuppliedProps {
     const { project } = props;
 
-    const allTodos = globalState.todos || {};
+    const allTodos = globalState.todos
+        ? globalState.todos[TodoSection.project]
+        : {};
     const projectTodos = allTodos[project.id] || [];
     const currentTodoIndex = globalState.currentTodoIndex || null;
 
