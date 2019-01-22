@@ -1,16 +1,15 @@
 import { ThunkResult } from './../thunkAction';
 import { createAction } from 'typesafe-actions';
-import { CurrentTodoSection } from '../../reducers/currentTodoReducer';
+import { TodoSection } from '../../../model/TodoSection';
 
 export const setCurrentTodoAction = createAction(
     '@current-todo/set',
-    resolve => (id: string, section: CurrentTodoSection) =>
-        resolve({ id, section })
+    resolve => (id: string, section: TodoSection) => resolve({ id, section })
 );
 
 export function createMoveToNextTodoAction(
     id: string,
-    section: CurrentTodoSection
+    section: TodoSection
 ): ThunkResult<void> {
     return (dispatch, getState) => {
         const todos = getState().todos;

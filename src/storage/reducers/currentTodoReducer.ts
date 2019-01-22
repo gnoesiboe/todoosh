@@ -1,22 +1,18 @@
 import { ActionType, getType } from 'typesafe-actions';
 import * as actionFactories from './../actions/factory/currentTodoActionFactories';
 import produce from 'immer';
+import { TodoSection } from '../../model/TodoSection';
 
 export type CurrentTodoAction = ActionType<typeof actionFactories>;
 
-export enum CurrentTodoSection {
-    date,
-    project,
-}
-
 export type CurrentTodoReducerState = {
-    [CurrentTodoSection.date]: string | null;
-    [CurrentTodoSection.project]: string | null;
+    [TodoSection.date]: string | null;
+    [TodoSection.project]: string | null;
 };
 
 const DEFAULT_STATE: CurrentTodoReducerState = {
-    [CurrentTodoSection.date]: null,
-    [CurrentTodoSection.project]: null,
+    [TodoSection.date]: null,
+    [TodoSection.project]: null,
 };
 
 export default (
