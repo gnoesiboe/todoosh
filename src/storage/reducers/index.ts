@@ -7,12 +7,16 @@ import projectsReducer, { ProjectsReducerState } from './projectsReducer';
 import currentProjectIndexReducer, {
     CurrentProjectIndexReducerState,
 } from './currentProjectIndexReducer';
+import currentTodoReducer, {
+    CurrentTodoReducerState,
+} from './currentTodoReducer';
 
 export type GlobalState = {
     todos?: TodosReducerState;
     currentTodoIndex?: CurrentTodoIndexReducerState;
     projects?: ProjectsReducerState;
     currentProjectIndex?: CurrentProjectIndexReducerState;
+    currentTodo?: CurrentTodoReducerState;
 };
 
 export default combineReducers({
@@ -20,4 +24,5 @@ export default combineReducers({
     projects: projectsReducer,
     currentTodoIndex: currentTodoIndexReducer,
     currentProjectIndex: currentProjectIndexReducer,
+    currentTodo: currentTodoReducer,
 });
