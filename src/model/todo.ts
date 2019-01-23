@@ -1,11 +1,10 @@
 export type Todo = {
     readonly id: string;
-    readonly projectId: string;
     readonly title: string;
     readonly deadline: string | null;
-    readonly isCompleted: boolean;
+    readonly completedAt: string | null;
 };
 
-export type TodoCollection = Readonly<{
-    [dateOrProjectId: string]: Todo[];
-}>;
+export type TodoCollection = Todo[];
+
+export type TodoIdCollection = Readonly<string[]>;

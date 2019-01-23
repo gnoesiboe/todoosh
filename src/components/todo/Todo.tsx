@@ -54,7 +54,7 @@ export default class Todo extends React.Component<Props> {
 
         const className = createClassName('todo', {
             todo__current: isCurrent,
-            todo__completed: todo.isCompleted,
+            todo__completed: !!todo.completedAt,
         });
 
         return (
@@ -62,11 +62,11 @@ export default class Todo extends React.Component<Props> {
                 <Label check>
                     <Input
                         type="checkbox"
-                        checked={todo.isCompleted}
+                        checked={!!todo.completedAt}
                         onChange={this.onCompleteChange}
                         innerRef={this.checkboxRef}
                     />{' '}
-                    {todo.deadline && !todo.isCompleted && (
+                    {todo.deadline && !todo.completedAt && (
                         <TodoDeadline deadline={todo.deadline} />
                     )}
                     {showProject && (
@@ -79,7 +79,7 @@ export default class Todo extends React.Component<Props> {
                         dangerouslySetInnerHTML={innerHtml}
                     />
                 </Label>
-                {!todo.isCompleted && (
+                {!todo.completedAt && (
                     <div className="todo--actions">
                         <ul className="list-inline">
                             <li>

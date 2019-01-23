@@ -4,9 +4,7 @@ import TodoFormStateHandler, {
     OnSubmitCallback,
 } from './components/TodoFormStateHandler';
 import { RootAction } from '../../storage/actions/rootAction';
-import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { OnCancelCallback } from './components/TodoForm';
-import { formatDate } from '../../utility/dateTimeHelper';
 import {
     KeyboardShortcuts,
     bindKeyboardShortcut,
@@ -14,6 +12,7 @@ import {
 } from '../../navigation/KeyboardShortcuts';
 import { GlobalState } from '../../storage/reducers';
 import { ProjectCollection } from '../../model/project';
+import { createAddNewTodoAction } from '../../storage/actions/factory/combinedActionsFactories';
 
 type Props = {
     date: Date;
@@ -87,14 +86,13 @@ class CreateTodo extends React.Component<CombinedProps, State> {
             );
         }
 
-        const action = createAddTodoAction(
-            values.title,
-            projectId,
-            this.props.date,
-            deadline ? formatDate(deadline) : null
+        const { dispatch, date } = this.props;
+
+        dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createAddNewTodoAction(values.title, deadline, projectId, date)
         );
 
-        this.props.dispatch(action);
         this.hideForm();
     };
 

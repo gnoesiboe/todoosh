@@ -5,11 +5,11 @@ import TodoFormStateHandler, {
 import { Todo } from '../../model/todo';
 import { connect, DispatchProp } from 'react-redux';
 import { RootAction } from '../../storage/actions/rootAction';
-import { createUpdateTodoAction } from '../../storage/actions/factory/todoActionFactories';
-import { formatDate } from '../../utility/dateTimeHelper';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { ProjectCollection } from '../../model/project';
 import { GlobalState } from '../../storage/reducers';
+import { createUpdateTodoAction } from '../../storage/actions/factory/combinedActionsFactories';
+import { parseDate } from '../../utility/dateTimeHelper';
 
 type Props = {
     todo: Todo;
@@ -36,15 +36,17 @@ class EditTodo extends React.Component<CombinedProps> {
             );
         }
 
-        const action = createUpdateTodoAction(
-            todo.id,
-            projectId,
-            date ? formatDate(date) : null,
-            values.title,
-            deadline ? formatDate(deadline) : null
+        dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createUpdateTodoAction(
+                todo.id,
+                projectId,
+                date || null,
+                values.title,
+                deadline || null,
+                todo.completedAt ? parseDate(todo.completedAt) : null
+            )
         );
-
-        dispatch(action);
         onCancel();
     };
 

@@ -8,11 +8,11 @@ import QuickCreateTodo from './../quickCreateTodo/QuickCreateTodo';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
 import createClassName from 'classnames';
-import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
 import { RootAction } from '../../storage/actions/rootAction';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { createSetCurrentProjectIndexAction } from '../../storage/actions/factory/currentProjectIndexActionFactories';
 import { TodoSection } from '../../model/TodoSection';
+import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
 
 type Props = {
     project: ProjectModel;
@@ -22,7 +22,7 @@ type Props = {
 
 type ReduxSuppliedProps = {
     todos: TodoModel[];
-    currentTodoIndex: number | null;
+    currentTodoId: string | null;
 };
 
 type CombinedProps = Props & ReduxSuppliedProps & DispatchProp<RootAction>;
@@ -40,11 +40,11 @@ class Project extends React.Component<CombinedProps, State> {
         };
     }
 
-    private onTodoEditClick = (todoIndex: number) => {
+    private onTodoEditClick = (id: string) => {
         const { dispatch, index } = this.props;
 
         dispatch(createSetCurrentProjectIndexAction(index));
-        dispatch(createSetCurrentTodoIndexAction(todoIndex));
+        dispatch(createSetCurrentTodoAction(id, TodoSection.project));
 
         this.startEditingTodo();
     };
@@ -67,18 +67,18 @@ class Project extends React.Component<CombinedProps, State> {
         this.stopEditingTodo();
     };
 
-    private renderTodo(todo: TodoModel, index: number) {
-        const { project, isCurrent, currentTodoIndex } = this.props;
+    private renderTodo(todo: TodoModel) {
+        const { project, isCurrent, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
 
         const isEditMode =
-            isCurrent && isEditingTodo && currentTodoIndex === index;
+            isCurrent && isEditingTodo && todo.id === currentTodoId;
 
         console.log('is edit mode', isEditMode);
 
         return (
             <Todo
-                onEditClick={() => this.onTodoEditClick(index)}
+                onEditClick={() => this.onTodoEditClick(todo.id)}
                 showProject={false}
                 project={project}
                 key={todo.id}
@@ -107,7 +107,7 @@ class Project extends React.Component<CombinedProps, State> {
                 </h3>
                 <QuickCreateTodo project={project} />
                 <TodoOverview droppableId={project.id}>
-                    {todos.map((todo, index) => this.renderTodo(todo, index))}
+                    {todos.map(todo => this.renderTodo(todo))}
                 </TodoOverview>
             </div>
         );
@@ -120,13 +120,25 @@ function mapGlobalStateToProps(
 ): ReduxSuppliedProps {
     const { project } = props;
 
-    const allTodos = globalState.todos
-        ? globalState.todos[TodoSection.project]
-        : {};
-    const projectTodos = allTodos[project.id] || [];
-    const currentTodoIndex = globalState.currentTodoIndex || null;
+    // @todo move below to selector
 
-    return { todos: projectTodos, currentTodoIndex };
+    const allTodos = globalState.todos || [];
+    const projectTodos = project.todos.map(todoId => {
+        const todo = allTodos.find(cursorTodo => cursorTodo.id === todoId);
+
+        if (!todo) {
+            throw new Error(
+                `Could not find referenced todo with id: ${todoId}`
+            );
+        }
+
+        return todo;
+    });
+    const currentTodoId = globalState.currentTodo
+        ? globalState.currentTodo[TodoSection.project]
+        : null;
+
+    return { todos: projectTodos, currentTodoId };
 }
 
 export default connect<ReduxSuppliedProps, {}, Props>(mapGlobalStateToProps)(

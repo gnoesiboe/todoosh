@@ -1,33 +1,33 @@
 import { TodosReducerState } from '../../../storage/reducers/todosReducer';
-import { TodoCollection, Todo } from '../../../model/todo';
-import {
-    formatDate,
-    parseDate,
-    checkDateIsInRange,
-} from '../../../utility/dateTimeHelper';
-import { TodoSection } from '../../../model/TodoSection';
+import { Todo } from '../../../model/todo';
+import { formatDate } from '../../../utility/dateTimeHelper';
+import { DatesReducerState } from '../../../storage/reducers/datesReducer';
+
+export type TodosForCalendarOverviewType = {
+    [date: string]: Todo[];
+};
 
 export function applyOnlyRelevantTodosSelector(
-    todosReducerState: TodosReducerState,
+    dates: DatesReducerState,
+    todos: TodosReducerState,
     visibleDateRange: Date[]
-): TodoCollection {
-    const allDateTodos = todosReducerState
-        ? todosReducerState[TodoSection.date]
-        : {};
+): TodosForCalendarOverviewType {
+    console.log('todos', todos);
 
-    const todosForComponent: { [date: string]: Todo[] } = {};
+    const todosForComponent: TodosForCalendarOverviewType = {};
 
     visibleDateRange.forEach(date => {
         todosForComponent[formatDate(date)] = [];
     });
 
-    Object.keys(allDateTodos).forEach(key => {
-        const cursorDate = parseDate(key);
+    Object.keys(todosForComponent).forEach(key => {
+        const todoIdsForDate =
+            typeof dates[key] !== 'undefined' ? dates[key] : [];
 
-        if (checkDateIsInRange(visibleDateRange, cursorDate)) {
-            todosForComponent[key] = allDateTodos[key];
-        }
+        todosForComponent[key] = todos.filter(cursorTodo =>
+            todoIdsForDate.includes(cursorTodo.id)
+        );
     });
 
-    return todosForComponent as TodoCollection;
+    return todosForComponent;
 }

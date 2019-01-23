@@ -17,21 +17,12 @@ import { GlobalState } from '../../storage/reducers';
 import { RouteComponentProps, withRouter, Redirect } from 'react-router';
 import { RootAction } from './../../storage/actions/rootAction';
 import CreateTodo from './../createTodo/CreateTodo';
-import { TodoCollection } from '../../model/todo';
 import { createVisibleDateRangeFromRouterDate } from './utility/dateRangeHelper';
-import { applyOnlyRelevantTodosSelector } from './utility/relevantTodosSelector';
 import {
-    createToggleTodoCompletedAction,
-    createDeleteTodoAction,
-    createMoveTodoAction,
-    createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction,
-} from '../../storage/actions/factory/todoActionFactories';
+    applyOnlyRelevantTodosSelector,
+    TodosForCalendarOverviewType,
+} from './utility/relevantTodosSelector';
 import { createTodosPath, createHomePath } from '../../routing/urlGenerator';
-import { createSetCurrentTodoIndexAction } from '../../storage/actions/factory/currentTodoIndexActionFactories';
-import {
-    determineNextIndex,
-    determinePrevousIndex,
-} from './../../utility/arrayIndexNavigationHelper';
 import DayOverviewTitle from './components/DayOverviewTitle';
 import TodoOverview from './components/TodoOverview';
 import Todo from '../todo/Todo';
@@ -49,6 +40,26 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DEFAULT_STATE as DEFAULT_TODO_REDUCER_STATE } from '../../storage/reducers/todosReducer';
 import { ProjectCollection } from '../../model/project';
+import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
+import { TodoSection } from '../../model/TodoSection';
+import {
+    createRemoveTodoAction,
+    createSelectPreviousDateTodoAction,
+    createSelectNextDateTodoAction,
+} from './../../storage/actions/factory/combinedActionsFactories';
+import {
+    createMoveTodosInThePastToTodayAction,
+    createMoveTodoWithinDatesAction,
+    createMoveTodoToNextSpotAction,
+    createMoveTodoToPreviousSpotAction,
+    createMoveTodoToNextDateAction,
+    createMoveTodoToPreviousDateAction,
+} from '../../storage/actions/factory/datesActionFactories';
+import {
+    createRemoveCompletedTodosAction,
+    createToggleTodoCompletedAction,
+} from '../../storage/actions/factory/todoActionFactories';
+import { DatesReducerState } from '../../storage/reducers/datesReducer';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -57,16 +68,17 @@ type ReactRouterMatchParams = {
 type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
 
 type ReduxSuppliedProps = {
-    todos: TodoCollection;
+    todos: TodosForCalendarOverviewType;
     visibleDateRange: Date[];
     currentDate: Date;
-    currentTodoIndex: number;
+    currentTodoId: string | null;
     projects: ProjectCollection;
+    dates: DatesReducerState;
 };
 
 type CombinedProps = OwnProps &
     ReduxSuppliedProps &
-    DispatchProp<RootAction> &
+    DispatchProp &
     RouteComponentProps<{}>;
 
 type State = {
@@ -113,9 +125,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private ensureAllCompletedTodosInThePastAreEitherMovedOrRemoved() {
-        this.props.dispatch(
-            createMoveUnfinishedTodosInThePastToTodayAndRemoveCompletedAction()
-        );
+        const { dispatch } = this.props;
+
+        dispatch(createRemoveCompletedTodosAction());
+        dispatch(createMoveTodosInThePastToTodayAction());
     }
 
     private bindKeyboardShortcuts() {
@@ -184,19 +197,17 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private onTodoDeleteKeyboardShortcutPressed = () => {
-        const { todos, currentDate, currentTodoIndex, dispatch } = this.props;
+        const { currentTodoId, dispatch } = this.props;
 
-        const currentDayTodos = todos[formatDate(currentDate)];
-        const currentTodo = currentDayTodos[currentTodoIndex];
+        if (!currentTodoId) {
+            toast.error('No current todo selected to delete');
 
-        if (!currentTodo) {
-            toast.error('There is no current todo to delete');
+            return;
         }
 
         if (confirm('Are you sure?')) {
-            dispatch(
-                createDeleteTodoAction(currentTodo.id, formatDate(currentDate))
-            );
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            dispatch(createRemoveTodoAction(currentTodoId));
         }
     };
 
@@ -235,25 +246,13 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             return;
         }
 
-        const { todos, currentDate, currentTodoIndex } = this.props;
+        const { currentTodoId } = this.props;
 
-        const currentDayTodos = todos[formatDate(currentDate)];
-        const currentTodo = currentDayTodos[currentTodoIndex];
-
-        if (!currentTodo) {
-            toast.error(
-                'There is no current todo to toggle the completed status of'
-            );
-
+        if (!currentTodoId) {
             return;
         }
 
-        this.setTodoCompletedStatus(
-            currentTodo.id,
-            currentTodo.projectId,
-            currentDate,
-            !currentTodo.isCompleted
-        );
+        this.toggleTodoCompletedStatus(currentTodoId);
     };
 
     private onMoveToNextDateKeyboardShortcutPressed = () => {
@@ -264,24 +263,16 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // prevent page scrolling up
         event.preventDefault();
 
-        const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
-
-        const arrayLength = todos[formatDate(currentDate)].length;
-        const nextIndex = determinePrevousIndex(currentTodoIndex, arrayLength);
-
-        dispatch(createSetCurrentTodoIndexAction(nextIndex));
+        // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+        this.props.dispatch(createSelectPreviousDateTodoAction());
     };
 
     private onMoveToNextTodoKeyboardShortcutPressed = (event: Event) => {
         // prevent page scrolling down
         event.preventDefault();
 
-        const { dispatch, currentTodoIndex, todos, currentDate } = this.props;
-
-        const arrayLength = todos[formatDate(currentDate)].length;
-        const nextIndex = determineNextIndex(currentTodoIndex, arrayLength);
-
-        dispatch(createSetCurrentTodoIndexAction(nextIndex));
+        // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+        this.props.dispatch(createSelectNextDateTodoAction());
     };
 
     private navigateToNextDate() {
@@ -330,26 +321,12 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.navigateToNextDate();
     };
 
-    private onTodoCompletedChange: OnTodoCompletedChangeCallback = (
-        todo,
-        date,
-        completed
-    ) => {
-        this.setTodoCompletedStatus(todo.id, todo.projectId, date, completed);
+    private onTodoCompletedChange: OnTodoCompletedChangeCallback = todo => {
+        this.toggleTodoCompletedStatus(todo.id);
     };
 
-    private setTodoCompletedStatus(
-        todoId: string,
-        projectId: string,
-        date: Date,
-        completed: boolean
-    ) {
-        const action = createToggleTodoCompletedAction(
-            todoId,
-            formatDate(date),
-            completed,
-            projectId
-        );
+    private toggleTodoCompletedStatus(todoId: string) {
+        const action = createToggleTodoCompletedAction(todoId);
 
         this.props.dispatch(action);
     }
@@ -369,11 +346,14 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const oldIndex = result.source.index;
         const newIndex = destination.index;
 
-        dispatch(createMoveTodoAction(oldDate, newDate, oldIndex, newIndex));
-
-        const newCurrentTodoIndex = oldDate === newDate ? newIndex : 0;
-
-        dispatch(createSetCurrentTodoIndexAction(newCurrentTodoIndex));
+        dispatch(
+            createMoveTodoWithinDatesAction(
+                oldDate,
+                newDate,
+                oldIndex,
+                newIndex
+            )
+        );
     };
 
     private onMoveTodoDownKeyboardShortcutPressed = (
@@ -381,28 +361,14 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     ) => {
         // as cmd + down is also used for moving down the page in Google Chrome, prevent default behaviour
         event.preventDefault();
-        const { currentTodoIndex, todos, dispatch, currentDate } = this.props;
-        const currentDateAsString = formatDate(currentDate);
 
-        const noOfTodosForCurrentDate =
-            typeof todos[currentDateAsString] !== 'undefined'
-                ? todos[currentDateAsString].length
-                : 0;
-        const nextTodoIndex = determineNextIndex(
-            currentTodoIndex,
-            noOfTodosForCurrentDate
-        );
+        const { currentTodoId, dispatch } = this.props;
 
-        dispatch(
-            createMoveTodoAction(
-                currentDateAsString,
-                currentDateAsString,
-                currentTodoIndex,
-                nextTodoIndex
-            )
-        );
+        if (!currentTodoId) {
+            return;
+        }
 
-        dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
+        dispatch(createMoveTodoToNextSpotAction(currentTodoId));
     };
 
     private onMoveTodoUpKeyboardShortcutPressed = (
@@ -411,28 +377,13 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + up is also used for moving up the page in Google Chrome, prevent default behaviour
         event.preventDefault();
 
-        const { currentDate, currentTodoIndex, todos, dispatch } = this.props;
-        const currentDateAsString = formatDate(currentDate);
+        const { currentTodoId, dispatch } = this.props;
 
-        const noOfTodosForCurrentDate =
-            typeof todos[currentDateAsString] !== 'undefined'
-                ? todos[currentDateAsString].length
-                : 0;
-        const nextTodoIndex = determinePrevousIndex(
-            currentTodoIndex,
-            noOfTodosForCurrentDate
-        );
+        if (!currentTodoId) {
+            return;
+        }
 
-        dispatch(
-            createMoveTodoAction(
-                currentDateAsString,
-                currentDateAsString,
-                currentTodoIndex,
-                nextTodoIndex
-            )
-        );
-
-        dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
+        dispatch(createMoveTodoToPreviousSpotAction(currentTodoId));
     };
 
     private onMoveTodoToNextDateKeyboardShortcutPressed = (
@@ -441,22 +392,15 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + right is also used for navigation in history, in Google Chrome, prevent default behaviour
         event.preventDefault();
 
-        const { dispatch, currentDate, currentTodoIndex } = this.props;
+        const { dispatch, currentTodoId } = this.props;
 
-        const nextDate = createDateRelativeToSupplied(currentDate, 1);
-        const nextIndex = 0;
+        if (!currentTodoId) {
+            return;
+        }
 
-        dispatch(
-            createMoveTodoAction(
-                formatDate(currentDate),
-                formatDate(nextDate),
-                currentTodoIndex,
-                nextIndex
-            )
-        );
+        dispatch(createMoveTodoToNextDateAction(currentTodoId));
 
-        dispatch(createSetCurrentTodoIndexAction(nextIndex));
-        this.navigateToDate(nextDate);
+        this.navigateToNextDate();
     };
 
     private onMoveTodoToPreviousDateKeyboardShortcutPressed = (
@@ -465,63 +409,33 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + left is also used for navigation in history, in Google Chrome, prevent default behaviour
         event.preventDefault();
 
-        const { dispatch, currentDate, currentTodoIndex, todos } = this.props;
+        const { dispatch, currentTodoId } = this.props;
 
-        const currentDateAsString = formatDate(currentDate);
-        const previousDate = createDateRelativeToSupplied(currentDate, -1);
-
-        if (checkDateIsInThePast(previousDate)) {
-            toast.error('Cannot move a todo to the past');
-
+        if (!currentTodoId) {
             return;
         }
 
-        const previousDateAsString = formatDate(previousDate);
-        const nextIndex = 0;
+        dispatch(createMoveTodoToPreviousDateAction(currentTodoId));
 
-        if (
-            typeof todos[currentDateAsString] === 'undefined' ||
-            typeof todos[currentDateAsString][currentTodoIndex] === 'undefined'
-        ) {
-            toast.error('No todo was selected to move to the previous date');
-
-            return;
-        }
-
-        dispatch(
-            createMoveTodoAction(
-                formatDate(currentDate),
-                previousDateAsString,
-                currentTodoIndex,
-                nextIndex
-            )
-        );
-
-        dispatch(createSetCurrentTodoIndexAction(nextIndex));
-        this.navigateToDate(previousDate);
+        this.navigateToPreviousDate();
     };
 
-    private onDayOverviewTitleClick(date: string) {
-        this.navigateToDate(parseDate(date));
+    private onDayOverviewTitleClick(dateAsString: string) {
+        this.navigateToDate(parseDate(dateAsString));
     }
 
-    private onEditTodoClick = (nextTodoIndex: number) => {
+    private onEditTodoClick = (id: string) => {
         const { dispatch } = this.props;
 
-        dispatch(createSetCurrentTodoIndexAction(nextTodoIndex));
+        dispatch(createSetCurrentTodoAction(id, TodoSection.date));
 
         this.startEditingTodo();
     };
 
-    private renderTodo(
-        todo: TodoModel,
-        isCurrent: boolean,
-        date: Date,
-        index: number
-    ) {
+    private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
-        const project = this.props.projects.find(
-            cursorProject => cursorProject.id === todo.projectId
+        const project = this.props.projects.find(cursorProject =>
+            cursorProject.todos.includes(todo.id)
         );
 
         if (!project) {
@@ -530,7 +444,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <Todo
-                onEditClick={() => this.onEditTodoClick(index)}
+                onEditClick={() => this.onEditTodoClick(todo.id)}
                 showProject={true}
                 key={todo.id}
                 isEditMode={isEditMode}
@@ -547,10 +461,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     }
 
     private renderDayOverview(date: Date, isCurrentDate: boolean) {
-        const { todos, currentDate, currentTodoIndex } = this.props;
+        const { todos, currentDate, currentTodoId } = this.props;
 
         const dateAsString = formatDate(date);
-        const todosForDate = todos[dateAsString];
+        const todosForDate = todos[dateAsString] || [];
 
         return (
             <DayOverview isCurrent={isCurrentDate}>
@@ -560,11 +474,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
                 <TodoOverview droppableId={formatDate(date)}>
-                    {todosForDate.map((todo, index) => {
-                        const isCurrent =
-                            isCurrentDate && index === currentTodoIndex;
+                    {todosForDate.map(todo => {
+                        const isCurrent = todo.id === currentTodoId;
 
-                        return this.renderTodo(todo, isCurrent, date, index);
+                        return this.renderTodo(todo, isCurrent, date);
                     })}
                 </TodoOverview>
             </DayOverview>
@@ -627,16 +540,30 @@ function mapGlobalStateToProps(
     globalState: GlobalState,
     props: OwnProps
 ): ReduxSuppliedProps {
+    // @todo use selectors to prepare the data for display in this component to make it
+    // less comlex to resolve dates and projects and stuff
+
     const currentDate = parseDate(props.match.params.startDate);
     const visibleDateRange = createVisibleDateRangeFromRouterDate(currentDate);
-    const todos: TodoCollection = applyOnlyRelevantTodosSelector(
+    const dates = globalState.dates || {};
+    const todos = applyOnlyRelevantTodosSelector(
+        dates,
         globalState.todos || DEFAULT_TODO_REDUCER_STATE,
         visibleDateRange
     );
-    const currentTodoIndex = globalState.currentTodoIndex || 0;
+    const currentTodoId = globalState.currentTodo
+        ? globalState.currentTodo[TodoSection.date]
+        : null;
     const projects = globalState.projects || [];
 
-    return { todos, visibleDateRange, currentDate, currentTodoIndex, projects };
+    return {
+        todos,
+        visibleDateRange,
+        currentDate,
+        currentTodoId,
+        projects,
+        dates,
+    };
 }
 
 export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(

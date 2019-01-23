@@ -4,8 +4,8 @@ import { RootAction } from '../../storage/actions/rootAction';
 import QuickTodoForm, {
     OnFormSubmittedAndValidCallback,
 } from './components/QuickTodoForm';
-import { createAddTodoAction } from '../../storage/actions/factory/todoActionFactories';
 import { Project } from '../../model/project';
+import { createAddNewTodoAction } from '../../storage/actions/factory/combinedActionsFactories';
 
 type Props = {
     project: Project;
@@ -17,7 +17,8 @@ class QuickCreateTodo extends React.Component<CombinedProps> {
     private onFormSubmittedAndValid: OnFormSubmittedAndValidCallback = values => {
         const { dispatch, project } = this.props;
 
-        dispatch(createAddTodoAction(values.title, project.id));
+        // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+        dispatch(createAddNewTodoAction(values.title, null, project.id, null));
     };
 
     public render() {

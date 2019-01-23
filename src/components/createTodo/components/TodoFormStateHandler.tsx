@@ -45,10 +45,10 @@ export default class TodoFormStateHandler extends React.Component<Props> {
     }
 
     private resolveCurrentProjectOption(
-        projectId: string
+        todoId: string
     ): ProjectSelectOptionType | undefined {
-        const selectedProject = this.props.projects.find(
-            project => project.id === projectId
+        const selectedProject = this.props.projects.find(project =>
+            project.todos.includes(todoId)
         );
 
         if (!selectedProject) {
@@ -57,7 +57,7 @@ export default class TodoFormStateHandler extends React.Component<Props> {
 
         return {
             label: selectedProject.title,
-            value: projectId,
+            value: selectedProject.id,
         };
     }
 
@@ -75,10 +75,9 @@ export default class TodoFormStateHandler extends React.Component<Props> {
     private determineInitialValues(todo?: Todo): TodoFormValues {
         return {
             title: todo ? todo.title : '',
-            projectId:
-                todo && todo.projectId
-                    ? this.resolveCurrentProjectOption(todo.projectId)
-                    : undefined,
+            projectId: todo
+                ? this.resolveCurrentProjectOption(todo.id)
+                : undefined,
             deadline:
                 todo && todo.deadline
                     ? this.resolveCurrentDeadlineOption(todo.deadline)

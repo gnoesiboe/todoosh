@@ -10,7 +10,7 @@ export type CurrentTodoReducerState = {
     [TodoSection.project]: string | null;
 };
 
-const DEFAULT_STATE: CurrentTodoReducerState = {
+export const DEFAULT_STATE: CurrentTodoReducerState = {
     [TodoSection.date]: null,
     [TodoSection.project]: null,
 };
@@ -20,10 +20,10 @@ export default (
     action: CurrentTodoAction
 ): CurrentTodoReducerState => {
     switch (action.type) {
-        case getType(actionFactories.setCurrentTodoAction): {
-            return produce<CurrentTodoReducerState>(currentState, draft => {
-                const { id, section } = action.payload;
+        case getType(actionFactories.createSetCurrentTodoAction): {
+            const { id, section } = action.payload;
 
+            return produce<CurrentTodoReducerState>(currentState, draft => {
                 draft[section] = id;
             });
         }

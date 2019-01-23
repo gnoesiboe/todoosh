@@ -21,6 +21,40 @@ export default (
                 draft.push(newProject);
             });
         }
+
+        case getType(actionFactories.createAddTodoToProjectAction): {
+            const { id, todoId } = action.payload;
+
+            return produce<ProjectCollection>(currentState, draft => {
+                const project = draft.find(
+                    cursorProject => cursorProject.id === id
+                );
+
+                if (!project) {
+                    throw new Error(
+                        'Expecting project to be available at this point'
+                    );
+                }
+
+                if (!project.todos.includes(todoId)) {
+                    project.todos.push(todoId);
+                }
+            });
+        }
+
+        case getType(actionFactories.createRemoveTodoFromProjectsAction): {
+            const { todoId } = action.payload;
+
+            return produce<ProjectCollection>(currentState, draft => {
+                draft.forEach(project => {
+                    if (project.todos.includes(todoId)) {
+                        project.todos = project.todos.filter(
+                            cursorTodoId => cursorTodoId !== todoId
+                        );
+                    }
+                });
+            });
+        }
     }
 
     return currentState;
