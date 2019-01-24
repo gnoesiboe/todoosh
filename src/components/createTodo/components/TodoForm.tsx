@@ -71,7 +71,7 @@ const TodoForm: React.FunctionComponent<
                 <Label for="projectId">Project</Label>
                 <Select<ProjectSelectOptionType>
                     options={projects.map(project => ({
-                        label: project.title,
+                        label: `${project.title} (${project.abbrevation})`,
                         value: project.id,
                     }))}
                     value={values.projectId}
