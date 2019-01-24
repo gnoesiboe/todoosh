@@ -10,6 +10,7 @@ import { ProjectCollection } from '../../model/project';
 import { GlobalState } from '../../storage/reducers';
 import { createUpdateTodoAction } from '../../storage/actions/factory/combinedActionsFactories';
 import { parseDate } from '../../utility/dateTimeHelper';
+import { DatesReducerState } from '../../storage/reducers/datesReducer';
 
 type Props = {
     todo: Todo;
@@ -19,16 +20,25 @@ type Props = {
 
 type ReduxSuppliedProps = {
     projects: ProjectCollection;
+    dates: DatesReducerState;
 };
 
 type CombinedProps = Props & DispatchProp<RootAction> & ReduxSuppliedProps;
 
 class EditTodo extends React.Component<CombinedProps> {
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
-        const { todo, dispatch, date, onCancel } = this.props;
+        const { todo, dispatch, dates, onCancel } = this.props;
 
         const deadline = values.deadline ? values.deadline.value : null;
         const projectId = values.projectId ? values.projectId.value : null;
+
+        const dateAsString = Object.keys(dates).find(cursorDate =>
+            dates[cursorDate].includes(todo.id)
+        );
+
+        if (!dateAsString) {
+            throw new Error('Expecting todo date to be resolvable here');
+        }
 
         if (!projectId) {
             throw new Error(
@@ -41,7 +51,7 @@ class EditTodo extends React.Component<CombinedProps> {
             createUpdateTodoAction(
                 todo.id,
                 projectId,
-                date || null,
+                parseDate(dateAsString),
                 values.title,
                 deadline || null,
                 todo.completedAt ? parseDate(todo.completedAt) : null
@@ -67,6 +77,7 @@ class EditTodo extends React.Component<CombinedProps> {
 function mapGlobalStateToProps(globalState: GlobalState): ReduxSuppliedProps {
     return {
         projects: globalState.projects || [],
+        dates: globalState.dates || {},
     };
 }
 
