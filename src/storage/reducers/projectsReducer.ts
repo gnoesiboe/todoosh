@@ -55,6 +55,24 @@ export default (
                 });
             });
         }
+
+        case getType(actionFactories.createMoveTodoToOtherProjectAction): {
+            const { todoId, oldProjectId, newProjectId } = action.payload;
+
+            return produce<ProjectCollection>(currentState, draft => {
+                draft.forEach(project => {
+                    if (project.id === oldProjectId) {
+                        project.todos = project.todos.filter(
+                            cursorTodoId => cursorTodoId !== todoId
+                        );
+                    }
+
+                    if (project.id === newProjectId) {
+                        project.todos.push(todoId);
+                    }
+                });
+            });
+        }
     }
 
     return currentState;

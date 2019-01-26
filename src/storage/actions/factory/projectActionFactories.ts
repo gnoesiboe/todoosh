@@ -24,3 +24,9 @@ export const createAddProjectAction = createAction(
             } as Project,
         })
 );
+
+export const createMoveTodoToOtherProjectAction = createAction(
+    '@projects/move-todo',
+    resolve => (todoId: string, oldProjectId: string, newProjectId: string) =>
+        resolve({ todoId, oldProjectId, newProjectId })
+);

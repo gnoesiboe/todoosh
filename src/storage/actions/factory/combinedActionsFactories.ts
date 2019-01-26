@@ -12,6 +12,7 @@ import {
 import {
     createAddTodoToProjectAction,
     createRemoveTodoFromProjectsAction,
+    createMoveTodoToOtherProjectAction,
 } from './projectActionFactories';
 import { TodoSection } from '../../../model/TodoSection';
 import { DEFAULT_STATE as DEFAULT_DATES_REDUCER_STATE } from '../../reducers/datesReducer';
@@ -90,11 +91,13 @@ export function createUpdateTodoAction(
         dispatch(createUpdateOnlyTodoAction(updatedTodo));
 
         if (currentProject.id !== newProjectId) {
-            // Remove todo from old project
-            dispatch(createRemoveTodoFromProjectsAction(id));
-
-            // Add to new project
-            dispatch(createAddTodoToProjectAction(newProjectId, id));
+            dispatch(
+                createMoveTodoToOtherProjectAction(
+                    id,
+                    currentProject.id,
+                    newProjectId
+                )
+            );
         }
 
         const newDateAsString = newDate ? formatDate(newDate) : null;
