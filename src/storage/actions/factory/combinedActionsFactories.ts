@@ -17,7 +17,10 @@ import {
 } from './projectActionFactories';
 import { TodoSection } from '../../../model/TodoSection';
 import { DEFAULT_STATE as DEFAULT_DATES_REDUCER_STATE } from '../../reducers/datesReducer';
-import { createSetCurrentTodoAction } from './currentTodoActionFactories';
+import {
+    createSetCurrentTodoAction,
+    createClearCurrentTodoAction,
+} from './currentTodoActionFactories';
 import {
     determinePrevousIndex,
     determineNextIndex,
@@ -272,5 +275,27 @@ export function createRemoveProjectAction(
         }
 
         dispatch(createDeleteProjectAction(projectId));
+    };
+}
+
+export function createSetCurrentTodoForDate(date: Date): ThunkResult<void> {
+    return (dispatch, getState) => {
+        const globalState = getState();
+        const dates = globalState.dates || {};
+        const dateAsString = formatDate(date);
+
+        if (
+            typeof dates[dateAsString] !== 'undefined' &&
+            dates[dateAsString].length > 0
+        ) {
+            dispatch(
+                createSetCurrentTodoAction(
+                    dates[dateAsString][0],
+                    TodoSection.date
+                )
+            );
+        } else {
+            dispatch(createClearCurrentTodoAction(TodoSection.date));
+        }
     };
 }

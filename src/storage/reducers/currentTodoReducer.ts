@@ -28,6 +28,14 @@ export default (
             });
         }
 
+        case getType(actionFactories.createClearCurrentTodoAction): {
+            const { section } = action.payload;
+
+            return produce<CurrentTodoReducerState>(currentState, draft => {
+                draft[section] = null;
+            });
+        }
+
         default:
             return currentState;
     }

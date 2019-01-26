@@ -47,6 +47,7 @@ import {
     createRemoveTodoAction,
     createSelectPreviousDateTodoAction,
     createSelectNextDateTodoAction,
+    createSetCurrentTodoForDate,
 } from './../../storage/actions/factory/combinedActionsFactories';
 import {
     createMoveTodosInThePastToTodayAction,
@@ -287,6 +288,11 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         const nextDate = createDateRelativeToSupplied(currentDate, 1);
 
+        this.props.dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createSetCurrentTodoForDate(nextDate)
+        );
+
         this.navigateToDate(nextDate);
     }
 
@@ -301,6 +307,11 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private onTodayKeyboardShortcutPressed = () => {
+        this.props.dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createSetCurrentTodoForDate(new Date())
+        );
+
         this.navigateToToday();
     };
 
@@ -309,15 +320,20 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private navigateToPreviousDate() {
-        const { currentDate } = this.props;
+        const { currentDate, dispatch } = this.props;
 
-        const nextDate = createDateRelativeToSupplied(currentDate, -1);
+        const previousDate = createDateRelativeToSupplied(currentDate, -1);
 
-        if (checkDateIsInThePast(nextDate)) {
+        if (checkDateIsInThePast(previousDate)) {
             return;
         }
 
-        this.navigateToDate(nextDate);
+        dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createSetCurrentTodoForDate(previousDate)
+        );
+
+        this.navigateToDate(previousDate);
     }
 
     private onBackClick: OnClickCallback = event => {
