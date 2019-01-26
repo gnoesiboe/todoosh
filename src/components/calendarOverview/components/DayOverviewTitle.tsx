@@ -7,12 +7,10 @@ type Props = {
     onClick: () => void;
 };
 
-const DayOverviewTitle = ({ date, onClick }: Props) => {
-    return (
-        <h3 className="day-overview-title" onClick={onClick}>
-            {formatDistanceFromToday(date)}
-        </h3>
-    );
-};
+const DayOverviewTitle = ({ date, onClick }: Props) => (
+    <h3 className="day-overview-title" onClick={onClick}>
+        {formatDistanceFromToday(date)}
+    </h3>
+);
 
 export default DayOverviewTitle;
