@@ -68,13 +68,10 @@ class Project extends React.Component<CombinedProps, State> {
     };
 
     private renderTodo(todo: TodoModel) {
-        const { project, isCurrent, currentTodoId } = this.props;
+        const { project, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
 
-        const isEditMode =
-            isCurrent && isEditingTodo && todo.id === currentTodoId;
-
-        console.log('is edit mode', isEditMode);
+        const isEditMode = isEditingTodo && todo.id === currentTodoId;
 
         return (
             <Todo
