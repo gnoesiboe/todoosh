@@ -17,6 +17,7 @@ const ProjectForm: React.FunctionComponent<
                 name="title"
                 id="title"
                 placeholder="Title"
+                autoFocus
                 onChange={handleChange}
                 autoComplete="off"
                 onBlur={handleBlur}
