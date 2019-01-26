@@ -25,6 +25,12 @@ export const createAddProjectAction = createAction(
         })
 );
 
+export const createUpdateProjectAction = createAction(
+    '@projects/update',
+    resolve => (id: string, title: string, abbrevation: string) =>
+        resolve({ id, title, abbrevation })
+);
+
 export const createMoveTodoToOtherProjectAction = createAction(
     '@projects/move-todo',
     resolve => (todoId: string, oldProjectId: string, newProjectId: string) =>

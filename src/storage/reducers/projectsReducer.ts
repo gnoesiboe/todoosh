@@ -83,6 +83,23 @@ export default (
                 });
             });
         }
+
+        case getType(actionFactories.createUpdateProjectAction): {
+            const { id, title, abbrevation } = action.payload;
+
+            return produce<ProjectCollection>(currentState, draft => {
+                const project = draft.find(
+                    cursorProject => cursorProject.id === id
+                );
+
+                if (!project) {
+                    return;
+                }
+
+                project.title = title;
+                project.abbrevation = abbrevation;
+            });
+        }
     }
 
     return currentState;

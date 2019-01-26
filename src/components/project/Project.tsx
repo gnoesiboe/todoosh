@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Project as ProjectModel } from './../../model/project';
 import './Project.scss';
 import TodoOverview from '../calendarOverview/components/TodoOverview';
@@ -17,7 +17,12 @@ import { createToggleTodoCompletedAction } from '../../storage/actions/factory/t
 import { createDroppableIdForProject } from '../../utility/dragAndDropHelpers';
 import { Button } from 'reactstrap';
 import deleteIcon from './../../icons/delete.svg';
+import editIcon from './../../icons/edit.svg';
 import { createRemoveProjectAction } from '../../storage/actions/factory/combinedActionsFactories';
+import ProjectFormStateHandler, {
+    OnSubmittedAndValidCallback,
+} from '../createProject/components/ProjectFormStateHandler';
+import { createUpdateProjectAction } from '../../storage/actions/factory/projectActionFactories';
 
 type Props = {
     project: ProjectModel;
@@ -34,6 +39,7 @@ type CombinedProps = Props & ReduxSuppliedProps & DispatchProp<RootAction>;
 
 type State = {
     isEditingTodo: boolean;
+    isEditMode: boolean;
 };
 
 class Project extends React.Component<CombinedProps, State> {
@@ -42,6 +48,7 @@ class Project extends React.Component<CombinedProps, State> {
 
         this.state = {
             isEditingTodo: false,
+            isEditMode: false,
         };
     }
 
@@ -68,7 +75,7 @@ class Project extends React.Component<CombinedProps, State> {
         }));
     }
 
-    private onEditCancel: OnCancelCallback = () => {
+    private onEditTodoCancel: OnCancelCallback = () => {
         this.stopEditingTodo();
     };
 
@@ -89,6 +96,18 @@ class Project extends React.Component<CombinedProps, State> {
         }
     };
 
+    private onEditClick = () => {
+        this.startEditMode();
+    };
+
+    private startEditMode() {
+        this.setState(currentState => ({ ...currentState, isEditMode: true }));
+    }
+
+    private stopEditMode() {
+        this.setState(currentState => ({ ...currentState, isEditMode: false }));
+    }
+
     private renderTodo(todo: TodoModel) {
         const { project, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
@@ -102,7 +121,7 @@ class Project extends React.Component<CombinedProps, State> {
                 project={project}
                 key={todo.id}
                 isEditMode={isEditMode}
-                onEditCancel={this.onEditCancel}
+                onEditCancel={this.onEditTodoCancel}
                 todo={todo}
                 isCurrent={false}
                 onCompletedChange={() => this.onTodoCompleteChange(todo)}
@@ -110,33 +129,92 @@ class Project extends React.Component<CombinedProps, State> {
         );
     }
 
+    private renderViewMode() {
+        const { project, todos } = this.props;
+
+        const droppableId = createDroppableIdForProject(project.id);
+
+        return (
+            <Fragment>
+                <QuickCreateTodo project={project} />
+                <TodoOverview droppableId={droppableId}>
+                    {todos.map(todo => this.renderTodo(todo))}
+                </TodoOverview>
+            </Fragment>
+        );
+    }
+
+    private onEditProjectCancel = () => {
+        this.stopEditMode();
+    };
+
+    private onEditFormSubmittedAndValid: OnSubmittedAndValidCallback = values => {
+        this.stopEditMode();
+
+        const { dispatch, project } = this.props;
+
+        dispatch(
+            createUpdateProjectAction(
+                project.id,
+                values.title,
+                values.abbrevation
+            )
+        );
+    };
+
+    private renderEditMode() {
+        const { project } = this.props;
+
+        return (
+            <ProjectFormStateHandler
+                onCancel={this.onEditProjectCancel}
+                project={project}
+                onFormSubmittedAndValid={this.onEditFormSubmittedAndValid}
+            />
+        );
+    }
+
+    private renderActions() {
+        if (this.state.isEditMode) {
+            return null;
+        }
+
+        return (
+            <h3 className="project--actions">
+                <Button
+                    color="link"
+                    onClick={this.onEditClick}
+                    className="project--action"
+                >
+                    <img src={editIcon} />
+                </Button>
+                <Button
+                    color="link"
+                    onClick={this.onDeleteClick}
+                    className="project--action"
+                >
+                    <img src={deleteIcon} />
+                </Button>
+            </h3>
+        );
+    }
+
     public render() {
-        const { project, todos, isCurrent } = this.props;
+        const { project, isCurrent } = this.props;
 
         const className = createClassName('project', {
             project__current: isCurrent,
         });
 
-        const droppableId = createDroppableIdForProject(project.id);
-
         return (
             <div className={className}>
-                <h3 className="project--actions">
-                    <ul className="list-unstyled">
-                        <li>
-                            <Button color="link" onClick={this.onDeleteClick}>
-                                <img src={deleteIcon} />
-                            </Button>
-                        </li>
-                    </ul>
-                </h3>
+                {this.renderActions()}
                 <h3 className="project--title">
                     {project.abbrevation} | {project.title}
                 </h3>
-                <QuickCreateTodo project={project} />
-                <TodoOverview droppableId={droppableId}>
-                    {todos.map(todo => this.renderTodo(todo))}
-                </TodoOverview>
+                {this.state.isEditMode
+                    ? this.renderEditMode()
+                    : this.renderViewMode()}
             </div>
         );
     }

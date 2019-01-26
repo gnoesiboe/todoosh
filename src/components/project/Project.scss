@@ -10,6 +10,11 @@
 
     .project--actions {
         float: right;
+
+        .project--action {
+            padding: 0;
+            margin: 0;
+        }
     }
 
     .project--title {
