@@ -8,6 +8,7 @@ import EditTodo from './../editTodo/EditTodo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import TodoDeadline from './components/TodoDeadline';
 import { Project } from '../../model/project';
+import editIcon from './../../icons/edit.svg';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 export type OnEditClickCallback = () => void;
@@ -84,7 +85,7 @@ export default class Todo extends React.Component<Props> {
                         <ul className="list-inline">
                             <li>
                                 <a href="#" onClick={this.onEditClick}>
-                                    edit
+                                    <img src={editIcon} />
                                 </a>
                             </li>
                         </ul>
