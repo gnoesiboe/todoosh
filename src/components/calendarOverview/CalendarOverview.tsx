@@ -74,7 +74,6 @@ type OwnProps = {} & RouteComponentProps<ReactRouterMatchParams>;
 
 type ReduxSuppliedProps = {
     todos: TodosForCalendarOverviewType;
-    visibleDateRange: Date[];
     currentDate: Date;
     currentTodoId: string | null;
     projects: ProjectCollection;
@@ -577,7 +576,6 @@ function mapGlobalStateToProps(
 
     return {
         todos,
-        visibleDateRange,
         currentDate,
         currentTodoId,
         projects,
