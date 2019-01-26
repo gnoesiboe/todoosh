@@ -11,6 +11,7 @@ import {
     checkIsSameDay,
     checkDateIsInThePast,
     checkIsValidDate,
+    formatDateShort,
 } from '../../utility/dateTimeHelper';
 import { connect, DispatchProp } from 'react-redux';
 import { GlobalState } from '../../storage/reducers';
@@ -65,6 +66,7 @@ import {
     parseDroppableId,
     TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
 } from './../../utility/dragAndDropHelpers';
+import { Helmet } from 'react-helmet';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -523,6 +525,9 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
 
         return (
             <div className="calendar-overview">
+                <Helmet>
+                    <title>{formatDateShort(currentDate)} | Todoosh</title>
+                </Helmet>
                 <div className="calendar-overview--navigation">
                     <Row>
                         <DateNavigator
