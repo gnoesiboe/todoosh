@@ -1,4 +1,6 @@
 import React from 'react';
+import left from './../../../icons/left.svg';
+import right from './../../../icons/right.svg';
 
 export enum Direction {
     Back,
@@ -14,14 +16,10 @@ type Props = {
     onClick: OnClickCallback;
 };
 
-const TimeNavigationButton = ({ direction, onClick }: Props) => {
-    const icon = direction === Direction.Back ? '<' : '>';
-
-    return (
-        <a href="#" onClick={onClick}>
-            {icon}
-        </a>
-    );
-};
+const TimeNavigationButton = ({ direction, onClick }: Props) => (
+    <a href="#" onClick={onClick}>
+        <img src={direction === Direction.Back ? left : right} />
+    </a>
+);
 
 export default TimeNavigationButton;
