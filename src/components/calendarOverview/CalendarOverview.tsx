@@ -198,6 +198,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_DOWN);
         unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_UP);
         unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_TO_NEXT_DATE);
+        unbindKeyboardShortcut(KeyboardShortcuts.MOVE_TODO_TO_PREVIOUS_DATE);
     }
 
     private onTodoDeleteKeyboardShortcutPressed = () => {
@@ -309,6 +310,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const { currentDate } = this.props;
 
         const nextDate = createDateRelativeToSupplied(currentDate, -1);
+
+        if (checkDateIsInThePast(nextDate)) {
+            return;
+        }
 
         this.navigateToDate(nextDate);
     }
