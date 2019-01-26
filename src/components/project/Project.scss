@@ -4,12 +4,19 @@
     border: 2px solid #fff;
     border-radius: 10px;
 
+    &:hover {
+        .project--actions {
+            display: block;
+        }
+    }
+
     &.project__current {
         border-color: #ff9900;
     }
 
     .project--actions {
         float: right;
+        display: none;
 
         .project--action {
             padding: 0;
