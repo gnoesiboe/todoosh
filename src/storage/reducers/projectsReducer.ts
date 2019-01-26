@@ -73,6 +73,16 @@ export default (
                 });
             });
         }
+
+        case getType(actionFactories.createDeleteProjectAction): {
+            const { id } = action.payload;
+
+            return produce<ProjectCollection>(currentState, draft => {
+                return draft.filter(cursorProject => {
+                    return cursorProject.id !== id;
+                });
+            });
+        }
     }
 
     return currentState;

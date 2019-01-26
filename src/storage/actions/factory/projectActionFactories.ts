@@ -30,3 +30,8 @@ export const createMoveTodoToOtherProjectAction = createAction(
     resolve => (todoId: string, oldProjectId: string, newProjectId: string) =>
         resolve({ todoId, oldProjectId, newProjectId })
 );
+
+export const createDeleteProjectAction = createAction(
+    '@projects/delete',
+    resolve => (id: string) => resolve({ id })
+);

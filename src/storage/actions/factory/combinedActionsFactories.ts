@@ -13,6 +13,7 @@ import {
     createAddTodoToProjectAction,
     createRemoveTodoFromProjectsAction,
     createMoveTodoToOtherProjectAction,
+    createDeleteProjectAction,
 } from './projectActionFactories';
 import { TodoSection } from '../../../model/TodoSection';
 import { DEFAULT_STATE as DEFAULT_DATES_REDUCER_STATE } from '../../reducers/datesReducer';
@@ -24,6 +25,7 @@ import {
 import { createUpdateTodoAction as createUpdateOnlyTodoAction } from './todoActionFactories';
 import { Todo } from '../../../model/todo';
 import { DEFAULT_STATE as DEFAULT_PROJECTS_REDUCER_STATE } from '../../reducers/projectsReducer';
+import { toast } from 'react-toastify';
 
 export function createAddNewTodoAction(
     title: string,
@@ -243,5 +245,32 @@ export function createSelectPreviousDateTodoAction(): ThunkResult<void> {
                 }
             }
         }
+    };
+}
+
+export function createRemoveProjectAction(
+    projectId: string
+): ThunkResult<void> {
+    return (dispatch, getState) => {
+        const globalState = getState();
+
+        const projects = globalState.projects || [];
+        const project = projects.find(
+            cursorProject => cursorProject.id === projectId
+        );
+
+        if (!project) {
+            throw new Error('Could not find project to be deleted');
+        }
+
+        if (project.todos.length > 0) {
+            toast.error(
+                'You have to first remove all todos in this project before you are allowed to delete it'
+            );
+
+            return;
+        }
+
+        dispatch(createDeleteProjectAction(projectId));
     };
 }

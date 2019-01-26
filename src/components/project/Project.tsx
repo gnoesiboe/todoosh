@@ -15,6 +15,9 @@ import { TodoSection } from '../../model/TodoSection';
 import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
 import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
 import { createDroppableIdForProject } from '../../utility/dragAndDropHelpers';
+import { Button } from 'reactstrap';
+import deleteIcon from './../../icons/delete.svg';
+import { createRemoveProjectAction } from '../../storage/actions/factory/combinedActionsFactories';
 
 type Props = {
     project: ProjectModel;
@@ -75,6 +78,17 @@ class Project extends React.Component<CombinedProps, State> {
         this.props.dispatch(action);
     };
 
+    private onDeleteClick = () => {
+        if (confirm('Are you sure you want to delete this project?')) {
+            const { dispatch, project } = this.props;
+
+            dispatch(
+                // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+                createRemoveProjectAction(project.id)
+            );
+        }
+    };
+
     private renderTodo(todo: TodoModel) {
         const { project, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
@@ -107,6 +121,15 @@ class Project extends React.Component<CombinedProps, State> {
 
         return (
             <div className={className}>
+                <h3 className="project--actions">
+                    <ul className="list-unstyled">
+                        <li>
+                            <Button color="link" onClick={this.onDeleteClick}>
+                                <img src={deleteIcon} />
+                            </Button>
+                        </li>
+                    </ul>
+                </h3>
                 <h3 className="project--title">
                     {project.abbrevation} | {project.title}
                 </h3>
