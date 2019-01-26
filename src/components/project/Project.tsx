@@ -13,6 +13,7 @@ import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { createSetCurrentProjectIndexAction } from '../../storage/actions/factory/currentProjectIndexActionFactories';
 import { TodoSection } from '../../model/TodoSection';
 import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
+import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
 
 type Props = {
     project: ProjectModel;
@@ -67,6 +68,12 @@ class Project extends React.Component<CombinedProps, State> {
         this.stopEditingTodo();
     };
 
+    private onTodoCompleteChange = (todo: TodoModel) => {
+        const action = createToggleTodoCompletedAction(todo.id);
+
+        this.props.dispatch(action);
+    };
+
     private renderTodo(todo: TodoModel) {
         const { project, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
@@ -83,9 +90,7 @@ class Project extends React.Component<CombinedProps, State> {
                 onEditCancel={this.onEditCancel}
                 todo={todo}
                 isCurrent={false}
-                onCompletedChange={complete => {
-                    console.log('on complete change', complete);
-                }}
+                onCompletedChange={() => this.onTodoCompleteChange(todo)}
             />
         );
     }
