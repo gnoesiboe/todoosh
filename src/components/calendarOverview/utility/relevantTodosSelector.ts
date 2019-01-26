@@ -18,13 +18,21 @@ export function applyOnlyRelevantTodosSelector(
         todosForComponent[formatDate(date)] = [];
     });
 
-    Object.keys(todosForComponent).forEach(key => {
+    Object.keys(todosForComponent).forEach(dateAsString => {
         const todoIdsForDate =
-            typeof dates[key] !== 'undefined' ? dates[key] : [];
+            typeof dates[dateAsString] !== 'undefined'
+                ? dates[dateAsString]
+                : [];
 
-        todosForComponent[key] = todos.filter(cursorTodo =>
-            todoIdsForDate.includes(cursorTodo.id)
-        );
+        todosForComponent[dateAsString] = todoIdsForDate.map(todoId => {
+            const todo = todos.find(cursorTodo => cursorTodo.id === todoId);
+
+            if (!todo) {
+                throw new Error(`Could not find todo with id: '${todoId}|'`);
+            }
+
+            return todo;
+        });
     });
 
     return todosForComponent;

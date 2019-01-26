@@ -88,14 +88,16 @@ export default (
             return produce<DatesReducerState>(currentState, draft => {
                 // extract todo from old location
                 if (typeof draft[from.date] === 'undefined') {
-                    throw new Error('Expecting the date to be available');
+                    throw new Error(
+                        'Expecting the date that the todo was moved from, to be available'
+                    );
                 }
 
                 const [todoId] = draft[from.date].splice(from.index, 1);
 
                 // move todo to new location
                 if (typeof draft[to.date] === 'undefined') {
-                    // new location does not exist, create it..
+                    // new dates does not exist, create it..
 
                     draft[to.date] = [];
                 }
