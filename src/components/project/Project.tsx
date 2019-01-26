@@ -14,6 +14,7 @@ import { createSetCurrentProjectIndexAction } from '../../storage/actions/factor
 import { TodoSection } from '../../model/TodoSection';
 import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
 import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
+import { createDroppableIdForProject } from '../../utility/dragAndDropHelpers';
 
 type Props = {
     project: ProjectModel;
@@ -102,13 +103,15 @@ class Project extends React.Component<CombinedProps, State> {
             project__current: isCurrent,
         });
 
+        const droppableId = createDroppableIdForProject(project.id);
+
         return (
             <div className={className}>
                 <h3 className="project--title">
                     {project.abbrevation} | {project.title}
                 </h3>
                 <QuickCreateTodo project={project} />
-                <TodoOverview droppableId={project.id}>
+                <TodoOverview droppableId={droppableId}>
                     {todos.map(todo => this.renderTodo(todo))}
                 </TodoOverview>
             </div>

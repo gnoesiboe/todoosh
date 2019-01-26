@@ -60,6 +60,11 @@ import {
     createToggleTodoCompletedAction,
 } from '../../storage/actions/factory/todoActionFactories';
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
+import {
+    createDroppableIdForDate,
+    parseDroppableId,
+    TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
+} from './../../utility/dragAndDropHelpers';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -340,8 +345,20 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             return;
         }
 
-        const oldDate = result.source.droppableId;
-        const newDate = destination.droppableId;
+        const oldDroppableIdData = parseDroppableId(result.source.droppableId);
+        const newDroppableIdData = parseDroppableId(destination.droppableId);
+
+        if (
+            oldDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE ||
+            newDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE
+        ) {
+            toast.error(
+                'Drag and drop between projects and dates is not supported at this point'
+            );
+        }
+
+        const oldDate = oldDroppableIdData.identifier;
+        const newDate = newDroppableIdData.identifier;
 
         const oldIndex = result.source.index;
         const newIndex = destination.index;
@@ -466,6 +483,8 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         const dateAsString = formatDate(date);
         const todosForDate = todos[dateAsString] || [];
 
+        const droppableId = createDroppableIdForDate(formatDate(date));
+
         return (
             <DayOverview isCurrent={isCurrentDate}>
                 <DayOverviewTitle
@@ -473,7 +492,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                     onClick={() => this.onDayOverviewTitleClick(dateAsString)}
                 />
                 {isCurrentDate ? <CreateTodo date={currentDate} /> : undefined}
-                <TodoOverview droppableId={formatDate(date)}>
+                <TodoOverview droppableId={droppableId}>
                     {todosForDate.map(todo => {
                         const isCurrent = todo.id === currentTodoId;
 
