@@ -13,6 +13,7 @@ export type OnSubmittedAndValidCallback = (values: ProjectFormValues) => void;
 type Props = {
     project?: Project;
     onFormSubmittedAndValid: OnSubmittedAndValidCallback;
+    onCancel: () => void;
 };
 
 function validateValues(values: ProjectFormValues) {
@@ -32,6 +33,7 @@ function validateValues(values: ProjectFormValues) {
 const ProjectFormStateHandler: React.FunctionComponent<Props> = ({
     project,
     onFormSubmittedAndValid,
+    onCancel,
 }: Props) => {
     const initialValues: ProjectFormValues = {
         title: project ? project.title : '',
@@ -49,7 +51,7 @@ const ProjectFormStateHandler: React.FunctionComponent<Props> = ({
             }}
         >
             {(childProps: FormikProps<ProjectFormValues>) => (
-                <ProjectForm {...childProps} />
+                <ProjectForm {...childProps} onCancel={onCancel} />
             )}
         </Formik>
     );

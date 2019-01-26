@@ -5,7 +5,9 @@ import ProjectFormStateHandler, {
     OnSubmittedAndValidCallback,
 } from './components/ProjectFormStateHandler';
 import { createAddProjectAction } from '../../storage/actions/factory/projectActionFactories';
-import { Card, CardBody, Button } from 'reactstrap';
+import { Button } from 'reactstrap';
+import './CreateProject.scss';
+import addProjectIcon from './../../icons/add_project.svg';
 
 type Props = {};
 
@@ -32,10 +34,15 @@ class CreateProject extends React.Component<CombinedProps, State> {
         );
     };
 
+    private onCreateCancel = () => {
+        this.hideForm();
+    };
+
     private renderForm() {
         return (
             <ProjectFormStateHandler
                 onFormSubmittedAndValid={this.onFormSubmittedAndValid}
+                onCancel={this.onCreateCancel}
             />
         );
     }
@@ -53,18 +60,20 @@ class CreateProject extends React.Component<CombinedProps, State> {
     }
 
     private renderButton() {
-        return <Button onClick={this.onButtonClick}>+</Button>;
+        return (
+            <Button color="primary" onClick={this.onButtonClick}>
+                <img src={addProjectIcon} /> Add project
+            </Button>
+        );
     }
 
     public render() {
         const { showForm } = this.state;
 
         return (
-            <Card>
-                <CardBody>
-                    {showForm ? this.renderForm() : this.renderButton()}
-                </CardBody>
-            </Card>
+            <div className="create-project">
+                {showForm ? this.renderForm() : this.renderButton()}
+            </div>
         );
     }
 }

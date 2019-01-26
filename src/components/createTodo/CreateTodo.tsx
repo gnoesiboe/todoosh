@@ -13,6 +13,7 @@ import {
 import { GlobalState } from '../../storage/reducers';
 import { ProjectCollection } from '../../model/project';
 import { createAddNewTodoAction } from '../../storage/actions/factory/combinedActionsFactories';
+import { toast } from 'react-toastify';
 
 type Props = {
     date: Date;
@@ -59,6 +60,14 @@ class CreateTodo extends React.Component<CombinedProps, State> {
     };
 
     private showForm() {
+        if (this.props.projects.length === 0) {
+            toast.error(
+                'Adding todos is not possible if you have no project configured yet'
+            );
+
+            return;
+        }
+
         this.setState(currentState => ({
             ...currentState,
             showForm: true,

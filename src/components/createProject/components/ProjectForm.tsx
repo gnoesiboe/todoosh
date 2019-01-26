@@ -2,13 +2,23 @@ import React from 'react';
 import { FormikProps } from 'formik';
 import { ProjectFormValues } from './ProjectFormStateHandler';
 import { Form, FormGroup, Label, FormFeedback } from 'reactstrap';
-import Input from 'reactstrap/lib/Input';
+import { Input, Button } from 'reactstrap';
 
-type Props = {};
+type Props = {
+    onCancel: () => void;
+};
 
 const ProjectForm: React.FunctionComponent<
     Props & FormikProps<ProjectFormValues>
-> = ({ handleSubmit, handleChange, handleBlur, values, touched, errors }) => (
+> = ({
+    handleSubmit,
+    handleChange,
+    handleBlur,
+    values,
+    touched,
+    errors,
+    onCancel,
+}) => (
     <Form onSubmit={handleSubmit}>
         <FormGroup>
             <Label for="title">Title</Label>
@@ -47,9 +57,12 @@ const ProjectForm: React.FunctionComponent<
                 <FormFeedback tooltip>{errors.abbrevation}</FormFeedback>
             )}
         </FormGroup>
-        <button type="submit" className="btn btn-primary">
+        <Button color="primary" type="submit">
             Save
-        </button>
+        </Button>
+        <Button color="link" onClick={onCancel}>
+            Cancel
+        </Button>
     </Form>
 );
 
