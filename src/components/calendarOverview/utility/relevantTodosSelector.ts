@@ -12,8 +12,6 @@ export function applyOnlyRelevantTodosSelector(
     todos: TodosReducerState,
     visibleDateRange: Date[]
 ): TodosForCalendarOverviewType {
-    console.log('todos', todos);
-
     const todosForComponent: TodosForCalendarOverviewType = {};
 
     visibleDateRange.forEach(date => {
