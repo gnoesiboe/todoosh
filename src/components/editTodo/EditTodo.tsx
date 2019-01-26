@@ -36,10 +36,6 @@ class EditTodo extends React.Component<CombinedProps> {
             dates[cursorDate].includes(todo.id)
         );
 
-        if (!dateAsString) {
-            throw new Error('Expecting todo date to be resolvable here');
-        }
-
         if (!projectId) {
             throw new Error(
                 'Expecting projectId to be available at this point'
@@ -51,7 +47,7 @@ class EditTodo extends React.Component<CombinedProps> {
             createUpdateTodoAction(
                 todo.id,
                 projectId,
-                parseDate(dateAsString),
+                dateAsString ? parseDate(dateAsString) : null,
                 values.title,
                 deadline || null,
                 todo.completedAt ? parseDate(todo.completedAt) : null
