@@ -6,7 +6,6 @@ import CreateProject from './../createProject/CreateProject';
 import Project from './../project/Project';
 import { Row, Col } from 'reactstrap';
 import './ProjectOverview.scss';
-import { DragDropContext } from 'react-beautiful-dnd';
 import {
     bindKeyboardShortcut,
     KeyboardShortcuts,
@@ -89,19 +88,15 @@ class ProjectOverview extends React.Component<CombinedProps> {
         return (
             <div className="project-overview">
                 <Row>
-                    <DragDropContext
-                        onDragEnd={() => console.log('on drag end')}
-                    >
-                        {projects.map((project, index) => (
-                            <Col md={3} key={project.id}>
-                                <Project
-                                    index={index}
-                                    project={project}
-                                    isCurrent={index === currentProjectIndex}
-                                />
-                            </Col>
-                        ))}
-                    </DragDropContext>
+                    {projects.map((project, index) => (
+                        <Col md={3} key={project.id}>
+                            <Project
+                                index={index}
+                                project={project}
+                                isCurrent={index === currentProjectIndex}
+                            />
+                        </Col>
+                    ))}
                     <Col md={3}>
                         <CreateProject />
                     </Col>

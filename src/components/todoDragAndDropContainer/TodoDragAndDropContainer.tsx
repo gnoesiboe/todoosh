@@ -6,7 +6,6 @@ import {
     parseDroppableId,
     TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
 } from './../../utility/dragAndDropHelpers';
-import { toast } from 'react-toastify';
 
 type OwnProps = {
     children: JSX.Element[];
@@ -29,29 +28,26 @@ class TodoDragAndDropContext extends React.Component<CombinedProps> {
         const oldDroppableIdData = parseDroppableId(result.source.droppableId);
         const newDroppableIdData = parseDroppableId(destination.droppableId);
 
-        if (
-            oldDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE ||
-            newDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE
-        ) {
-            toast.error(
-                'Drag and drop between projects and dates is not supported at this point'
-            );
-        }
-
-        const oldDate = oldDroppableIdData.identifier;
-        const newDate = newDroppableIdData.identifier;
-
         const oldIndex = result.source.index;
         const newIndex = destination.index;
 
-        dispatch(
-            createMoveTodoWithinDatesAction(
-                oldDate,
-                newDate,
-                oldIndex,
-                newIndex
-            )
-        );
+        if (
+            oldDroppableIdData.type === DROPPABLE_ID_TYPE_DATE &&
+            newDroppableIdData.type === DROPPABLE_ID_TYPE_DATE
+        ) {
+            // drop todos between dates
+
+            dispatch(
+                createMoveTodoWithinDatesAction(
+                    oldDroppableIdData.identifier,
+                    newDroppableIdData.identifier,
+                    oldIndex,
+                    newIndex
+                )
+            );
+
+            return;
+        }
     };
 
     public render() {
