@@ -23,6 +23,7 @@ import ProjectFormStateHandler, {
     OnSubmittedAndValidCallback,
 } from '../createProject/components/ProjectFormStateHandler';
 import { createUpdateProjectAction } from '../../storage/actions/factory/projectActionFactories';
+import ProjectTitle from './components/ProjectTitle';
 
 type Props = {
     project: ProjectModel;
@@ -209,9 +210,10 @@ class Project extends React.Component<CombinedProps, State> {
         return (
             <div className={className}>
                 {this.renderActions()}
-                <h3 className="project--title">
-                    {project.abbrevation} | {project.title}
-                </h3>
+                <ProjectTitle
+                    title={project.title}
+                    abbrevation={project.abbrevation}
+                />
                 {this.state.isEditMode
                     ? this.renderEditMode()
                     : this.renderViewMode()}
