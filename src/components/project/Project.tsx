@@ -139,7 +139,10 @@ class Project extends React.Component<CombinedProps, State> {
         return (
             <Fragment>
                 <QuickCreateTodo project={project} />
-                <TodoOverview droppableId={droppableId}>
+                <TodoOverview
+                    droppableId={droppableId}
+                    section={TodoSection.project}
+                >
                     {todos.map(todo => this.renderTodo(todo))}
                 </TodoOverview>
             </Fragment>
