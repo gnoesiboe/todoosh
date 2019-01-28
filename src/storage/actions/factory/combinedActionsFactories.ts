@@ -3,6 +3,7 @@ import uuid from 'uuid/v4';
 import {
     createAddTodoAction,
     createDeleteTodoAction,
+    createToggleTodoCompletedAction,
 } from './todoActionFactories';
 import { formatDate } from '../../../utility/dateTimeHelper';
 import {
@@ -248,6 +249,16 @@ export function createSelectPreviousDateTodoAction(): ThunkResult<void> {
                 }
             }
         }
+    };
+}
+
+export function createToggleTodoCompletedStatusAction(
+    id: string,
+    section: TodoSection
+): ThunkResult<void> {
+    return dispatch => {
+        dispatch(createToggleTodoCompletedAction(id));
+        dispatch(createSetCurrentTodoAction(id, section));
     };
 }
 

@@ -48,6 +48,7 @@ import {
     createSelectPreviousDateTodoAction,
     createSelectNextDateTodoAction,
     createSetCurrentTodoForDate,
+    createToggleTodoCompletedStatusAction,
 } from './../../storage/actions/factory/combinedActionsFactories';
 import {
     createMoveTodosInThePastToTodayAction,
@@ -57,10 +58,7 @@ import {
     createMoveTodoToNextDateAction,
     createMoveTodoToPreviousDateAction,
 } from '../../storage/actions/factory/datesActionFactories';
-import {
-    createRemoveCompletedTodosAction,
-    createToggleTodoCompletedAction,
-} from '../../storage/actions/factory/todoActionFactories';
+import { createRemoveCompletedTodosAction } from '../../storage/actions/factory/todoActionFactories';
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
 import {
     createDroppableIdForDate,
@@ -353,9 +351,10 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
     };
 
     private toggleTodoCompletedStatus(todoId: string) {
-        const action = createToggleTodoCompletedAction(todoId);
-
-        this.props.dispatch(action);
+        this.props.dispatch(
+            // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
+            createToggleTodoCompletedStatusAction(todoId, TodoSection.date)
+        );
     }
 
     private onTodoDragEnd = (result: DropResult) => {
