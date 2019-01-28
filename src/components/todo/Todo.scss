@@ -8,6 +8,14 @@
     &.todo__current {
         background-color: #fff;
         border: 1px solid #ccc;
+
+        &:hover {
+            background-color: #fff;
+        }
+    }
+
+    &:hover {
+        background-color: #ddd;
     }
 
     &.todo__completed {
