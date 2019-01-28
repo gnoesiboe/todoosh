@@ -60,7 +60,6 @@ import { createRemoveCompletedTodosAction } from '../../storage/actions/factory/
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
 import { createDroppableIdForDate } from './../../utility/dragAndDropHelpers';
 import { Helmet } from 'react-helmet';
-import TodoDragAndDropContainer from './../todoDragAndDropContainer/TodoDragAndDropContainer';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -552,24 +551,16 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                     </Row>
                 </div>
                 <Row>
-                    <TodoDragAndDropContainer>
-                        {Object.keys(todos).map(dateAsString => {
-                            const date = parseDate(dateAsString);
-                            const isCurrentDate = checkIsSameDay(
-                                date,
-                                currentDate
-                            );
+                    {Object.keys(todos).map(dateAsString => {
+                        const date = parseDate(dateAsString);
+                        const isCurrentDate = checkIsSameDay(date, currentDate);
 
-                            return (
-                                <Col md={4} key={dateAsString}>
-                                    {this.renderDayOverview(
-                                        date,
-                                        isCurrentDate
-                                    )}
-                                </Col>
-                            );
-                        })}
-                    </TodoDragAndDropContainer>
+                        return (
+                            <Col md={4} key={dateAsString}>
+                                {this.renderDayOverview(date, isCurrentDate)}
+                            </Col>
+                        );
+                    })}
                 </Row>
                 <ToastContainer />
             </div>

@@ -9,27 +9,30 @@ import { createHomePath, createTodosPath } from './../routing/urlGenerator';
 import Home from './home/Home';
 import KeyboardShortcutOverview from './keyboardShortcutOverview/KeyboardShortcutOverview';
 import ProjectOverview from './projectOverview/ProjectOverview';
+import TodoDragAndDropContainer from './todoDragAndDropContainer/TodoDragAndDropContainer';
 
 class App extends Component {
     public render() {
         return (
             <Provider store={createStore()}>
                 <Container fluid>
-                    <BrowserRouter>
-                        <Switch>
-                            <Route
-                                path={createHomePath()}
-                                exact
-                                component={Home}
-                            />
-                            <Route
-                                path={createTodosPath()}
-                                exact
-                                component={CalendarOverview}
-                            />
-                        </Switch>
-                    </BrowserRouter>
-                    <ProjectOverview />
+                    <TodoDragAndDropContainer>
+                        <BrowserRouter>
+                            <Switch>
+                                <Route
+                                    path={createHomePath()}
+                                    exact
+                                    component={Home}
+                                />
+                                <Route
+                                    path={createTodosPath()}
+                                    exact
+                                    component={CalendarOverview}
+                                />
+                            </Switch>
+                        </BrowserRouter>
+                        <ProjectOverview />
+                    </TodoDragAndDropContainer>
                     <KeyboardShortcutOverview />
                 </Container>
             </Provider>
