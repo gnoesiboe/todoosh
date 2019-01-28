@@ -1,4 +1,5 @@
 import React from 'react';
+import './ProjectTitle.scss';
 
 type Props = {
     title: string;
