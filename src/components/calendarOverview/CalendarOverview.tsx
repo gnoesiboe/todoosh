@@ -79,6 +79,7 @@ type ReduxSuppliedProps = {
     currentTodoId: string | null;
     projects: ProjectCollection;
     dates: DatesReducerState;
+    visibleDateRange: Date[];
 };
 
 type CombinedProps = OwnProps &
@@ -430,16 +431,39 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + right is also used for navigation in history, in Google Chrome, prevent default behaviour
         event.preventDefault();
 
-        const { dispatch, currentTodoId } = this.props;
+        const { dispatch, currentTodoId, dates } = this.props;
 
         if (!currentTodoId) {
             return;
         }
 
+        const currentTodoDateString = Object.keys(dates).find(
+            cursorDateString => dates[cursorDateString].includes(currentTodoId)
+        );
+
+        if (!currentTodoDateString) {
+            throw new Error('Expecting there to be a current date string');
+        }
+
+        const currentTodoDate = parseDate(currentTodoDateString);
+        const nextTodoDate = createDateRelativeToSupplied(currentTodoDate, 1);
+
         dispatch(createMoveTodoToNextDateAction(currentTodoId));
 
-        this.navigateToNextDate();
+        if (!this.checkDateFallsInsideVisualPeriod(nextTodoDate)) {
+            this.navigateToDate(nextTodoDate);
+        }
     };
+
+    private checkDateFallsInsideVisualPeriod(date: Date): boolean {
+        const { visibleDateRange } = this.props;
+
+        const foundIndex = visibleDateRange.findIndex(cursorDate =>
+            checkIsSameDay(cursorDate, date)
+        );
+
+        return foundIndex !== -1;
+    }
 
     private onMoveTodoToPreviousDateKeyboardShortcutPressed = (
         event: ExtendedKeyboardEvent
@@ -605,6 +629,7 @@ function mapGlobalStateToProps(
         currentTodoId,
         projects,
         dates,
+        visibleDateRange,
     };
 }
 
