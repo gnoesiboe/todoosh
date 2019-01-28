@@ -29,7 +29,6 @@ import TodoOverview from './components/TodoOverview';
 import Todo from '../todo/Todo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import { Todo as TodoModel } from './../../model/todo';
-import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import './CalendarOverview.scss';
 import DateNavigator from './components/DateNavigator';
 import {
@@ -52,7 +51,6 @@ import {
 } from './../../storage/actions/factory/combinedActionsFactories';
 import {
     createMoveTodosInThePastToTodayAction,
-    createMoveTodoWithinDatesAction,
     createMoveTodoToNextSpotAction,
     createMoveTodoToPreviousSpotAction,
     createMoveTodoToNextDateAction,
@@ -60,12 +58,9 @@ import {
 } from '../../storage/actions/factory/datesActionFactories';
 import { createRemoveCompletedTodosAction } from '../../storage/actions/factory/todoActionFactories';
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
-import {
-    createDroppableIdForDate,
-    parseDroppableId,
-    TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
-} from './../../utility/dragAndDropHelpers';
+import { createDroppableIdForDate } from './../../utility/dragAndDropHelpers';
 import { Helmet } from 'react-helmet';
+import TodoDragAndDropContainer from './../todoDragAndDropContainer/TodoDragAndDropContainer';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -358,43 +353,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         );
     }
 
-    private onTodoDragEnd = (result: DropResult) => {
-        const { dispatch } = this.props;
-
-        const destination = result.destination;
-
-        if (!destination) {
-            return;
-        }
-
-        const oldDroppableIdData = parseDroppableId(result.source.droppableId);
-        const newDroppableIdData = parseDroppableId(destination.droppableId);
-
-        if (
-            oldDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE ||
-            newDroppableIdData.type !== DROPPABLE_ID_TYPE_DATE
-        ) {
-            toast.error(
-                'Drag and drop between projects and dates is not supported at this point'
-            );
-        }
-
-        const oldDate = oldDroppableIdData.identifier;
-        const newDate = newDroppableIdData.identifier;
-
-        const oldIndex = result.source.index;
-        const newIndex = destination.index;
-
-        dispatch(
-            createMoveTodoWithinDatesAction(
-                oldDate,
-                newDate,
-                oldIndex,
-                newIndex
-            )
-        );
-    };
-
     private onMoveTodoDownKeyboardShortcutPressed = (
         event: ExtendedKeyboardEvent
     ) => {
@@ -594,7 +552,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                     </Row>
                 </div>
                 <Row>
-                    <DragDropContext onDragEnd={this.onTodoDragEnd}>
+                    <TodoDragAndDropContainer>
                         {Object.keys(todos).map(dateAsString => {
                             const date = parseDate(dateAsString);
                             const isCurrentDate = checkIsSameDay(
@@ -611,7 +569,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                                 </Col>
                             );
                         })}
-                    </DragDropContext>
+                    </TodoDragAndDropContainer>
                 </Row>
                 <ToastContainer />
             </div>
