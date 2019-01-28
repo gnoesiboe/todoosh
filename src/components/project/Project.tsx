@@ -24,6 +24,7 @@ import ProjectTitle from './components/ProjectTitle';
 import ProjectActions from './components/ProjectActions';
 import ProjectEditActionButton from './components/ProjectEditActionButton';
 import ProjectDeleteActionButton from './components/ProjectDeleteActionButton';
+import { resolveProjectTodos, resoleCurrentTodoId } from './utility/selectors';
 
 type Props = {
     project: ProjectModel;
@@ -210,25 +211,10 @@ function mapGlobalStateToProps(
 ): ReduxSuppliedProps {
     const { project } = props;
 
-    // @todo move below to selector
+    const todos = resolveProjectTodos(globalState, project);
+    const currentTodoId = resoleCurrentTodoId(globalState);
 
-    const allTodos = globalState.todos || [];
-    const projectTodos = project.todos.map(todoId => {
-        const todo = allTodos.find(cursorTodo => cursorTodo.id === todoId);
-
-        if (!todo) {
-            throw new Error(
-                `Could not find referenced todo with id: ${todoId}`
-            );
-        }
-
-        return todo;
-    });
-    const currentTodoId = globalState.currentTodo
-        ? globalState.currentTodo[TodoSection.project]
-        : null;
-
-    return { todos: projectTodos, currentTodoId };
+    return { todos, currentTodoId };
 }
 
 export default connect<ReduxSuppliedProps, {}, Props>(mapGlobalStateToProps)(
