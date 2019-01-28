@@ -471,15 +471,31 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         // as cmd + left is also used for navigation in history, in Google Chrome, prevent default behaviour
         event.preventDefault();
 
-        const { dispatch, currentTodoId } = this.props;
+        const { dispatch, currentTodoId, dates } = this.props;
 
         if (!currentTodoId) {
             return;
         }
 
+        const currentTodoDateString = Object.keys(dates).find(
+            cursorDateString => dates[cursorDateString].includes(currentTodoId)
+        );
+
+        if (!currentTodoDateString) {
+            throw new Error('Expecting there to be a current date string');
+        }
+
+        const currentTodoDate = parseDate(currentTodoDateString);
+        const previousTodoDate = createDateRelativeToSupplied(
+            currentTodoDate,
+            -1
+        );
+
         dispatch(createMoveTodoToPreviousDateAction(currentTodoId));
 
-        this.navigateToPreviousDate();
+        if (!this.checkDateFallsInsideVisualPeriod(previousTodoDate)) {
+            this.navigateToPreviousDate();
+        }
     };
 
     private onDayOverviewTitleClick(dateAsString: string) {
