@@ -10,17 +10,11 @@
         }
     }
 
-    &.project__current {
-        border-color: #ff9900;
+    .project--actions {
+        display: none;
     }
 
-    .project--actions {
-        float: right;
-        display: none;
-
-        .project--action {
-            padding: 0;
-            margin: 0;
-        }
+    &.project__current {
+        border-color: #ff9900;
     }
 }

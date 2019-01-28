@@ -15,15 +15,15 @@ import { TodoSection } from '../../model/TodoSection';
 import { createSetCurrentTodoAction } from '../../storage/actions/factory/currentTodoActionFactories';
 import { createToggleTodoCompletedAction } from '../../storage/actions/factory/todoActionFactories';
 import { createDroppableIdForProject } from '../../utility/dragAndDropHelpers';
-import { Button } from 'reactstrap';
-import deleteIcon from './../../icons/delete.svg';
-import editIcon from './../../icons/edit.svg';
 import { createRemoveProjectAction } from '../../storage/actions/factory/combinedActionsFactories';
 import ProjectFormStateHandler, {
     OnSubmittedAndValidCallback,
 } from '../createProject/components/ProjectFormStateHandler';
 import { createUpdateProjectAction } from '../../storage/actions/factory/projectActionFactories';
 import ProjectTitle from './components/ProjectTitle';
+import ProjectActions from './components/ProjectActions';
+import ProjectEditActionButton from './components/ProjectEditActionButton';
+import ProjectDeleteActionButton from './components/ProjectDeleteActionButton';
 
 type Props = {
     project: ProjectModel;
@@ -175,31 +175,6 @@ class Project extends React.Component<CombinedProps, State> {
         );
     }
 
-    private renderActions() {
-        if (this.state.isEditMode) {
-            return null;
-        }
-
-        return (
-            <h3 className="project--actions">
-                <Button
-                    color="link"
-                    onClick={this.onEditClick}
-                    className="project--action"
-                >
-                    <img src={editIcon} />
-                </Button>
-                <Button
-                    color="link"
-                    onClick={this.onDeleteClick}
-                    className="project--action"
-                >
-                    <img src={deleteIcon} />
-                </Button>
-            </h3>
-        );
-    }
-
     public render() {
         const { project, isCurrent } = this.props;
 
@@ -209,7 +184,14 @@ class Project extends React.Component<CombinedProps, State> {
 
         return (
             <div className={className}>
-                {this.renderActions()}
+                {this.state.isEditMode && (
+                    <ProjectActions>
+                        <ProjectEditActionButton onClick={this.onEditClick} />
+                        <ProjectDeleteActionButton
+                            onClick={this.onDeleteClick}
+                        />
+                    </ProjectActions>
+                )}
                 <ProjectTitle
                     title={project.title}
                     abbrevation={project.abbrevation}
