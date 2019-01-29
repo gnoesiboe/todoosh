@@ -2,13 +2,17 @@ import React, { ChangeEvent } from 'react';
 import { Todo as TodoType } from '../../model/todo';
 import { Label, Input } from 'reactstrap';
 import './Todo.scss';
-import { parseInlineMarkdown } from './../../utility/markdownHelper';
 import createClassName from 'classnames';
 import EditTodo from './../editTodo/EditTodo';
 import { OnCancelCallback } from '../createTodo/components/TodoForm';
 import TodoDeadline from './components/TodoDeadline';
 import { Project } from '../../model/project';
-import editIcon from './../../icons/edit.svg';
+import TodoActions from './components/TodoActions';
+import TodoEditActionButton, {
+    OnTodoEditClickCallback,
+} from './components/TodoEditActionButton';
+import TodoProjectPrefix from './components/TodoProjectPrefix';
+import TodoTitle from './components/TodoTitle';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 export type OnEditClickCallback = () => void;
@@ -42,7 +46,7 @@ export default class Todo extends React.Component<Props> {
         this.checkboxRef.current.blur();
     };
 
-    private onEditClick = (event: React.MouseEvent<HTMLElement>) => {
+    private onEditClick: OnTodoEditClickCallback = event => {
         event.preventDefault();
 
         this.props.onEditClick();
@@ -50,8 +54,6 @@ export default class Todo extends React.Component<Props> {
 
     private renderDisplayMode() {
         const { todo, isCurrent, project, showProject } = this.props;
-
-        const innerHtml = { __html: parseInlineMarkdown(todo.title) };
 
         const className = createClassName('todo', {
             todo__current: isCurrent,
@@ -71,25 +73,14 @@ export default class Todo extends React.Component<Props> {
                         <TodoDeadline deadline={todo.deadline} />
                     )}
                     {showProject && (
-                        <span>
-                            <strong>{project.abbrevation}</strong> |&nbsp;
-                        </span>
+                        <TodoProjectPrefix abbrevation={project.abbrevation} />
                     )}
-                    <span
-                        className="todo--title"
-                        dangerouslySetInnerHTML={innerHtml}
-                    />
+                    <TodoTitle title={todo.title} />
                 </Label>
                 {!todo.completedAt && (
-                    <div className="todo--actions">
-                        <ul className="list-inline">
-                            <li>
-                                <a href="#" onClick={this.onEditClick}>
-                                    <img src={editIcon} />
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+                    <TodoActions>
+                        <TodoEditActionButton onClick={this.onEditClick} />
+                    </TodoActions>
                 )}
             </div>
         );

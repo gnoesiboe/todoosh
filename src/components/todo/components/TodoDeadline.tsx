@@ -7,6 +7,7 @@ import {
     checkDateIsInThePast,
 } from '../../../utility/dateTimeHelper';
 import createClassName from 'classnames';
+import './TodoDeadline.scss';
 
 type Props = {
     deadline: string;
