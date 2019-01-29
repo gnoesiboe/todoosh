@@ -8,6 +8,7 @@ import {
     TYPE_PROJECT as DROPPABLE_ID_TYPE_PROJECT,
 } from './../../utility/dragAndDropHelpers';
 import { createMoveTodoWithinProjectsAction } from '../../storage/actions/factory/projectActionFactories';
+import { toast } from 'react-toastify';
 
 type OwnProps = {
     children: JSX.Element[];
@@ -33,10 +34,14 @@ class TodoDragAndDropContext extends React.Component<CombinedProps> {
         const oldIndex = result.source.index;
         const newIndex = destination.index;
 
-        if (
-            oldDroppableIdData.type === DROPPABLE_ID_TYPE_DATE &&
-            newDroppableIdData.type === DROPPABLE_ID_TYPE_DATE
-        ) {
+        const fromDate = oldDroppableIdData.type === DROPPABLE_ID_TYPE_DATE;
+        const fromProject =
+            oldDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT;
+
+        const toDate = newDroppableIdData.type === DROPPABLE_ID_TYPE_DATE;
+        const toProject = newDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT;
+
+        if (fromDate && toDate) {
             // drop todos between dates
 
             dispatch(
@@ -51,10 +56,7 @@ class TodoDragAndDropContext extends React.Component<CombinedProps> {
             return;
         }
 
-        if (
-            oldDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT &&
-            newDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT
-        ) {
+        if (fromProject && toProject) {
             // drop todos between projects
 
             dispatch(
@@ -65,7 +67,11 @@ class TodoDragAndDropContext extends React.Component<CombinedProps> {
                     newIndex
                 )
             );
+
+            return;
         }
+
+        toast.error('Moving between dates and projects is not yet supported');
     };
 
     public render() {
