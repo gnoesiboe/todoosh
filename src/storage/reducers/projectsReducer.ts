@@ -100,6 +100,36 @@ export default (
                 project.abbrevation = abbrevation;
             });
         }
+
+        case getType(actionFactories.createMoveTodoWithinProjectsAction): {
+            const { from, to } = action.payload;
+
+            return produce<ProjectsReducerState>(currentState, draft => {
+                const fromProject = draft.find(
+                    cursorProject => cursorProject.id === from.projectId
+                );
+
+                if (!fromProject) {
+                    throw new Error(
+                        'Cannot find project to move todo away from'
+                    );
+                }
+
+                const toProject = draft.find(
+                    cursorProject => cursorProject.id === to.projectId
+                );
+
+                if (!toProject) {
+                    throw new Error('Cannot find project to move todo to');
+                }
+
+                // extract todo from old location
+                const [todoId] = fromProject.todos.splice(from.index, 1);
+
+                // move todo to new location
+                toProject.todos.splice(to.index, 0, todoId);
+            });
+        }
     }
 
     return currentState;

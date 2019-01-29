@@ -5,7 +5,9 @@ import { createMoveTodoWithinDatesAction } from '../../storage/actions/factory/d
 import {
     parseDroppableId,
     TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
+    TYPE_PROJECT as DROPPABLE_ID_TYPE_PROJECT,
 } from './../../utility/dragAndDropHelpers';
+import { createMoveTodoWithinProjectsAction } from '../../storage/actions/factory/projectActionFactories';
 
 type OwnProps = {
     children: JSX.Element[];
@@ -47,6 +49,22 @@ class TodoDragAndDropContext extends React.Component<CombinedProps> {
             );
 
             return;
+        }
+
+        if (
+            oldDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT &&
+            newDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT
+        ) {
+            // drop todos between projects
+
+            dispatch(
+                createMoveTodoWithinProjectsAction(
+                    oldDroppableIdData.identifier,
+                    newDroppableIdData.identifier,
+                    oldIndex,
+                    newIndex
+                )
+            );
         }
     };
 

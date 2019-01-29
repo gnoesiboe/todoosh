@@ -41,3 +41,17 @@ export const createDeleteProjectAction = createAction(
     '@projects/delete',
     resolve => (id: string) => resolve({ id })
 );
+
+export const createMoveTodoWithinProjectsAction = createAction(
+    '@projects/move-project',
+    resolve => (
+        fromId: string,
+        toId: string,
+        fromIndex: number,
+        toIndex: number
+    ) =>
+        resolve({
+            from: { projectId: fromId, index: fromIndex },
+            to: { projectId: toId, index: toIndex },
+        })
+);
