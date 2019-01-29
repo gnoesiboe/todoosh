@@ -17,7 +17,7 @@ export default (
         case getType(actionFactories.createAddProjectAction): {
             const newProject = action.payload.project;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 draft.push(newProject);
             });
         }
@@ -25,7 +25,7 @@ export default (
         case getType(actionFactories.createAddTodoToProjectAction): {
             const { id, todoId } = action.payload;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 const project = draft.find(
                     cursorProject => cursorProject.id === id
                 );
@@ -45,7 +45,7 @@ export default (
         case getType(actionFactories.createRemoveTodoFromProjectsAction): {
             const { todoId } = action.payload;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 draft.forEach(project => {
                     if (project.todos.includes(todoId)) {
                         project.todos = project.todos.filter(
@@ -59,7 +59,7 @@ export default (
         case getType(actionFactories.createMoveTodoToOtherProjectAction): {
             const { todoId, oldProjectId, newProjectId } = action.payload;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 draft.forEach(project => {
                     if (project.id === oldProjectId) {
                         project.todos = project.todos.filter(
@@ -77,7 +77,7 @@ export default (
         case getType(actionFactories.createDeleteProjectAction): {
             const { id } = action.payload;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 return draft.filter(cursorProject => {
                     return cursorProject.id !== id;
                 });
@@ -87,7 +87,7 @@ export default (
         case getType(actionFactories.createUpdateProjectAction): {
             const { id, title, abbrevation } = action.payload;
 
-            return produce<ProjectCollection>(currentState, draft => {
+            return produce<ProjectsReducerState>(currentState, draft => {
                 const project = draft.find(
                     cursorProject => cursorProject.id === id
                 );
