@@ -6,9 +6,9 @@ type Props = {
 };
 
 const ProjectActions = ({ children }: Props) => (
-    <ul className="project--actions list-inline">
+    <ul className="project--actions">
         {React.Children.map(children, child => (
-            <li className="project--action list-inline-item">{child}</li>
+            <span className="project--action list-inline-item">{child}</span>
         ))}
     </ul>
 );

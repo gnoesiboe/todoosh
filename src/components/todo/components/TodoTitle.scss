@@ -1,0 +1,7 @@
+.todo--title {
+    color: #333;
+
+    .project & {
+        color: #999;
+    }
+}

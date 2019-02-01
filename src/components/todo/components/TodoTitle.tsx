@@ -1,5 +1,6 @@
 import React from 'react';
 import { parseInlineMarkdown } from './../../../utility/markdownHelper';
+import './TodoTitle.scss';
 
 type Props = {
     title: string;

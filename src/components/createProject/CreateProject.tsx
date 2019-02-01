@@ -61,7 +61,12 @@ class CreateProject extends React.Component<CombinedProps, State> {
 
     private renderButton() {
         return (
-            <Button color="primary" onClick={this.onButtonClick}>
+            <Button
+                color="secondary"
+                onClick={this.onButtonClick}
+                className="create-project--button"
+                size="lg"
+            >
                 <img src={addProjectIcon} /> Add project
             </Button>
         );

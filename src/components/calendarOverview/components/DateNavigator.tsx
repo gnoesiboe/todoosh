@@ -27,7 +27,7 @@ const DateNavigator = ({
 
     return (
         <Fragment>
-            <Col md={{ size: 1, offset: 4 }} className="text-right">
+            <Col className="text-right">
                 {previousDateIsAccessible && (
                     <TimeNavigationButton
                         direction={Direction.Back}
@@ -35,12 +35,12 @@ const DateNavigator = ({
                     />
                 )}
             </Col>
-            <Col md={2} className="text-center">
+            <Col className="text-center">
                 <button className="btn btn-link" onClick={onTodayClick}>
                     today
                 </button>
             </Col>
-            <Col md={1} className="text-left">
+            <Col className="text-left">
                 <TimeNavigationButton
                     direction={Direction.Forward}
                     onClick={onForwardClick}

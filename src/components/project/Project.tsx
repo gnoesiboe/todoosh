@@ -188,7 +188,7 @@ class Project extends React.Component<CombinedProps, State> {
 
         return (
             <div className={className}>
-                {this.state.isEditMode && (
+                {!this.state.isEditMode && (
                     <ProjectActions>
                         <ProjectEditActionButton onClick={this.onEditClick} />
                         <ProjectDeleteActionButton
