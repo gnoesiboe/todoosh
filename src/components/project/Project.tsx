@@ -132,19 +132,19 @@ class Project extends React.Component<CombinedProps, State> {
     }
 
     private renderViewMode() {
-        const { project, todos } = this.props;
+        const { project, todos, isCurrent } = this.props;
 
         const droppableId = createDroppableIdForProject(project.id);
 
         return (
             <Fragment>
-                <QuickCreateTodo project={project} />
                 <TodoOverview
                     droppableId={droppableId}
                     section={TodoSection.project}
                 >
                     {todos.map(todo => this.renderTodo(todo))}
                 </TodoOverview>
+                {isCurrent && <QuickCreateTodo project={project} />}
             </Fragment>
         );
     }
