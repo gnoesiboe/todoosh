@@ -9,12 +9,14 @@ import { formatDate } from '../../../utility/dateTimeHelper';
 import {
     createAddTodoToDateAction,
     createRemoveTodoFromDatesAction,
+    createMoveTodoWithinDatesAction,
 } from './datesActionFactories';
 import {
     createAddTodoToProjectAction,
     createRemoveTodoFromProjectsAction,
     createMoveTodoToOtherProjectAction,
     createDeleteProjectAction,
+    createMoveTodoWithinProjectsAction,
 } from './projectActionFactories';
 import { TodoSection } from '../../../model/TodoSection';
 import { DEFAULT_STATE as DEFAULT_DATES_REDUCER_STATE } from '../../reducers/datesReducer';
@@ -30,6 +32,12 @@ import { createUpdateTodoAction as createUpdateOnlyTodoAction } from './todoActi
 import { Todo } from '../../../model/todo';
 import { DEFAULT_STATE as DEFAULT_PROJECTS_REDUCER_STATE } from '../../reducers/projectsReducer';
 import { toast } from 'react-toastify';
+import { DropResult } from 'react-beautiful-dnd';
+import {
+    parseDroppableId,
+    TYPE_DATE as DROPPABLE_ID_TYPE_DATE,
+    TYPE_PROJECT as DROPPABLE_ID_TYPE_PROJECT,
+} from '../../../utility/dragAndDropHelpers';
 
 export function createAddNewTodoAction(
     title: string,
@@ -308,5 +316,64 @@ export function createSetCurrentTodoForDate(date: Date): ThunkResult<void> {
         } else {
             dispatch(createClearCurrentTodoAction(TodoSection.date));
         }
+    };
+}
+
+export function createMoveTodoAction(
+    dropResult: DropResult
+): ThunkResult<void> {
+    return dispatch => {
+        const destination = dropResult.destination;
+
+        if (!destination) {
+            return;
+        }
+
+        const oldDroppableIdData = parseDroppableId(
+            dropResult.source.droppableId
+        );
+        const newDroppableIdData = parseDroppableId(destination.droppableId);
+
+        const oldIndex = dropResult.source.index;
+        const newIndex = destination.index;
+
+        const fromDate = oldDroppableIdData.type === DROPPABLE_ID_TYPE_DATE;
+        const fromProject =
+            oldDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT;
+
+        const toDate = newDroppableIdData.type === DROPPABLE_ID_TYPE_DATE;
+        const toProject = newDroppableIdData.type === DROPPABLE_ID_TYPE_PROJECT;
+
+        if (fromDate && toDate) {
+            // drop todos between dates
+
+            dispatch(
+                createMoveTodoWithinDatesAction(
+                    oldDroppableIdData.identifier,
+                    newDroppableIdData.identifier,
+                    oldIndex,
+                    newIndex
+                )
+            );
+
+            return;
+        }
+
+        if (fromProject && toProject) {
+            // drop todos between projects
+
+            dispatch(
+                createMoveTodoWithinProjectsAction(
+                    oldDroppableIdData.identifier,
+                    newDroppableIdData.identifier,
+                    oldIndex,
+                    newIndex
+                )
+            );
+
+            return;
+        }
+
+        toast.error('Moving between dates and projects is not supported');
     };
 }
