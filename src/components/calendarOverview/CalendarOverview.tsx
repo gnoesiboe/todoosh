@@ -36,7 +36,7 @@ import {
     bindKeyboardShortcut,
     unbindKeyboardShortcut,
 } from './../../navigation/KeyboardShortcuts';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { DEFAULT_STATE as DEFAULT_TODO_REDUCER_STATE } from '../../storage/reducers/todosReducer';
 import { ProjectCollection } from '../../model/project';
@@ -565,7 +565,6 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         );
                     })}
                 </Row>
-                <ToastContainer />
             </div>
         );
     }

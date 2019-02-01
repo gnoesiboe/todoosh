@@ -10,6 +10,7 @@ import Home from './home/Home';
 import KeyboardShortcutOverview from './keyboardShortcutOverview/KeyboardShortcutOverview';
 import ProjectOverview from './projectOverview/ProjectOverview';
 import TodoDragAndDropContainer from './todoDragAndDropContainer/TodoDragAndDropContainer';
+import { ToastContainer } from 'react-toastify';
 
 class App extends Component {
     public render() {
@@ -32,6 +33,7 @@ class App extends Component {
                             </Switch>
                         </BrowserRouter>
                         <ProjectOverview />
+                        <ToastContainer />
                     </TodoDragAndDropContainer>
                     <KeyboardShortcutOverview />
                 </Container>
