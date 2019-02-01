@@ -1,8 +1,12 @@
 .calendar-overview {
     border-bottom: 1px dashed #ddd;
-    margin-bottom: 50px;
+    margin-bottom: 40px;
 
     .calendar-overview--navigation {
         margin: 10px 0 20px;
+    }
+
+    .calendar-overview--days {
+        margin-bottom: 50px;
     }
 }

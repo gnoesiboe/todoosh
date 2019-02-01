@@ -87,9 +87,13 @@ class ProjectOverview extends React.Component<CombinedProps> {
 
         return (
             <div className="project-overview">
-                <Row>
+                <Row className="row-eq-height">
                     {projects.map((project, index) => (
-                        <Col md={3} key={project.id}>
+                        <Col
+                            md={3}
+                            key={project.id}
+                            className="project-overview--item"
+                        >
                             <Project
                                 index={index}
                                 project={project}

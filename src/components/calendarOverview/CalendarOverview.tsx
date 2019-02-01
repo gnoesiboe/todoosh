@@ -553,7 +553,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                         />
                     </Row>
                 </div>
-                <Row>
+                <Row className="calendar-overview--days row-eq-height">
                     {Object.keys(todos).map(dateAsString => {
                         const date = parseDate(dateAsString);
                         const isCurrentDate = checkIsSameDay(date, currentDate);
