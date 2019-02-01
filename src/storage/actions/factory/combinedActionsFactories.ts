@@ -91,10 +91,6 @@ export function createUpdateTodoAction(
             allDates[dateAsString].includes(id)
         );
 
-        if (!currentDateAsString) {
-            throw new Error('Could not find the current date for todo');
-        }
-
         const updatedTodo: Todo = {
             id,
             title,
