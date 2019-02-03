@@ -206,7 +206,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
             return;
         }
 
-        if (confirm('Are you sure?')) {
+        if (confirm('Are you sure you want to remove this todo?')) {
             // @ts-ignore @todo fix problem where thunks are not allowed to be dispatched
             dispatch(createRemoveTodoAction(currentTodoId));
         }
