@@ -1,11 +1,12 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 import { TodoFormValues } from './TodoFormStateHandler';
-import { Form, Input, FormGroup, FormFeedback, Label } from 'reactstrap';
+import { Form, FormGroup, FormFeedback, Label } from 'reactstrap';
 import Select from 'react-select';
 import { createDeadlineOptions } from './../utility/deadlineOptionsFactory';
 import './TodoForm.scss';
 import { ProjectCollection } from '../../../model/project';
+import TextareaAutosize from 'react-autosize-textarea';
 
 export type OnCancelCallback = () => void;
 
@@ -43,13 +44,13 @@ const TodoForm: React.FunctionComponent<
         <Form onSubmit={handleSubmit} className="todo-form">
             <FormGroup>
                 <Label for="title">Title</Label>
-                <Input
+                <TextareaAutosize
+                    className="form-control"
                     type="text"
                     name="title"
                     id="title"
-                    placeholder="Title"
+                    placeholder="Get some more milk.."
                     onChange={handleChange}
-                    autoComplete="off"
                     onKeyDown={(event: React.KeyboardEvent) => {
                         if (event.key === 'Escape') {
                             onCancel();
@@ -60,8 +61,6 @@ const TodoForm: React.FunctionComponent<
                     onBlur={handleBlur}
                     value={values.title}
                     autoFocus
-                    invalid={!!errors.title && touched.title}
-                    valid={!errors.title && touched.title}
                 />
                 {errors.title && touched.title && (
                     <FormFeedback tooltip>{errors.title}</FormFeedback>

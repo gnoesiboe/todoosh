@@ -40,6 +40,7 @@
     "markdown-it": "^8.4.2",
     "mousetrap": "^1.6.2",
     "react": "^16.6.3",
+    "react-autosize-textarea": "^6.0.0",
     "react-beautiful-dnd": "^10.0.3",
     "react-dom": "^16.6.3",
     "react-flip-move": "^3.0.3",
