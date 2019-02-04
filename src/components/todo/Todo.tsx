@@ -11,8 +11,12 @@ import TodoActions from './components/TodoActions';
 import TodoEditActionButton, {
     OnTodoEditClickCallback,
 } from './components/TodoEditActionButton';
+import TodoPlanActionButton, {
+    OnTodoPlanClickCallback,
+} from './components/TodoPlanActionButton';
 import TodoProjectPrefix from './components/TodoProjectPrefix';
 import TodoTitle from './components/TodoTitle';
+import PlanTodoModal from './components/PlanTodoModal';
 
 export type OnCompletedChangeCallback = (completed: boolean) => void;
 export type OnEditClickCallback = () => void;
@@ -20,7 +24,7 @@ export type OnEditClickCallback = () => void;
 type Props = {
     todo: TodoType;
     project: Project;
-    date?: Date;
+    isPlanned: boolean;
     onCompletedChange: OnCompletedChangeCallback;
     isCurrent: boolean;
     isEditMode: boolean;
@@ -29,11 +33,19 @@ type Props = {
     onEditClick: OnEditClickCallback;
 };
 
-export default class Todo extends React.Component<Props> {
+type State = {
+    showPlanForm: boolean;
+};
+
+export default class Todo extends React.Component<Props, State> {
     private checkboxRef: React.RefObject<any>;
 
     constructor(props: Props) {
         super(props);
+
+        this.state = {
+            showPlanForm: false,
+        };
 
         this.checkboxRef = React.createRef();
     }
@@ -46,14 +58,30 @@ export default class Todo extends React.Component<Props> {
         this.checkboxRef.current.blur();
     };
 
+    private onPlanClick: OnTodoPlanClickCallback = event => {
+        event.preventDefault();
+
+        this.setState(currentState => ({
+            ...currentState,
+            showPlanForm: true,
+        }));
+    };
+
     private onEditClick: OnTodoEditClickCallback = event => {
         event.preventDefault();
 
         this.props.onEditClick();
     };
 
+    private onPlanCancel = () => {
+        this.setState(currentState => ({
+            ...currentState,
+            showPlanForm: false,
+        }));
+    };
+
     private renderDisplayMode() {
-        const { todo, isCurrent, project, showProject } = this.props;
+        const { todo, isCurrent, project, showProject, isPlanned } = this.props;
 
         const className = createClassName('todo', {
             todo__current: isCurrent,
@@ -79,17 +107,28 @@ export default class Todo extends React.Component<Props> {
                 </Label>
                 {!todo.completedAt && (
                     <TodoActions>
+                        {!isPlanned ? (
+                            <TodoPlanActionButton onClick={this.onPlanClick} />
+                        ) : (
+                            undefined
+                        )}
                         <TodoEditActionButton onClick={this.onEditClick} />
                     </TodoActions>
+                )}
+                {!isPlanned && (
+                    <PlanTodoModal
+                        isOpen={this.state.showPlanForm}
+                        onCancel={this.onPlanCancel}
+                    />
                 )}
             </div>
         );
     }
 
     private renderEditMode() {
-        const { todo, date, onEditCancel } = this.props;
+        const { todo, onEditCancel } = this.props;
 
-        return <EditTodo todo={todo} date={date} onCancel={onEditCancel} />;
+        return <EditTodo todo={todo} onCancel={onEditCancel} />;
     }
 
     public render() {

@@ -126,6 +126,7 @@ class Project extends React.Component<CombinedProps, State> {
                 onEditCancel={this.onEditTodoCancel}
                 todo={todo}
                 isCurrent={false}
+                isPlanned={false}
                 onCompletedChange={() => this.onTodoCompleteChange(todo)}
             />
         );

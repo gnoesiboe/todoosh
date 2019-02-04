@@ -14,7 +14,6 @@ import { DatesReducerState } from '../../storage/reducers/datesReducer';
 
 type Props = {
     todo: Todo;
-    date?: Date;
     onCancel: OnCancelCallback;
 };
 

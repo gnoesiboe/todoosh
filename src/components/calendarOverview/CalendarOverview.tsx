@@ -486,7 +486,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 onEditCancel={this.onEditTodoCancel}
                 todo={todo}
                 project={project}
-                date={date}
+                isPlanned={true}
                 isCurrent={isCurrent}
                 onCompletedChange={complete =>
                     this.onTodoCompletedChange(todo, date, complete)
