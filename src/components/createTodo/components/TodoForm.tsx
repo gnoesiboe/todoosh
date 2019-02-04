@@ -42,6 +42,7 @@ const TodoForm: React.FunctionComponent<
     setFieldValue,
     projects,
     isValid: formIsValid,
+    submitForm,
 }) => {
     const hasErrors = {
         title: touched.title && !!errors.title,
@@ -78,6 +79,16 @@ const TodoForm: React.FunctionComponent<
         ),
     };
 
+    const onKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+            submitForm();
+        }
+
+        if (event.key === 'Escape') {
+            onCancel();
+        }
+    };
+
     return (
         <Form onSubmit={handleSubmit} className="todo-form">
             <FormGroup>
@@ -89,11 +100,7 @@ const TodoForm: React.FunctionComponent<
                     id="title"
                     placeholder="Get some more milk.."
                     onChange={handleChange}
-                    onKeyDown={(event: React.KeyboardEvent) => {
-                        if (event.key === 'Escape') {
-                            onCancel();
-                        }
-                    }}
+                    onKeyDown={onKeyDown}
                     onBlur={handleBlur}
                     value={values.title}
                     autoFocus
@@ -116,6 +123,7 @@ const TodoForm: React.FunctionComponent<
                     }}
                     inputId="projectId"
                     onBlur={handleBlur}
+                    onKeyDown={onKeyDown}
                     placeholder="Project"
                     name="project"
                     className={classNames.projectId}
@@ -137,6 +145,7 @@ const TodoForm: React.FunctionComponent<
                     }}
                     inputId="deadline"
                     onBlur={handleBlur}
+                    onKeyDown={onKeyDown}
                     placeholder="Deadline"
                     name="deadline"
                     className={classNames.deadline}
