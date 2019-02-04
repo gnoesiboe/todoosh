@@ -38,7 +38,7 @@ export default class TodoFormStateHandler extends React.Component<Props> {
         }
 
         if (!values.projectId) {
-            errors.title = 'Required';
+            errors.projectId = 'Required';
         }
 
         return errors;

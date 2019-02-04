@@ -1,12 +1,14 @@
 import React from 'react';
 import { FormikProps } from 'formik';
 import { TodoFormValues } from './TodoFormStateHandler';
-import { Form, FormGroup, FormFeedback, Label } from 'reactstrap';
+import { Form, FormGroup, Label } from 'reactstrap';
 import Select from 'react-select';
 import { createDeadlineOptions } from './../utility/deadlineOptionsFactory';
 import './TodoForm.scss';
 import { ProjectCollection } from '../../../model/project';
 import TextareaAutosize from 'react-autosize-textarea';
+import InvalidFormFeedback from '../../forms/components/InvalidFormFeedback';
+import createClassName from 'classnames';
 
 export type OnCancelCallback = () => void;
 
@@ -39,13 +41,49 @@ const TodoForm: React.FunctionComponent<
     onCancel,
     setFieldValue,
     projects,
+    isValid: formIsValid,
 }) => {
+    const hasErrors = {
+        title: touched.title && !!errors.title,
+        projectId: touched.projectId && !!errors.projectId,
+        deadline: touched.deadline && !!errors.deadline,
+    };
+
+    const isValid = {
+        title: touched.title && !errors.title,
+        projectId: touched.projectId && !errors.projectId,
+        deadline: touched.deadline && !errors.deadline,
+    };
+
+    const classNames = {
+        title: createClassName('form-control', {
+            'is-valid': isValid.title,
+            'is-invalid': hasErrors.title,
+        }),
+        projectId: createClassName(
+            'form-control',
+            'form-control__alternative-padding',
+            {
+                'is-valid': isValid.projectId,
+                'is-invalid': hasErrors.projectId,
+            }
+        ),
+        deadline: createClassName(
+            'form-control',
+            'form-control__alternative-padding',
+            {
+                'is-valid': isValid.deadline,
+                'is-invalid': hasErrors.deadline,
+            }
+        ),
+    };
+
     return (
         <Form onSubmit={handleSubmit} className="todo-form">
             <FormGroup>
                 <Label for="title">Title</Label>
                 <TextareaAutosize
-                    className="form-control"
+                    className={classNames.title}
                     type="text"
                     name="title"
                     id="title"
@@ -55,15 +93,13 @@ const TodoForm: React.FunctionComponent<
                         if (event.key === 'Escape') {
                             onCancel();
                         }
-
-                        return true;
                     }}
                     onBlur={handleBlur}
                     value={values.title}
                     autoFocus
                 />
-                {errors.title && touched.title && (
-                    <FormFeedback tooltip>{errors.title}</FormFeedback>
+                {hasErrors.title && (
+                    <InvalidFormFeedback>{errors.title}</InvalidFormFeedback>
                 )}
             </FormGroup>
             <FormGroup>
@@ -82,9 +118,12 @@ const TodoForm: React.FunctionComponent<
                     onBlur={handleBlur}
                     placeholder="Project"
                     name="project"
+                    className={classNames.projectId}
                 />
-                {errors.projectId && touched.projectId && (
-                    <FormFeedback tooltip>{errors.projectId}</FormFeedback>
+                {hasErrors.projectId && (
+                    <InvalidFormFeedback>
+                        {errors.projectId}
+                    </InvalidFormFeedback>
                 )}
             </FormGroup>
             <FormGroup>
@@ -100,12 +139,17 @@ const TodoForm: React.FunctionComponent<
                     onBlur={handleBlur}
                     placeholder="Deadline"
                     name="deadline"
+                    className={classNames.deadline}
                 />
-                {errors.deadline && touched.deadline && (
-                    <FormFeedback tooltip>{errors.deadline}</FormFeedback>
+                {hasErrors.deadline && (
+                    <InvalidFormFeedback>{errors.deadline}</InvalidFormFeedback>
                 )}
             </FormGroup>
-            <button type="submit" className="btn btn-primary">
+            <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={!formIsValid}
+            >
                 Save
             </button>
             <button type="button" className="btn btn-link" onClick={onCancel}>
