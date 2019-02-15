@@ -12,7 +12,7 @@ import { createUpdateTodoAction } from '../../storage/actions/factory/combinedAc
 import { parseDate } from '../../utility/dateTimeHelper';
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
 
-type Props = {
+type OwnProps = {
     todo: Todo;
     onCancel: OnCancelCallback;
 };
@@ -22,7 +22,7 @@ type ReduxSuppliedProps = {
     dates: DatesReducerState;
 };
 
-type CombinedProps = Props & DispatchProp<RootAction> & ReduxSuppliedProps;
+type CombinedProps = OwnProps & DispatchProp<RootAction> & ReduxSuppliedProps;
 
 class EditTodo extends React.Component<CombinedProps> {
     private onFormSubmittedAndValid: OnSubmitCallback = values => {
@@ -76,6 +76,6 @@ function mapGlobalStateToProps(globalState: GlobalState): ReduxSuppliedProps {
     };
 }
 
-export default connect<ReduxSuppliedProps, {}, Props>(mapGlobalStateToProps)(
+export default connect<ReduxSuppliedProps, {}, OwnProps>(mapGlobalStateToProps)(
     EditTodo
 );

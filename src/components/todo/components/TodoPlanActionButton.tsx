@@ -7,10 +7,11 @@ export type OnTodoPlanClickCallback = (
 
 type Props = {
     onClick: OnTodoPlanClickCallback;
+    targetId: string;
 };
 
-const TodoPlanActionButton = ({ onClick }: Props) => (
-    <Button color="link" onClick={onClick}>
+const TodoPlanActionButton = ({ onClick, targetId }: Props) => (
+    <Button color="link" onClick={onClick} id={targetId}>
         plan
     </Button>
 );

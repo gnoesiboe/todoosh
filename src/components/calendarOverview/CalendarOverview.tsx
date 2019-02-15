@@ -55,11 +55,13 @@ import {
     createMoveTodoToPreviousSpotAction,
     createMoveTodoToNextDateAction,
     createMoveTodoToPreviousDateAction,
+    createPlanTodoAction,
 } from '../../storage/actions/factory/datesActionFactories';
 import { createRemoveCompletedTodosAction } from '../../storage/actions/factory/todoActionFactories';
 import { DatesReducerState } from '../../storage/reducers/datesReducer';
 import { createDroppableIdForDate } from './../../utility/dragAndDropHelpers';
 import { Helmet } from 'react-helmet';
+import { PlanTodoFormValues } from '../todo/components/PlanTodoForm';
 
 type ReactRouterMatchParams = {
     startDate: string;
@@ -467,6 +469,21 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
         this.startEditingTodo();
     };
 
+    private onPlanFormSubmittedAndValid = (
+        todo: TodoModel,
+        values: PlanTodoFormValues
+    ) => {
+        const { dispatch } = this.props;
+
+        const newDate = values.date ? values.date.value : null;
+
+        if (!newDate) {
+            throw new Error('Expecting date to be available at this point');
+        }
+
+        dispatch(createPlanTodoAction(todo.id, formatDate(newDate)));
+    };
+
     private renderTodo(todo: TodoModel, isCurrent: boolean, date: Date) {
         const isEditMode = isCurrent && this.state.isEditingTodo;
         const project = this.props.projects.find(cursorProject =>
@@ -491,6 +508,7 @@ class CalendarOverview extends React.Component<CombinedProps, State> {
                 onCompletedChange={complete =>
                     this.onTodoCompletedChange(todo, date, complete)
                 }
+                onPlanFormSubmittedAndValid={this.onPlanFormSubmittedAndValid}
             />
         );
     }

@@ -5,7 +5,9 @@ import {
     formatDay,
 } from '../../../utility/dateTimeHelper';
 
-export function createDeadlineOptions(): OptionsType<DeadlineSelectOptionType> {
+export function createDateSelectOptions(): OptionsType<
+    DeadlineSelectOptionType
+> {
     const today = new Date();
 
     const relative = [

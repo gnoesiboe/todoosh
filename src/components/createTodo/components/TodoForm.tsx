@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { TodoFormValues } from './TodoFormStateHandler';
 import { Form, FormGroup, Label } from 'reactstrap';
 import Select from 'react-select';
-import { createDeadlineOptions } from './../utility/deadlineOptionsFactory';
+import { createDateSelectOptions } from './../utility/deadlineOptionsFactory';
 import './TodoForm.scss';
 import { ProjectCollection } from '../../../model/project';
 import TextareaAutosize from 'react-autosize-textarea';
@@ -27,7 +27,7 @@ export type ProjectSelectOptionType = {
     value: string;
 };
 
-const deadlineOptions = createDeadlineOptions();
+const deadlineOptions = createDateSelectOptions();
 
 const TodoForm: React.FunctionComponent<
     Props & FormikProps<TodoFormValues>

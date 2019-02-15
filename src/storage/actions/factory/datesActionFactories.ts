@@ -53,3 +53,12 @@ export const createMoveTodoToPreviousDateAction = createAction(
     '@dates/move-todo-to-previous-date',
     resolve => (todoId: string) => resolve({ todoId })
 );
+
+export const createPlanTodoAction = createAction(
+    '@dates/plan-todo',
+    resolve => (id: string, newDate: string) =>
+        resolve({
+            id,
+            newDate,
+        })
+);

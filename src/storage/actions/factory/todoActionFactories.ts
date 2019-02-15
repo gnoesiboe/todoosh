@@ -22,6 +22,6 @@ export const createDeleteTodoAction = createAction(
 );
 
 export const createRemoveCompletedTodosAction = createAction(
-    '@todoes/remove-completed',
+    '@todos/remove-completed',
     resolve => () => resolve({})
 );

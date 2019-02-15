@@ -250,6 +250,30 @@ export default (
             });
         }
 
+        case getType(actionFactories.createPlanTodoAction): {
+            const { newDate, id } = action.payload;
+
+            return produce<DatesReducerState>(currentState, draft => {
+                for (const dateAsString in draft) {
+                    if (!draft.hasOwnProperty(dateAsString)) {
+                        continue;
+                    }
+
+                    if (draft[dateAsString].includes(id)) {
+                        draft[dateAsString] = draft[dateAsString].filter(
+                            cursorTodoId => cursorTodoId !== id
+                        );
+                    }
+                }
+
+                if (typeof draft[newDate] === 'undefined') {
+                    draft[newDate] = [];
+                }
+
+                draft[newDate].push(id);
+            });
+        }
+
         default:
             return currentState;
     }

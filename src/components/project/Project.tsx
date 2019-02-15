@@ -25,6 +25,9 @@ import ProjectActions from './components/ProjectActions';
 import ProjectEditActionButton from './components/ProjectEditActionButton';
 import ProjectDeleteActionButton from './components/ProjectDeleteActionButton';
 import { resolveProjectTodos, resoleCurrentTodoId } from './utility/selectors';
+import { PlanTodoFormValues } from '../todo/components/PlanTodoForm';
+import { formatDate } from '../../utility/dateTimeHelper';
+import { createPlanTodoAction } from '../../storage/actions/factory/datesActionFactories';
 
 type Props = {
     project: ProjectModel;
@@ -110,6 +113,21 @@ class Project extends React.Component<CombinedProps, State> {
         this.setState(currentState => ({ ...currentState, isEditMode: false }));
     }
 
+    private onPlanFormSubmittedAndValid = (
+        todo: TodoModel,
+        values: PlanTodoFormValues
+    ) => {
+        const { dispatch } = this.props;
+
+        const newDate = values.date ? values.date.value : null;
+
+        if (!newDate) {
+            throw new Error('Expecting date to be available at this point');
+        }
+
+        dispatch(createPlanTodoAction(todo.id, formatDate(newDate)));
+    };
+
     private renderTodo(todo: TodoModel) {
         const { project, currentTodoId } = this.props;
         const { isEditingTodo } = this.state;
@@ -128,6 +146,7 @@ class Project extends React.Component<CombinedProps, State> {
                 isCurrent={false}
                 isPlanned={false}
                 onCompletedChange={() => this.onTodoCompleteChange(todo)}
+                onPlanFormSubmittedAndValid={this.onPlanFormSubmittedAndValid}
             />
         );
     }
